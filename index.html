@@ -60,66 +60,66 @@
 
 <div class="container">
     <h1>UGS Files Directory</h1>
-    <div id="loading">Scraping repo and sorting files...</div>
+    <div id="loading">Fetching and sorting files...</div>
     <ul id="file-list"></ul>
 </div>
 
 <script>
-    // Target third-party repository details
     const targetUser = 'brickyosu';
     const targetRepo = 'ugs-files-sorted';
     const targetBranch = 'main';
 
-    // Using an open proxy to read the HTML directory of the external repository safely
+    // Using an alternative proxy to fetch GitHub's public file tree feed safely
     const proxyUrl = 'https://api.allorigins.win/get?url=';
-    const targetHtmlUrl = encodeURIComponent(`https://github.com/${targetUser}/${targetRepo}/tree/${targetBranch}`);
+    const targetFeedUrl = encodeURIComponent(`https://github.com/${targetUser}/${targetRepo}/file-list/${targetBranch}`);
     const githackBaseUrl = `https://raw.githack.com/${targetUser}/${targetRepo}/${targetBranch}/`;
 
     async function loadExternalFiles() {
         try {
-            const response = await fetch(`${proxyUrl}${targetHtmlUrl}`);
-            if (!response.ok) throw new Error('Proxy failed to fetch data');
+            const response = await fetch(`${proxyUrl}${targetFeedUrl}`);
+            if (!response.ok) throw new Error('Proxy failed');
             
             const data = await response.json();
             
-            // Parse the scraped HTML text from the target repository page
             const parser = new DOMParser();
             const doc = parser.parseFromString(data.contents, 'text/html');
             
-            // Extract file link elements using GitHub's default layout classes
-            const links = doc.querySelectorAll('a.Link--primary, .react-directory-row a');
+            // Grabs all links matching the repository item path structure
+            const links = doc.querySelectorAll('a');
             let fileNames = [];
 
             links.forEach(link => {
                 const href = link.getAttribute('href') || '';
-                // Filter out folders, readme pointers, or parent directories
-                if (href.includes(`/blob/${targetBranch}/`)) {
+                // Filters out folder paths, keeping only standard raw file items
+                if (href.includes(`/${targetUser}/${targetRepo}/blob/${targetBranch}/`)) {
                     const filename = href.split('/').pop();
-                    if (filename && !fileNames.includes(filename)) {
-                        fileNames.push(decodeURIComponent(filename));
+                    // Avoid duplicate records or platform documentation files
+                    if (filename && !fileNames.includes(filename) && !filename.includes('.' === 0)) {
+                        if(filename.toLowerCase() !== 'readme.md' && filename.toLowerCase() !== 'index.html') {
+                            fileNames.push(decodeURIComponent(filename));
+                        }
                     }
                 }
             });
 
-            // Sort them strictly alphabetically
-            fileNames.sort((a, b) => a.localeCompare(b.name, undefined, {sensitivity: 'base'}));
+            // Alphabetical Sort
+            fileNames.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
             const loadingDiv = document.getElementById('loading');
             const fileList = document.getElementById('file-list');
             loadingDiv.style.display = 'none';
 
             if (fileNames.length === 0) {
-                loadingDiv.innerText = "No readable files found in that branch layout.";
+                loadingDiv.innerText = "No files found or the repository layout changed.";
                 loadingDiv.style.display = "block";
                 return;
             }
 
-            // Render the items as All-Caps GitHack links
+            // Create list elements
             fileNames.forEach(name => {
                 const li = document.createElement('li');
                 const a = document.createElement('a');
                 
-                // Routes through GitHack CDN
                 a.href = githackBaseUrl + name;
                 a.textContent = name.toUpperCase();
                 a.target = "_blank"; 
@@ -130,7 +130,7 @@
 
         } catch (error) {
             console.error(error);
-            document.getElementById('loading').innerText = "Error loading index. The repository structure might have changed.";
+            document.getElementById('loading').innerText = "Connection error. Please refresh the page.";
         }
     }
 
