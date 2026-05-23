@@ -16,16 +16,33 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        h1 {
-            text-align: center;
-            color: #00ffcc;
-            text-transform: uppercase;
+        .header-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 2px solid #333;
             padding-bottom: 10px;
+        }
+        h1 {
+            margin: 0;
+            color: #00ffcc;
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
-        
-        /* Search Bar Styling */
+        .form-btn {
+            background: #ff007f;
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        .form-btn:hover {
+            background: #ff0055;
+        }
         .search-box {
             width: 100%;
             padding: 15px;
@@ -37,12 +54,10 @@
             font-size: 1.1rem;
             box-sizing: border-box;
             outline: none;
-            transition: border-color 0.2s;
         }
         .search-box:focus {
             border-color: #00ffcc;
         }
-
         h2 {
             color: #ff007f;
             text-transform: uppercase;
@@ -50,70 +65,80 @@
             margin-top: 40px;
             border-left: 4px solid #ff007f;
             padding-left: 10px;
-            letter-spacing: 1px;
         }
-        .recent-section h2 {
-            color: #ffcc00;
-            border-left-color: #ffcc00;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 15px 0;
-        }
+        .recent-section h2 { color: #ffcc00; border-left-color: #ffcc00; }
+        .favorite-section h2 { color: #00ffcc; border-left-color: #00ffcc; }
+        
+        ul { list-style: none; padding: 0; margin: 15px 0; }
         li {
             background: #1e1e1e;
             margin: 10px 0;
             border-radius: 6px;
-            transition: transform 0.2s, background 0.2s, border-color 0.2s;
             border: 1px solid #2d2d2d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
         }
-        li:hover {
-            background: #252525;
-            transform: translateX(5px);
-            border-color: #00ffcc;
-        }
-        button {
-            display: block;
-            width: 100%;
+        li:hover { border-color: #00ffcc; }
+        
+        .game-btn {
+            flex-grow: 1;
             padding: 18px;
             background: none;
             border: none;
-            color: #00ffcc;
+            color: #fff;
             text-align: left;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             text-transform: uppercase; 
-            letter-spacing: 1px;
             cursor: pointer;
         }
-        .no-recents {
-            color: #666;
-            font-style: italic;
-            padding: 10px;
+        .star-btn {
+            background: none;
+            border: none;
+            color: #444;
+            font-size: 1.5rem;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: color 0.2s;
         }
+        .star-btn.fav-active {
+            color: #ffcc00;
+        }
+        .no-items { color: #666; font-style: italic; padding: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Arcade Directory</h1>
+    <div class="header-wrapper">
+        <h1>Arcade Hub</h1>
+        <a href="" target="_blank" class="form-btn">Request / Upload Game</a>
+    </div>
     
-    <input type="text" id="search-input" class="search-box" placeholder="Search for a game..." onkeyup="filterGames()">
+    <input type="text" id="search-input" class="search-box" placeholder="Search games..." onkeyup="filterGames()">
 
-    <div class="recent-section" id="recent-section-wrapper">
-        <h2>Recently Played</h2>
-        <ul id="recent-list">
-            <div class="no-recents" id="no-recents">No games played recently.</div>
+    <div class="favorite-section">
+        <h2>My Favorites</h2>
+        <ul id="favorites-list">
+            <div class="no-items" id="no-favorites">Star a game to add it to your favorites!</div>
         </ul>
     </div>
 
-    <div class="console-section" id="nintendo-section-wrapper">
+    <div class="recent-section">
+        <h2>Recently Played</h2>
+        <ul id="recent-list">
+            <div class="no-items" id="no-recents">No games played recently.</div>
+        </ul>
+    </div>
+
+    <div class="console-section">
         <h2>Nintendo Games</h2>
         <ul id="nintendo-list"></ul>
     </div>
 
-    <div class="console-section" id="playstation-section-wrapper">
+    <div class="console-section">
         <h2>Playstation Games</h2>
         <ul id="playstation-list"></ul>
     </div>
@@ -163,35 +188,78 @@
         win.document.body.appendChild(iframe);
     }
 
-    function createListElement(file) {
+    // Creates UI elements containing both a clickable title and a toggle star
+    function createGameRow(file) {
         const li = document.createElement('li');
-        const btn = document.createElement('button');
+        li.setAttribute('data-filename', file);
         
-        const displayName = file.replace('.html', '').toUpperCase();
-        btn.textContent = displayName;
-        btn.onclick = () => launchGame(file);
+        const gameBtn = document.createElement('button');
+        gameBtn.className = 'game-btn';
+        gameBtn.textContent = file.replace('.html', '').toUpperCase();
+        gameBtn.onclick = () => launchGame(file);
         
-        li.appendChild(btn);
+        const starBtn = document.createElement('button');
+        starBtn.className = 'star-btn';
+        starBtn.innerHTML = '★';
+        
+        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+        if (favs.includes(file)) {
+            starBtn.classList.add('fav-active');
+        }
+        
+        starBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleFavorite(file, starBtn);
+        };
+        
+        li.appendChild(gameBtn);
+        li.appendChild(starBtn);
         return li;
     }
 
-    // Live filtering functionality
-    function filterGames() {
-        const query = document.getElementById('search-input').value.toUpperCase();
+    function toggleFavorite(file, starElement) {
+        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+        if (favs.includes(file)) {
+            favs = favs.filter(item => item !== file);
+            starElement.classList.remove('fav-active');
+        } else {
+            favs.push(file);
+            starElement.classList.add('fav-active');
+        }
+        localStorage.setItem('favGames', JSON.stringify(favs));
         
-        // Filter Nintendo list items
-        const nintendoItems = document.getElementById('nintendo-list').getElementsByTagName('li');
-        for (let i = 0; i < nintendoItems.length; i++) {
-            const btnText = nintendoItems[i].getElementsByTagName('button')[0].textContent;
-            nintendoItems[i].style.display = btnText.includes(query) ? "" : "none";
-        }
+        // Dynamic visual update across arrays
+        renderFavorites();
+        updateStarStates();
+    }
 
-        // Filter PlayStation list items
-        const psItems = document.getElementById('playstation-list').getElementsByTagName('li');
-        for (let i = 0; i < psItems.length; i++) {
-            const btnText = psItems[i].getElementsByTagName('button')[0].textContent;
-            psItems[i].style.display = btnText.includes(query) ? "" : "none";
+    function updateStarStates() {
+        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+        document.querySelectorAll('li').forEach(li => {
+            const file = li.getAttribute('data-filename');
+            const star = li.querySelector('.star-btn');
+            if (star && file) {
+                if (favs.includes(file)) {
+                    star.classList.add('fav-active');
+                } else {
+                    star.classList.remove('fav-active');
+                }
+            }
+        });
+    }
+
+    function renderFavorites() {
+        const favList = document.getElementById('favorites-list');
+        const noFavs = document.getElementById('no-favorites');
+        const favs = JSON.parse(localStorage.getItem('favGames')) || [];
+
+        favList.innerHTML = '';
+        if (favs.length === 0) {
+            favList.appendChild(noFavs);
+            noFavs.style.display = 'block';
+            return;
         }
+        favs.forEach(file => favList.appendChild(createGameRow(file)));
     }
 
     function addToRecents(file) {
@@ -210,26 +278,31 @@
         const recents = JSON.parse(localStorage.getItem('recentGames')) || [];
 
         recentList.innerHTML = '';
-
         if (recents.length === 0) {
             recentList.appendChild(noRecents);
             noRecents.style.display = 'block';
             return;
         }
+        recents.forEach(file => recentList.appendChild(createGameRow(file)));
+    }
 
-        recents.forEach(file => {
-            const element = createListElement(file);
-            recentList.appendChild(element);
+    function filterGames() {
+        const query = document.getElementById('search-input').value.toUpperCase();
+        document.querySelectorAll('.console-section li').forEach(li => {
+            const txt = li.querySelector('.game-btn').textContent;
+            li.style.display = txt.includes(query) ? "" : "none";
         });
     }
 
+    // Initialize lists
     const nintendoContainer = document.getElementById('nintendo-list');
-    nintendoGames.forEach(file => nintendoContainer.appendChild(createListElement(file)));
+    nintendoGames.forEach(file => nintendoContainer.appendChild(createGameRow(file)));
 
     const playstationContainer = document.getElementById('playstation-list');
-    playstationGames.forEach(file => playstationContainer.appendChild(createListElement(file)));
+    playstationGames.forEach(file => playstationContainer.appendChild(createGameRow(file)));
 
     renderRecents();
+    renderFavorites();
 </script>
 
 </body>
