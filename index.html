@@ -1,309 +1,481 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARCADE DIRECTORY</title>
+    <title>UGS Files</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #2e3244 0%, #36224b 100%);
+            min-height: 100vh;
             margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 80px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+
+        .sidebar-btn {
+            background: rgb(89, 134, 218);
+            border: none;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            text-align: center;
+            min-height: 45px;
+        }
+
+        .sidebar-btn:hover {
+            background: #79aadb;
+            transform: scale(1.05);
+        }
+
+        .sidebar-btn.empty {
+            opacity: 0.4;
+            cursor: default;
+        }
+
+        .sidebar-btn.empty:hover {
+            transform: none;
+            background: rgb(89, 134, 218);
+        }
+
+        .main-content {
+            margin-left: 100px;
+            flex: 1;
             padding: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .header-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #333;
-            padding-bottom: 10px;
-        }
+
         h1 {
-            margin: 0;
-            color: #00ffcc;
+            color: white;
+            text-align: center;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .sub-title {
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 30px;
             text-transform: uppercase;
             letter-spacing: 2px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
         }
+
+        /* Interactive Widgets Layout */
+        .hub-controls {
+            max-width: 900px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .search-box {
+            flex-grow: 1;
+            padding: 15px;
+            background: rgba(20, 20, 30, 0.6);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus {
+            border-color: #79aadb;
+        }
+
         .form-btn {
             background: #ff007f;
             color: white;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 15px 25px;
             font-weight: bold;
-            border-radius: 4px;
+            border-radius: 8px;
             text-transform: uppercase;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: background 0.2s, transform 0.2s;
         }
+
         .form-btn:hover {
             background: #ff0055;
+            transform: translateY(-2px);
         }
-        .search-box {
-            width: 100%;
-            padding: 15px;
-            margin: 20px 0;
-            background: #1e1e1e;
-            border: 2px solid #333;
-            border-radius: 6px;
-            color: #fff;
-            font-size: 1.1rem;
-            box-sizing: border-box;
-            outline: none;
+
+        .letter-section {
+            margin-bottom: 40px;
+            padding: 0 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            min-height: 100px;
         }
-        .search-box:focus {
-            border-color: #00ffcc;
-        }
-        h2 {
-            color: #ff007f;
+
+        .letter-header {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid rgba(255,255,255,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             text-transform: uppercase;
-            font-size: 1.4rem;
-            margin-top: 40px;
-            border-left: 4px solid #ff007f;
-            padding-left: 10px;
         }
-        .recent-section h2 { color: #ffcc00; border-left-color: #ffcc00; }
-        .favorite-section h2 { color: #00ffcc; border-left-color: #00ffcc; }
-        
-        ul { list-style: none; padding: 0; margin: 15px 0; }
-        li {
-            background: #1e1e1e;
-            margin: 10px 0;
-            border-radius: 6px;
-            border: 1px solid #2d2d2d;
+
+        .favorite-section .letter-header { color: #00ffcc; border-bottom-color: rgba(0, 255, 204, 0.4); }
+        .recent-section .letter-header { color: #ffcc00; border-bottom-color: rgba(255, 204, 0, 0.4); }
+
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .empty-message {
+            color: rgba(255,255,255,0.4);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .game-row {
+            background: rgb(89, 134, 218);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 600px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             overflow: hidden;
         }
-        li:hover { border-color: #00ffcc; }
-        
+
+        .game-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: #79aadb;
+        }
+
         .game-btn {
-            flex-grow: 1;
-            padding: 18px;
             background: none;
             border: none;
-            color: #fff;
-            text-align: left;
-            font-weight: bold;
-            font-size: 1.1rem;
-            text-transform: uppercase; 
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 500;
             cursor: pointer;
+            color: white;
+            text-align: left;
+            flex-grow: 1;
+            text-transform: uppercase;
         }
+
         .star-btn {
             background: none;
             border: none;
-            color: #444;
+            color: rgba(255, 255, 255, 0.3);
             font-size: 1.5rem;
             padding: 0 20px;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: color 0.2s, transform 0.2s;
+            height: 100%;
         }
+
+        .star-btn:hover {
+            transform: scale(1.2);
+        }
+
         .star-btn.fav-active {
             color: #ffcc00;
         }
-        .no-items { color: #666; font-style: italic; padding: 10px; }
+
+        #lolbutton {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #79aadb;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                padding: 15px 5px;
+            }
+            .sidebar-btn {
+                padding: 8px;
+                font-size: 16px;
+            }
+            .main-content {
+                margin-left: 70px;
+            }
+            .hub-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-wrapper">
-        <h1>Arcade Hub</h1>
-        <a href="" target="_blank" class="form-btn">Request / Upload Game</a>
+    <div class="sidebar" id="sidebar"></div>
+
+    <div class="main-content">
+        <h1>UGS Files</h1>
+        <div class="sub-title">Emulator Games</div>
+
+        <h2 style="color: white; text-align: center; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-weight: normal; font-size: 16px;">
+            Files from 
+            <a href="https://docs.google.com/document/d/1_FmH3BlSBQI7FGgAQL59-ZPe8eCxs35wel6JUyVaG8Q/" target="_blank" style="display: inline; color: #79aadb; text-decoration: none;">
+                Ultimate Game Stash Google Doc
+            </a>
+        </h2>
+        <h2 style="color: white; text-align: center; margin-bottom: 30px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); font-weight: normal; font-size: 16px;">
+            Discord Server:
+            <a href="https://discord.gg/rmVsAqkpkA" target="_blank" style="display: inline; color: #79aadb; text-decoration: none;">
+                https://discord.gg/rmVsAqkpkA
+            </a>
+            <button id="lolbutton" onclick="const script = document.createElement('script');script.src = 'https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/games.js';document.body.appendChild(script);">Click to load if it isn't loading</button>
+        </h2>
+
+        <div class="hub-controls">
+            <input type="text" id="search-input" class="search-box" placeholder="Search emulator games..." onkeyup="filterGames()">
+            <a href="YOUR_GOOGLE_FORM_LINK_HERE" target="_blank" class="form-btn">Request / Upload File</a>
+        </div>
+
+        <div id="user-sections-container">
+            <div class="letter-section favorite-section">
+                <div class="letter-header">My Favorites</div>
+                <div class="buttons-container" id="favorites-list"></div>
+            </div>
+
+            <div class="letter-section recent-section">
+                <div class="letter-header">Recently Played</div>
+                <div class="buttons-container" id="recent-list"></div>
+            </div>
+        </div>
+
+        <div id="sections-container"></div>
     </div>
-    
-    <input type="text" id="search-input" class="search-box" placeholder="Search games..." onkeyup="filterGames()">
 
-    <div class="favorite-section">
-        <h2>My Favorites</h2>
-        <ul id="favorites-list">
-            <div class="no-items" id="no-favorites">Star a game to add it to your favorites!</div>
-        </ul>
-    </div>
+    <script>
+        const targetUser = 'CalcSolver';
+        const targetRepo = 'Wii';
+        const targetBranch = 'main';
+        const githackBaseUrl = `https://raw.githack.com/${targetUser}/${targetRepo}/${targetBranch}/`;
 
-    <div class="recent-section">
-        <h2>Recently Played</h2>
-        <ul id="recent-list">
-            <div class="no-items" id="no-recents">No games played recently.</div>
-        </ul>
-    </div>
+        // Hardcoded categorizations mapping back to your personal uploaded files
+        const nintendoGames = [
+            "Zelda2.html", "smashbros.html", "tennis.html", "pacman.html",
+            "supermarioworld2.html", "Zeldalinktopast.html", "pokemonemerald.html"
+        ];
 
-    <div class="console-section">
-        <h2>Nintendo Games</h2>
-        <ul id="nintendo-list"></ul>
-    </div>
+        const playstationGames = [
+            "1942.html", "mortalkombat.html", "winterolympics.html",
+            "tonyhawk2.html", "streetfighter2.html"
+        ];
 
-    <div class="console-section">
-        <h2>Playstation Games</h2>
-        <ul id="playstation-list"></ul>
-    </div>
-</div>
+        // Sort structures cleanly ahead of injection execution
+        nintendoGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+        playstationGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
-<script>
-    const targetUser = 'CalcSolver';
-    const targetRepo = 'Wii';
-    const targetBranch = 'main';
-    const githackBaseUrl = `https://raw.githack.com/${targetUser}/${targetRepo}/${targetBranch}/`;
+        function launchGame(fileName) {
+            const gameUrl = githackBaseUrl + fileName;
+            addToRecents(fileName);
 
-    const nintendoGames = [
-        "Zelda2.html", "smashbros.html", "tennis.html", "pacman.html",
-        "supermarioworld2.html", "Zeldalinktopast.html", "pokemonemerald.html"
-    ];
-
-    const playstationGames = [
-        "1942.html", "mortalkombat.html", "winterolympics.html",
-        "tonyhawk2.html", "streetfighter2.html"
-    ];
-
-    nintendoGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
-    playstationGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
-
-    function launchGame(fileName) {
-        const gameUrl = githackBaseUrl + fileName;
-        addToRecents(fileName);
-
-        const win = window.open('about:blank', '_blank');
-        if (!win) {
-            alert('Pop-up blocked! Please allow pop-ups to run games.');
-            return;
-        }
-
-        win.document.body.style.margin = '0';
-        win.document.body.style.height = '100vh';
-        win.document.body.style.overflow = 'hidden';
-        win.document.body.style.backgroundColor = '#000000';
-
-        const iframe = win.document.createElement('iframe');
-        iframe.style.border = 'none';
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.margin = '0';
-        iframe.src = gameUrl;
-
-        win.document.body.appendChild(iframe);
-    }
-
-    // Creates UI elements containing both a clickable title and a toggle star
-    function createGameRow(file) {
-        const li = document.createElement('li');
-        li.setAttribute('data-filename', file);
-        
-        const gameBtn = document.createElement('button');
-        gameBtn.className = 'game-btn';
-        gameBtn.textContent = file.replace('.html', '').toUpperCase();
-        gameBtn.onclick = () => launchGame(file);
-        
-        const starBtn = document.createElement('button');
-        starBtn.className = 'star-btn';
-        starBtn.innerHTML = '★';
-        
-        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
-        if (favs.includes(file)) {
-            starBtn.classList.add('fav-active');
-        }
-        
-        starBtn.onclick = (e) => {
-            e.stopPropagation();
-            toggleFavorite(file, starBtn);
-        };
-        
-        li.appendChild(gameBtn);
-        li.appendChild(starBtn);
-        return li;
-    }
-
-    function toggleFavorite(file, starElement) {
-        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
-        if (favs.includes(file)) {
-            favs = favs.filter(item => item !== file);
-            starElement.classList.remove('fav-active');
-        } else {
-            favs.push(file);
-            starElement.classList.add('fav-active');
-        }
-        localStorage.setItem('favGames', JSON.stringify(favs));
-        
-        // Dynamic visual update across arrays
-        renderFavorites();
-        updateStarStates();
-    }
-
-    function updateStarStates() {
-        let favs = JSON.parse(localStorage.getItem('favGames')) || [];
-        document.querySelectorAll('li').forEach(li => {
-            const file = li.getAttribute('data-filename');
-            const star = li.querySelector('.star-btn');
-            if (star && file) {
-                if (favs.includes(file)) {
-                    star.classList.add('fav-active');
-                } else {
-                    star.classList.remove('fav-active');
-                }
+            const win = window.open('about:blank', '_blank');
+            if (!win) {
+                alert('Pop-up blocked! Please allow pop-ups to run your games.');
+                return;
             }
-        });
-    }
 
-    function renderFavorites() {
-        const favList = document.getElementById('favorites-list');
-        const noFavs = document.getElementById('no-favorites');
-        const favs = JSON.parse(localStorage.getItem('favGames')) || [];
+            win.document.body.style.margin = '0';
+            win.document.body.style.height = '100vh';
+            win.document.body.style.overflow = 'hidden';
+            win.document.body.style.backgroundColor = '#000000';
 
-        favList.innerHTML = '';
-        if (favs.length === 0) {
-            favList.appendChild(noFavs);
-            noFavs.style.display = 'block';
-            return;
+            const iframe = win.document.createElement('iframe');
+            iframe.style.border = 'none';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.margin = '0';
+            iframe.src = gameUrl;
+
+            win.document.body.appendChild(iframe);
         }
-        favs.forEach(file => favList.appendChild(createGameRow(file)));
-    }
 
-    function addToRecents(file) {
-        let recents = JSON.parse(localStorage.getItem('recentGames')) || [];
-        recents = recents.filter(item => item !== file);
-        recents.unshift(file);
-        if (recents.length > 3) recents.pop();
-        
-        localStorage.setItem('recentGames', JSON.stringify(recents));
-        renderRecents();
-    }
+        function createGameRowElement(file) {
+            const row = document.createElement('div');
+            row.className = 'game-row';
+            row.setAttribute('data-filename', file);
 
-    function renderRecents() {
-        const recentList = document.getElementById('recent-list');
-        const noRecents = document.getElementById('no-recents');
-        const recents = JSON.parse(localStorage.getItem('recentGames')) || [];
+            const btn = document.createElement('button');
+            btn.className = 'game-btn';
+            btn.textContent = file.replace('.html', '').toUpperCase();
+            btn.onclick = () => launchGame(file);
 
-        recentList.innerHTML = '';
-        if (recents.length === 0) {
-            recentList.appendChild(noRecents);
-            noRecents.style.display = 'block';
-            return;
+            const star = document.createElement('button');
+            star.className = 'star-btn';
+            star.innerHTML = '★';
+
+            let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+            if (favs.includes(file)) {
+                star.classList.add('fav-active');
+            }
+
+            star.onclick = (e) => {
+                e.stopPropagation();
+                toggleFavorite(file, star);
+            };
+
+            row.appendChild(btn);
+            row.appendChild(star);
+            return row;
         }
-        recents.forEach(file => recentList.appendChild(createGameRow(file)));
-    }
 
-    function filterGames() {
-        const query = document.getElementById('search-input').value.toUpperCase();
-        document.querySelectorAll('.console-section li').forEach(li => {
-            const txt = li.querySelector('.game-btn').textContent;
-            li.style.display = txt.includes(query) ? "" : "none";
-        });
-    }
+        function toggleFavorite(file, starElement) {
+            let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+            if (favs.includes(file)) {
+                favs = favs.filter(item => item !== file);
+                starElement.classList.remove('fav-active');
+            } else {
+                favs.push(file);
+                starElement.classList.add('fav-active');
+            }
+            localStorage.setItem('favGames', JSON.stringify(favs));
+            
+            renderFavoritesList();
+            updateGlobalStarStates();
+        }
 
-    // Initialize lists
-    const nintendoContainer = document.getElementById('nintendo-list');
-    nintendoGames.forEach(file => nintendoContainer.appendChild(createGameRow(file)));
+        function updateGlobalStarStates() {
+            let favs = JSON.parse(localStorage.getItem('favGames')) || [];
+            document.querySelectorAll('.game-row').forEach(row => {
+                const file = row.getAttribute('data-filename');
+                const star = row.querySelector('.star-btn');
+                if (star && file) {
+                    if (favs.includes(file)) {
+                        star.classList.add('fav-active');
+                    } else {
+                        star.classList.remove('fav-active');
+                    }
+                }
+            });
+        }
 
-    const playstationContainer = document.getElementById('playstation-list');
-    playstationGames.forEach(file => playstationContainer.appendChild(createGameRow(file)));
+        function renderFavoritesList() {
+            const container = document.getElementById('favorites-list');
+            const favs = JSON.parse(localStorage.getItem('favGames')) || [];
+            container.innerHTML = '';
 
-    renderRecents();
-    renderFavorites();
-</script>
+            if (favs.length === 0) {
+                container.innerHTML = '<div class="empty-message">Star an emulator game item to list it here!</div>';
+                return;
+            }
+            favs.forEach(file => container.appendChild(createGameRowElement(file)));
+        }
 
+        function addToRecents(file) {
+            let recents = JSON.parse(localStorage.getItem('recentGames')) || [];
+            recents = recents.filter(item => item !== file);
+            recents.unshift(file);
+            if (recents.length > 3) recents.pop();
+
+            localStorage.setItem('recentGames', JSON.stringify(recents));
+            renderRecentsList();
+        }
+
+        function renderRecentsList() {
+            const container = document.getElementById('recent-list');
+            const recents = JSON.parse(localStorage.getItem('recentGames')) || [];
+            container.innerHTML = '';
+
+            if (recents.length === 0) {
+                container.innerHTML = '<div class="empty-message">No emulation nodes targeted recently.</div>';
+                return;
+            }
+            recents.forEach(file => container.appendChild(createGameRowElement(file)));
+        }
+
+        function filterGames() {
+            const query = document.getElementById('search-input').value.toUpperCase();
+            document.querySelectorAll('#sections-container .game-row').forEach(row => {
+                const text = row.querySelector('.game-btn').textContent;
+                row.style.display = text.includes(query) ? "" : "none";
+            });
+        }
+
+        // Programmatic section buildout injection 
+        function buildConsoleCategorySection(headingTitle, filesArray) {
+            const mainBox = document.getElementById('sections-container');
+            
+            const section = document.createElement('div');
+            section.className = 'letter-section';
+            
+            const header = document.createElement('div');
+            header.className = 'letter-header';
+            header.textContent = headingTitle;
+            
+            const container = document.createElement('div');
+            container.className = 'buttons-container';
+
+            filesArray.forEach(file => container.appendChild(createGameRowElement(file)));
+            
+            section.appendChild(header);
+            section.appendChild(container);
+            mainBox.appendChild(section);
+        }
+
+        // Render sections systematically
+        buildConsoleCategorySection("Nintendo Systems", nintendoGames);
+        buildConsoleCategorySection("PlayStation Systems", playstationGames);
+
+        // Core initialization renders
+        renderFavoritesList();
+        renderRecentsList();
+    </script>
+    <script src="https://cdn.jsdelivr.net/gh/bubbls/ugs-singlefile@main/games.js"></script>
 </body>
 </html>
