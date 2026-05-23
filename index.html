@@ -24,6 +24,25 @@
             padding-bottom: 10px;
             letter-spacing: 2px;
         }
+        
+        /* Search Bar Styling */
+        .search-box {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            background: #1e1e1e;
+            border: 2px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1.1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-box:focus {
+            border-color: #00ffcc;
+        }
+
         h2 {
             color: #ff007f;
             text-transform: uppercase;
@@ -80,19 +99,21 @@
 <div class="container">
     <h1>Arcade Directory</h1>
     
-    <div class="recent-section">
+    <input type="text" id="search-input" class="search-box" placeholder="Search for a game..." onkeyup="filterGames()">
+
+    <div class="recent-section" id="recent-section-wrapper">
         <h2>Recently Played</h2>
         <ul id="recent-list">
             <div class="no-recents" id="no-recents">No games played recently.</div>
         </ul>
     </div>
 
-    <div class="console-section">
+    <div class="console-section" id="nintendo-section-wrapper">
         <h2>Nintendo Games</h2>
         <ul id="nintendo-list"></ul>
     </div>
 
-    <div class="console-section">
+    <div class="console-section" id="playstation-section-wrapper">
         <h2>Playstation Games</h2>
         <ul id="playstation-list"></ul>
     </div>
@@ -104,26 +125,16 @@
     const targetBranch = 'main';
     const githackBaseUrl = `https://raw.githack.com/${targetUser}/${targetRepo}/${targetBranch}/`;
 
-    // Categorized game arrays (including your new additions!)
     const nintendoGames = [
-        "Zelda2.html",
-        "smashbros.html",
-        "tennis.html",
-        "pacman.html",
-        "supermarioworld2.html",
-        "Zeldalinktopast.html",
-        "pokemonemerald.html"
+        "Zelda2.html", "smashbros.html", "tennis.html", "pacman.html",
+        "supermarioworld2.html", "Zeldalinktopast.html", "pokemonemerald.html"
     ];
 
     const playstationGames = [
-        "1942.html",
-        "mortalkombat.html",
-        "winterolympics.html",
-        "tonyhawk2.html",
-        "streetfighter2.html"
+        "1942.html", "mortalkombat.html", "winterolympics.html",
+        "tonyhawk2.html", "streetfighter2.html"
     ];
 
-    // Auto-sort strictly alphabetically
     nintendoGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
     playstationGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
@@ -156,13 +167,31 @@
         const li = document.createElement('li');
         const btn = document.createElement('button');
         
-        // Formats the display labels nicely
         const displayName = file.replace('.html', '').toUpperCase();
         btn.textContent = displayName;
         btn.onclick = () => launchGame(file);
         
         li.appendChild(btn);
         return li;
+    }
+
+    // Live filtering functionality
+    function filterGames() {
+        const query = document.getElementById('search-input').value.toUpperCase();
+        
+        // Filter Nintendo list items
+        const nintendoItems = document.getElementById('nintendo-list').getElementsByTagName('li');
+        for (let i = 0; i < nintendoItems.length; i++) {
+            const btnText = nintendoItems[i].getElementsByTagName('button')[0].textContent;
+            nintendoItems[i].style.display = btnText.includes(query) ? "" : "none";
+        }
+
+        // Filter PlayStation list items
+        const psItems = document.getElementById('playstation-list').getElementsByTagName('li');
+        for (let i = 0; i < psItems.length; i++) {
+            const btnText = psItems[i].getElementsByTagName('button')[0].textContent;
+            psItems[i].style.display = btnText.includes(query) ? "" : "none";
+        }
     }
 
     function addToRecents(file) {
@@ -194,7 +223,6 @@
         });
     }
 
-    // Populate Lists
     const nintendoContainer = document.getElementById('nintendo-list');
     nintendoGames.forEach(file => nintendoContainer.appendChild(createListElement(file)));
 
