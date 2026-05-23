@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Games Directory</title>
+    <title>ARCADE DIRECTORY</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,10 +24,23 @@
             padding-bottom: 10px;
             letter-spacing: 2px;
         }
+        h2 {
+            color: #ff007f;
+            text-transform: uppercase;
+            font-size: 1.4rem;
+            margin-top: 40px;
+            border-left: 4px solid #ff007f;
+            padding-left: 10px;
+            letter-spacing: 1px;
+        }
+        .recent-section h2 {
+            color: #ffcc00;
+            border-left-color: #ffcc00;
+        }
         ul {
             list-style: none;
             padding: 0;
-            margin-top: 30px;
+            margin: 15px 0;
         }
         li {
             background: #1e1e1e;
@@ -41,68 +54,154 @@
             transform: translateX(5px);
             border-color: #00ffcc;
         }
-        a {
+        button {
             display: block;
+            width: 100%;
             padding: 18px;
+            background: none;
+            border: none;
             color: #00ffcc;
-            text-decoration: none;
+            text-align: left;
             font-weight: bold;
             font-size: 1.2rem;
             text-transform: uppercase; 
             letter-spacing: 1px;
+            cursor: pointer;
+        }
+        .no-recents {
+            color: #666;
+            font-style: italic;
+            padding: 10px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Wii Games Directory</h1>
-    <ul id="file-list"></ul>
+    <h1>Arcade Directory</h1>
+    
+    <div class="recent-section">
+        <h2>Recently Played</h2>
+        <ul id="recent-list">
+            <div class="no-recents" id="no-recents">No games played recently.</div>
+        </ul>
+    </div>
+
+    <div class="console-section">
+        <h2>Nintendo Games</h2>
+        <ul id="nintendo-list"></ul>
+    </div>
+
+    <div class="console-section">
+        <h2>Playstation Games</h2>
+        <ul id="playstation-list"></ul>
+    </div>
 </div>
 
 <script>
-    // Your exact repository details
     const targetUser = 'CalcSolver';
     const targetRepo = 'Wii';
     const targetBranch = 'main';
-
-    // The base GitHack URL for your raw files
     const githackBaseUrl = `https://raw.githack.com/${targetUser}/${targetRepo}/${targetBranch}/`;
 
-    // Your exact list of game files
-    const gameFiles = [
-        "1942.html",
+    // Categorized game arrays (including your new additions!)
+    const nintendoGames = [
         "Zelda2.html",
-        "mortalkombat.html",
-        "pacman.html",
         "smashbros.html",
         "tennis.html",
-        "winterolympics.html"
+        "pacman.html",
+        "supermarioworld2.html",
+        "Zeldalinktopast.html",
+        "pokemonemerald.html"
     ];
 
-    // Sort them strictly alphabetically (handles numbers like 1942 first naturally)
-    gameFiles.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+    const playstationGames = [
+        "1942.html",
+        "mortalkombat.html",
+        "winterolympics.html",
+        "tonyhawk2.html",
+        "streetfighter2.html"
+    ];
 
-    const fileList = document.getElementById('file-list');
+    // Auto-sort strictly alphabetically
+    nintendoGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+    playstationGames.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
 
-    // Generate the links cleanly
-    gameFiles.forEach(file => {
+    function launchGame(fileName) {
+        const gameUrl = githackBaseUrl + fileName;
+        addToRecents(fileName);
+
+        const win = window.open('about:blank', '_blank');
+        if (!win) {
+            alert('Pop-up blocked! Please allow pop-ups to run games.');
+            return;
+        }
+
+        win.document.body.style.margin = '0';
+        win.document.body.style.height = '100vh';
+        win.document.body.style.overflow = 'hidden';
+        win.document.body.style.backgroundColor = '#000000';
+
+        const iframe = win.document.createElement('iframe');
+        iframe.style.border = 'none';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.margin = '0';
+        iframe.src = gameUrl;
+
+        win.document.body.appendChild(iframe);
+    }
+
+    function createListElement(file) {
         const li = document.createElement('li');
-        const a = document.createElement('a');
+        const btn = document.createElement('button');
         
-        // Point directly to the production-ready GitHack raw URL
-        a.href = githackBaseUrl + file;
-        
-        // Strip the ".html" extension and put the name in ALL CAPS for the menu display
+        // Formats the display labels nicely
         const displayName = file.replace('.html', '').toUpperCase();
-        a.textContent = displayName;
+        btn.textContent = displayName;
+        btn.onclick = () => launchGame(file);
         
-        // Opens the game in a new tab when clicked
-        a.target = "_blank"; 
+        li.appendChild(btn);
+        return li;
+    }
+
+    function addToRecents(file) {
+        let recents = JSON.parse(localStorage.getItem('recentGames')) || [];
+        recents = recents.filter(item => item !== file);
+        recents.unshift(file);
+        if (recents.length > 3) recents.pop();
         
-        li.appendChild(a);
-        fileList.appendChild(li);
-    });
+        localStorage.setItem('recentGames', JSON.stringify(recents));
+        renderRecents();
+    }
+
+    function renderRecents() {
+        const recentList = document.getElementById('recent-list');
+        const noRecents = document.getElementById('no-recents');
+        const recents = JSON.parse(localStorage.getItem('recentGames')) || [];
+
+        recentList.innerHTML = '';
+
+        if (recents.length === 0) {
+            recentList.appendChild(noRecents);
+            noRecents.style.display = 'block';
+            return;
+        }
+
+        recents.forEach(file => {
+            const element = createListElement(file);
+            recentList.appendChild(element);
+        });
+    }
+
+    // Populate Lists
+    const nintendoContainer = document.getElementById('nintendo-list');
+    nintendoGames.forEach(file => nintendoContainer.appendChild(createListElement(file)));
+
+    const playstationContainer = document.getElementById('playstation-list');
+    playstationGames.forEach(file => playstationContainer.appendChild(createListElement(file)));
+
+    renderRecents();
 </script>
 
 </body>
