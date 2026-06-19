@@ -93,6 +93,12 @@
             opacity: 1;
         }
 
+        /* FIX: Completely hide the controls overlay when the container goes fullscreen */
+        .theater-box:fullscreen .hover-controls {
+            display: none !important;
+            opacity: 0 !important;
+        }
+
         .current-title {
             font-size: 18px;
             font-weight: 600;
