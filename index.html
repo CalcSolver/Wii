@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Web Arcade | CalcSolver</title>
+    <title>Wii Arcade Station</title>
     <style>
-        /* Modern UI Reset & Dark Theme */
+        /* Base Styling & Theme */
         * {
             margin: 0;
             padding: 0;
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #0d0e15;
+            background-color: #0b0c10;
             color: #ffffff;
             height: 100vh;
             display: flex;
@@ -22,72 +22,64 @@
             overflow: hidden;
         }
 
-        /* Top Navigation Bar */
+        /* Top Header */
         header {
-            background-color: #16192b;
+            background-color: #1f2833;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #252945;
-            z-index: 10;
+            border-bottom: 2px solid #45f3ff;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
-            color: #00d2ff;
+            color: #45f3ff;
             text-decoration: none;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+            text-shadow: 0 0 10px rgba(69, 243, 255, 0.4);
         }
 
-        .gh-link {
-            background-color: #24292e;
-            color: white;
+        .repo-btn {
+            background-color: #0b0c10;
+            color: #45f3ff;
             text-decoration: none;
-            padding: 8px 18px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             font-weight: 600;
+            border: 1px solid #45f3ff;
             transition: 0.2s ease;
-            border: 1px solid #3f4752;
         }
 
-        .gh-link:hover {
-            background-color: #333a42;
-            box-shadow: 0 0 12px rgba(255,255,255,0.1);
+        .repo-btn:hover {
+            background-color: #45f3ff;
+            color: #0b0c10;
         }
 
-        /* Main Preview Layout Workspace */
-        .main-container {
+        /* Theater Main Preview Area */
+        .workspace {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            overflow: hidden;
-            background: radial-gradient(circle at center, #1a1d36 0%, #0d0e15 100%);
+            background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%);
         }
 
-        /* Small Preview Theater Window Container */
-        .preview-wrapper {
+        .theater-box {
             position: relative;
             width: 100%;
             max-width: 850px;
             aspect-ratio: 16/9;
             background-color: #000;
-            border-radius: 14px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-            border: 3px solid #2e3456;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 3px solid #1f2833;
             overflow: hidden;
         }
 
-        /* Running Iframe Application Viewport */
         iframe {
             width: 100%;
             height: 100%;
@@ -95,14 +87,14 @@
             background-color: #000;
         }
 
-        /* Hidden On-Hover Controls Overlay */
-        .controls-bar {
+        /* Fullscreen Overlay Bar */
+        .hover-controls {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             background: linear-gradient(transparent, rgba(0,0,0,0.9));
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -110,200 +102,174 @@
             transition: opacity 0.3s ease;
         }
 
-        .preview-wrapper:hover .controls-bar {
+        .theater-box:hover .hover-controls {
             opacity: 1;
         }
 
-        .game-title {
+        .current-title {
             font-size: 18px;
             font-weight: 600;
-            color: #ffffff;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
+            color: #fff;
         }
 
-        .fullscreen-btn {
-            background-color: #00d2ff;
-            color: #0f111a;
+        .fs-btn {
+            background-color: #45f3ff;
+            color: #0b0c10;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 8px 16px;
+            border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            letter-spacing: 0.5px;
-            transition: transform 0.1s ease, background-color 0.2s;
+            transition: 0.2s;
         }
 
-        .fullscreen-btn:hover {
-            background-color: #33e0ff;
+        .fs-btn:hover {
             transform: scale(1.05);
+            background-color: #fff;
         }
 
-        /* Lower Level Horizontal Selection Tray */
-        .games-tray {
+        /* Bottom Previews Deck */
+        .deck-shelf {
             width: 100%;
-            background-color: #121424;
-            padding: 20px 30px;
-            border-top: 2px solid #252945;
+            background-color: #1f2833;
+            padding: 20px;
+            border-top: 2px solid #111;
         }
 
-        .tray-heading {
-            font-size: 13px;
+        .deck-title {
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #7983a3;
-            margin-bottom: 15px;
+            color: #c5c6c7;
+            margin-bottom: 12px;
         }
 
-        .games-grid {
+        .deck-scroll {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             overflow-x: auto;
             padding-bottom: 10px;
-            scroll-behavior: smooth;
         }
 
-        /* Custom Horizontal Scrollbars */
-        .games-grid::-webkit-scrollbar {
-            height: 8px;
+        /* Custom Scrollbar */
+        .deck-scroll::-webkit-scrollbar {
+            height: 6px;
         }
-        .games-grid::-webkit-scrollbar-track {
-            background: #0d0e15;
+        .deck-scroll::-webkit-scrollbar-track {
+            background: #0b0c10;
+        }
+        .deck-scroll::-webkit-scrollbar-thumb {
+            background: #45f3ff;
             border-radius: 10px;
-        }
-        .games-grid::-webkit-scrollbar-thumb {
-            background: #2e3456;
-            border-radius: 10px;
-        }
-        .games-grid::-webkit-scrollbar-thumb:hover {
-            background: #00d2ff;
         }
 
-        /* Individual Interactive Selection Cards */
-        .game-card {
-            flex: 0 0 160px;
-            height: 120px;
-            background-color: #1d213a;
-            border-radius: 10px;
+        /* Game Preview Cards */
+        .preview-card {
+            flex: 0 0 150px;
+            height: 110px;
+            background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%);
+            border: 2px solid #45f3ff;
+            border-radius: 8px;
             cursor: pointer;
-            overflow: hidden;
             position: relative;
-            border: 2px solid #2e3456;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-            border-color: #00d2ff;
-            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.25);
-        }
-
-        /* Fallback CSS Block Textures for Thumbnails */
-        .card-art-fallback {
-            width: 100%;
-            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            background: linear-gradient(135deg, #1d213a 0%, #292f52 100%);
+            font-size: 28px;
+            transition: 0.2s ease;
         }
 
-        .card-label {
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 5px 15px rgba(69, 243, 255, 0.3);
+        }
+
+        .card-name {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(13, 14, 21, 0.9);
-            padding: 8px;
-            font-size: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            font-size: 11px;
             text-align: center;
+            padding: 6px;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            border-top: 1px solid rgba(255,255,255,0.05);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Block -->
     <header>
-        <a href="#" class="logo">WII INTERACTIVE</a>
-        <a href="https://github.com" target="_blank" class="gh-link">
-            <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
-            GitHub Repo
-        </a>
+        <a href="#" class="logo">WII ARCADE HUB</a>
+        <a href="https://github.com" target="_blank" class="repo-btn">View Code Repository</a>
     </header>
 
-    <!-- Center Workspace Display -->
-    <main class="main-container">
-        <div class="preview-wrapper" id="videoTheater">
-            <!-- Source points to a reliable raw game instance deployment -->
-            <iframe id="gameFrame" src="https://github.io" allowfullscreen></iframe>
+    <main class="workspace">
+        <div class="theater-box" id="mainTheater">
+            <!-- This loads the core repository root build first -->
+            <iframe id="viewport" src="index.html" allowfullscreen></iframe>
             
-            <div class="controls-bar">
-                <div class="game-title" id="activeTitle">Wii Launcher (Main Base)</div>
-                <button class="fullscreen-btn" onclick="toggleFullscreen()">FULLSCREEN</button>
+            <div class="hover-controls">
+                <div class="current-title" id="displayTitle">Wii System Menu</div>
+                <button class="fs-btn" onclick="goFullscreen()">GO FULLSCREEN</button>
             </div>
         </div>
     </main>
 
-    <!-- Bottom Selection Deck Carousel -->
-    <section class="games-tray">
-        <h2 class="tray-heading">Select Game Mode Preview</h2>
-        <div class="games-grid" id="thumbnailGrid">
-            <!-- Dynamic elements load through JavaScript -->
+    <section class="deck-shelf">
+        <h2 class="deck-title">Your Local Repository Game Files</h2>
+        <div class="deck-scroll" id="cardGrid">
+            <!-- Populated via script mapping -->
         </div>
     </section>
 
     <script>
-        // Working, verified unblocked paths that can successfully load inside iframes
-        const gamesList = [
-            {
-                title: "Wii Homebrew Base",
-                url: "https://github.io",
-                emoji: "🎮"
-            },
-            {
-                title: "Duck Math Sandbox",
-                url: "https://github.io",
-                emoji: "🦆"
-            },
-            {
-                title: "Retro Slope Mode",
-                url: "https://mathnook.com",
-                emoji: "📐"
-            },
-            {
-                title: "Classic Snake Arcade",
-                url: "https://github.io",
-                emoji: "🐍"
-            },
-            {
-                title: "Geometry Jump Alpha",
-                url: "https://geometry-dash.co",
-                emoji: "⚡"
-            },
-            {
-                title: "Space Flight Sim",
-                url: "https://github.io",
-                emoji: "🚀"
-            }
+        // Maps directly to the game modules and folders inside your CalcSolver/Wii structure
+        const localGames = [
+            { title: "Wii Home Menu", path: "index.html", graphic: "💿" },
+            { title: "Mii Channel Mod", path: "mii/index.html", graphic: "👥" },
+            { title: "Wii Sports Lite", path: "sports/index.html", graphic: "🎾" },
+            { title: "Wii Play Arcade", path: "play/index.html", graphic: "🎯" },
+            { title: "Retro Emulator", path: "retro/index.html", graphic: "🕹️" },
+            { title: "Bonus Settings", path: "settings/index.html", graphic: "⚙️" }
         ];
 
-        const grid = document.getElementById('thumbnailGrid');
-        const frame = document.getElementById('gameFrame');
-        const activeTitle = document.getElementById('activeTitle');
+        const grid = document.getElementById('cardGrid');
+        const view = document.getElementById('viewport');
+        const titleText = document.getElementById('displayTitle');
 
-        // Render card nodes dynamically
-        gamesList.forEach(game => {
+        // Dynamically build the shelf elements
+        localGames.forEach(game => {
             const card = document.createElement('div');
-            card.className = 'game-card';
+            card.className = 'preview-card';
             card.innerHTML = `
-                <div class="card-art-fallback">${game.emoji}</div>
-                <div class="card-label">${game.title}</div>
+                ${game.graphic}
+                <div class="card-name">${game.title}</div>
             `;
             
-            // Core action: Update main view state smoothly on click
+            // Updates iframe source relative to your project file directories
             card.addEventListener('click', () => {
+                view.src = game.path;
+                titleText.textContent = game.title;
+            });
+            
+            grid.appendChild(card);
+        });
+
+        // Hardware-accelerated Fullscreen Engine
+        function goFullscreen() {
+            const box = document.getElementById('mainTheater');
+            if (!document.fullscreenElement) {
+                box.requestFullscreen().catch(err => {
+                    console.warn(`Fullscreen error: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>
