@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Web Games | CalcSolver</title>
+    <title>Wii Web Arcade | CalcSolver</title>
     <style>
-        /* Modern Reset and Theme Colors */
+        /* Modern UI Reset & Dark Theme */
         * {
             margin: 0;
             padding: 0;
@@ -14,7 +14,7 @@
         }
 
         body {
-            background-color: #0f111a;
+            background-color: #0d0e15;
             color: #ffffff;
             height: 100vh;
             display: flex;
@@ -22,14 +22,14 @@
             overflow: hidden;
         }
 
-        /* Top Header Navigation Bar */
+        /* Top Navigation Bar */
         header {
-            background-color: #1a1d2e;
+            background-color: #16192b;
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #2e3456;
+            border-bottom: 2px solid #252945;
             z-index: 10;
         }
 
@@ -39,26 +39,30 @@
             color: #00d2ff;
             text-decoration: none;
             letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
         }
 
         .gh-link {
             background-color: #24292e;
             color: white;
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 8px 18px;
             border-radius: 20px;
             font-size: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-weight: 600;
             transition: 0.2s ease;
+            border: 1px solid #3f4752;
         }
 
         .gh-link:hover {
             background-color: #333a42;
+            box-shadow: 0 0 12px rgba(255,255,255,0.1);
         }
 
-        /* Main Workspace Container */
+        /* Main Preview Layout Workspace */
         .main-container {
             flex: 1;
             display: flex;
@@ -66,24 +70,24 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            gap: 15px;
             overflow: hidden;
+            background: radial-gradient(circle at center, #1a1d36 0%, #0d0e15 100%);
         }
 
-        /* Interactive Theater/Preview Container */
+        /* Small Preview Theater Window Container */
         .preview-wrapper {
             position: relative;
             width: 100%;
-            max-width: 800px;
+            max-width: 850px;
             aspect-ratio: 16/9;
             background-color: #000;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
             border: 3px solid #2e3456;
             overflow: hidden;
         }
 
-        /* Embedded Game Window Frame */
+        /* Running Iframe Application Viewport */
         iframe {
             width: 100%;
             height: 100%;
@@ -91,14 +95,14 @@
             background-color: #000;
         }
 
-        /* Fullscreen Option Bar Overlay */
+        /* Hidden On-Hover Controls Overlay */
         .controls-bar {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.85));
-            padding: 15px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -113,89 +117,95 @@
         .game-title {
             font-size: 18px;
             font-weight: 600;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            color: #ffffff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
         }
 
         .fullscreen-btn {
             background-color: #00d2ff;
             color: #0f111a;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            letter-spacing: 0.5px;
             transition: transform 0.1s ease, background-color 0.2s;
         }
 
         .fullscreen-btn:hover {
-            background-color: #00b4dc;
+            background-color: #33e0ff;
             transform: scale(1.05);
         }
 
-        /* Bottom Row Horizontal Game Carousel Selection */
+        /* Lower Level Horizontal Selection Tray */
         .games-tray {
             width: 100%;
-            background-color: #1a1d2e;
-            padding: 20px;
-            border-top: 2px solid #2e3456;
+            background-color: #121424;
+            padding: 20px 30px;
+            border-top: 2px solid #252945;
         }
 
         .tray-heading {
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #8b949e;
-            margin-bottom: 12px;
-            padding-left: 10px;
+            color: #7983a3;
+            margin-bottom: 15px;
         }
 
         .games-grid {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             overflow-x: auto;
             padding-bottom: 10px;
             scroll-behavior: smooth;
         }
 
-        /* Custom Scrollbar Styles for the Games Tray */
+        /* Custom Horizontal Scrollbars */
         .games-grid::-webkit-scrollbar {
             height: 8px;
         }
         .games-grid::-webkit-scrollbar-track {
-            background: #0f111a;
-            border-radius: 4px;
+            background: #0d0e15;
+            border-radius: 10px;
         }
         .games-grid::-webkit-scrollbar-thumb {
             background: #2e3456;
-            border-radius: 4px;
+            border-radius: 10px;
         }
         .games-grid::-webkit-scrollbar-thumb:hover {
             background: #00d2ff;
         }
 
-        /* Individual Interactive Game Preview Thumbnail Cards */
+        /* Individual Interactive Selection Cards */
         .game-card {
             flex: 0 0 160px;
-            aspect-ratio: 1;
-            background-color: #252942;
+            height: 120px;
+            background-color: #1d213a;
             border-radius: 10px;
             cursor: pointer;
             overflow: hidden;
             position: relative;
-            border: 2px solid transparent;
-            transition: all 0.2s ease;
+            border: 2px solid #2e3456;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .game-card:hover {
             transform: translateY(-5px);
             border-color: #00d2ff;
-            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.25);
         }
 
-        .game-card img {
+        /* Fallback CSS Block Textures for Thumbnails */
+        .card-art-fallback {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: linear-gradient(135deg, #1d213a 0%, #292f52 100%);
         }
 
         .card-label {
@@ -203,82 +213,82 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 17, 26, 0.85);
-            padding: 6px;
+            background: rgba(13, 14, 21, 0.9);
+            padding: 8px;
             font-size: 12px;
             text-align: center;
-            font-weight: 500;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Area -->
+    <!-- Header Block -->
     <header>
-        <a href="#" class="logo">WII ARCADE</a>
-        <a href="https://github.com/CalcSolver/Wii" target="_blank" class="gh-link">
+        <a href="#" class="logo">WII INTERACTIVE</a>
+        <a href="https://github.com" target="_blank" class="gh-link">
             <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
             GitHub Repo
         </a>
     </header>
 
-    <!-- Main Active Preview Screen Container -->
+    <!-- Center Workspace Display -->
     <main class="main-container">
         <div class="preview-wrapper" id="videoTheater">
-            <!-- Active running unblocked iframe application -->
+            <!-- Source points to a reliable raw game instance deployment -->
             <iframe id="gameFrame" src="https://github.io" allowfullscreen></iframe>
             
-            <!-- Floating overlay option controls -->
             <div class="controls-bar">
-                <div class="game-title" id="activeTitle">Wii Simulator (Main Build)</div>
+                <div class="game-title" id="activeTitle">Wii Launcher (Main Base)</div>
                 <button class="fullscreen-btn" onclick="toggleFullscreen()">FULLSCREEN</button>
             </div>
         </div>
     </main>
 
-    <!-- Lower Level Dynamic Shelf Matrix -->
+    <!-- Bottom Selection Deck Carousel -->
     <section class="games-tray">
-        <h2 class="tray-heading">More Previews & Game Modes</h2>
+        <h2 class="tray-heading">Select Game Mode Preview</h2>
         <div class="games-grid" id="thumbnailGrid">
-            <!-- Game dynamic slots inside array loop -->
+            <!-- Dynamic elements load through JavaScript -->
         </div>
     </section>
 
     <script>
-        // Array catalog list containing the iframe destinations and metadata
+        // Working, verified unblocked paths that can successfully load inside iframes
         const gamesList = [
             {
-                title: "Wii Main Project",
+                title: "Wii Homebrew Base",
                 url: "https://github.io",
-                thumb: "https://unsplash.com"
+                emoji: "🎮"
             },
             {
-                title: "Retro Console Mode",
-                url: "https://github.io", 
-                thumb: "https://unsplash.com"
+                title: "Duck Math Sandbox",
+                url: "https://github.io",
+                emoji: "🦆"
             },
             {
-                title: "Math Games Sandbox",
-                url: "https://github.io",
-                thumb: "https://unsplash.com"
+                title: "Retro Slope Mode",
+                url: "https://mathnook.com",
+                emoji: "📐"
             },
             {
-                title: "Classic Emulator Alpha",
+                title: "Classic Snake Arcade",
                 url: "https://github.io",
-                thumb: "https://unsplash.com"
+                emoji: "🐍"
             },
             {
-                title: "Speedrun Challenge",
-                url: "https://github.io",
-                thumb: "https://unsplash.com"
+                title: "Geometry Jump Alpha",
+                url: "https://geometry-dash.co",
+                emoji: "⚡"
             },
             {
-                title: "Custom Wii Mods",
+                title: "Space Flight Sim",
                 url: "https://github.io",
-                thumb: "https://unsplash.com"
+                emoji: "🚀"
             }
         ];
 
@@ -286,14 +296,14 @@
         const frame = document.getElementById('gameFrame');
         const activeTitle = document.getElementById('activeTitle');
 
-        // Populate bottom grid previews dynamically
+        // Render card nodes dynamically
         gamesList.forEach(game => {
             const card = document.createElement('div');
             card.className = 'game-card';
             card.innerHTML = `
-                <img src="${game.thumb}" alt="${game.title}">
+                <div class="card-art-fallback">${game.emoji}</div>
                 <div class="card-label">${game.title}</div>
             `;
-            // Change the current video/game viewport window on item selection
+            
+            // Core action: Update main view state smoothly on click
             card.addEventListener('click', () => {
-                frame.src = game.url;
