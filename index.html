@@ -5,16 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wii Web Arcade Hub</title>
     <style>
+        /* CSS Variables for Clean Theme Swapping */
+        :root {
+            --bg-color: #0b0c10;
+            --text-color: #ffffff;
+            --header-bg: #1f2833;
+            --accent-color: #45f3ff;
+            --card-gradient-start: #1f2833;
+            --card-gradient-end: #0b0c10;
+            --radial-gradient-start: #1f2833;
+            --tray-border: #111111;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --text-color: #1a1a24;
+            --header-bg: #ffffff;
+            --accent-color: #0070f3;
+            --card-gradient-start: #ffffff;
+            --card-gradient-end: #e2e8f0;
+            --radial-gradient-start: #e2e8f0;
+            --tray-border: #cbd5e1;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
-            background-color: #0b0c10;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -23,30 +47,47 @@
         }
 
         header {
-            background-color: #1f2833;
+            background-color: var(--header-bg);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #45f3ff;
+            border-bottom: 2px solid var(--accent-color);
         }
 
         .logo {
             font-size: 22px;
             font-weight: bold;
-            color: #45f3ff;
+            color: var(--accent-color);
             text-decoration: none;
         }
 
+        .right-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-switch {
+            background-color: var(--bg-color);
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .nav-btn {
-            background-color: #0b0c10;
-            color: #45f3ff;
+            background-color: var(--bg-color);
+            color: var(--accent-color);
             text-decoration: none;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
-            border: 1px solid #45f3ff;
+            border: 1px solid var(--accent-color);
         }
 
         .workspace {
@@ -54,7 +95,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%);
+            background: radial-gradient(circle, var(--radial-gradient-start) 0%, var(--bg-color) 100%);
         }
 
         .theater-box {
@@ -64,7 +105,7 @@
             aspect-ratio: 16/9;
             background-color: #000;
             border-radius: 12px;
-            border: 3px solid #1f2833;
+            border: 3px solid var(--header-bg);
             overflow: hidden;
         }
 
@@ -93,7 +134,7 @@
             opacity: 1;
         }
 
-        /* FIX: Completely hide the controls overlay when the container goes fullscreen */
+        /* Hides both the overlay, title, and button in full-screen */
         .theater-box:fullscreen .hover-controls {
             display: none !important;
             opacity: 0 !important;
@@ -102,11 +143,12 @@
         .current-title {
             font-size: 18px;
             font-weight: 600;
+            color: #ffffff;
         }
 
         .fs-btn {
-            background-color: #45f3ff;
-            color: #0b0c10;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
@@ -116,9 +158,9 @@
 
         .deck-shelf {
             width: 100%;
-            background-color: #1f2833;
+            background-color: var(--header-bg);
             padding: 30px 20px;
-            border-top: 2px solid #111;
+            border-top: 2px solid var(--tray-border);
             margin-top: auto;
         }
 
@@ -126,7 +168,8 @@
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: #c5c6c7;
+            color: var(--text-color);
+            opacity: 0.7;
             margin-bottom: 15px;
         }
 
@@ -142,20 +185,20 @@
         }
 
         .deck-scroll::-webkit-scrollbar-track {
-            background: #0b0c10;
+            background: var(--bg-color);
             border-radius: 4px;
         }
 
         .deck-scroll::-webkit-scrollbar-thumb {
-            background: #45f3ff;
+            background: var(--accent-color);
             border-radius: 4px;
         }
 
         .preview-card {
             flex: 0 0 160px;
             height: 115px;
-            background: linear-gradient(135deg, #1f2833 0%, #0b0c10 100%);
-            border: 2px solid #45f3ff;
+            background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
+            border: 2px solid var(--accent-color);
             border-radius: 8px;
             cursor: pointer;
             position: relative;
@@ -163,7 +206,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s ease;
+            transition: transform 0.2s ease;
         }
 
         .preview-card:hover {
@@ -190,6 +233,7 @@
             left: 0;
             right: 0;
             background: rgba(0, 0, 0, 0.85);
+            color: #ffffff;
             font-size: 11px;
             text-align: center;
             padding: 6px;
@@ -205,11 +249,15 @@
 
     <header>
         <a href="#" class="logo">WII ARCADE</a>
-        <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
+        <div class="right-menu">
+            <button class="theme-switch" onclick="toggleTheme()">☀️ LIGHT MODE</button>
+            <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
+        </div>
     </header>
 
     <main class="workspace">
         <div class="theater-box" id="mainTheater">
+            <!-- Safe startup preview to bypass cross-recursion crashes -->
             <iframe id="viewport" src="pacman.html" allowfullscreen></iframe>
             <div class="hover-controls">
                 <div class="current-title" id="displayTitle">Pacman</div>
@@ -220,59 +268,51 @@
 
     <section class="deck-shelf">
         <h2 class="deck-title">Select a Game Preview Below</h2>
-        <div class="deck-scroll" id="cardGrid"></div>
+        <div class="deck-scroll" id="cardGrid">Loading items dynamically...</div>
     </section>
 
     <script>
-        const repositoryGames = [
-            { title: "Pacman", file: "pacman.html", emoji: "🕹️", imgUrl: "images/pacman.jpg" },
-            { title: "Call of Duty 4", file: "COD4.html", emoji: "🔫", imgUrl: "images/cod4.jpg" },
-            { title: "1942 Arcade", file: "1942.html", emoji: "🛩️", imgUrl: "images/1942.jpg" },
-            { title: "Zelda 2", file: "Zelda2.html", emoji: "⚔️", imgUrl: "images/zelda2.jpg" },
-            { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", emoji: "🛡️", imgUrl: "images/linktopast.jpg" },
-            { title: "Mortal Kombat", file: "mortalkombat.html", emoji: "🥋", imgUrl: "images/mortalkombat.jpg" },
-            { title: "Pokemon Emerald", file: "pokemonemerald.html", emoji: "🐉", imgUrl: "images/pokemon.jpg" },
-            { title: "Smash Bros", file: "smashbros.html", emoji: "💥", imgUrl: "images/smashbros.jpg" },
-            { title: "Street Fighter 2", file: "streetfighter2.html", emoji: "🥊", imgUrl: "images/streetfighter2.jpg" },
-            { title: "Super Mario World 2", file: "supermarioworld2.html", emoji: "🍄", imgUrl: "images/mario.jpg" },
-            { title: "Tennis", file: "tennis.html", emoji: "🎾", imgUrl: "images/tennis.jpg" },
-            { title: "Tony Hawk 2", file: "tonyhawk2.html", emoji: "🛹", imgUrl: "images/tonyhawk2.jpg" },
-            { title: "Winter Olympics", file: "winterolympics.html", emoji: "🏂", imgUrl: "images/winterolympics.jpg" },
-            { title: "Other Stuff", file: "otherstuff.html", emoji: "📦", imgUrl: "" }
-        ];
-
         const grid = document.getElementById('cardGrid');
         const view = document.getElementById('viewport');
         const titleText = document.getElementById('displayTitle');
 
-        repositoryGames.forEach(game => {
-            const card = document.createElement('div');
-            card.className = 'preview-card';
-            
-            card.innerHTML = `
-                <img src="${game.imgUrl}" alt="${game.title}" onerror="this.style.display='none'">
-                <div class="card-fallback-emoji">${game.emoji}</div>
-                <div class="card-name">${game.title}</div>
-            `;
-            
-            card.addEventListener('click', () => {
-                view.src = game.file;
-                titleText.textContent = game.title;
-            });
-            
-            grid.appendChild(card);
-        });
-
-        function goFullscreen() {
-            const box = document.getElementById('mainTheater');
-            if (!document.fullscreenElement) {
-                box.requestFullscreen().catch(err => {
-                    console.warn(err.message);
-                });
-            } else {
-                document.exitFullscreen();
-            }
+        function formatGameTitle(filename) {
+            let name = filename.replace('.html', '');
+            if(name.toLowerCase() === 'cod4') return 'Call of Duty 4';
+            if(name.toLowerCase() === 'zeldalinktopast') return 'Zelda: Link to Past';
+            if(name.toLowerCase() === 'supermarioworld2') return 'Super Mario World 2';
+            return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
         }
-    </script>
-</body>
-</html>
+
+        // Automated GitHub scan engine loop
+        async function fetchRepositoryGames() {
+            try {
+                const response = await fetch('https://github.com');
+                const files = await response.json();
+                
+                const htmlFiles = files.filter(item => 
+                    item.type === 'file' && 
+                    item.name.endsWith('.html') && 
+                    item.name !== 'index.html'
+                );
+
+                if (htmlFiles.length === 0) {
+                    grid.innerHTML = "<div style='padding:10px;'>No game files found.</div>";
+                    return;
+                }
+
+                grid.innerHTML = ""; 
+
+                htmlFiles.forEach(file => {
+                    const cleanTitle = formatGameTitle(file.name);
+                    const rawBaseName = file.name.replace('.html', '');
+                    
+                    // Direct dynamic image mapper path matching your code structure
+                    const anticipatedImg = `images/${rawBaseName}.jpg`;
+                    const defaultEmojis = ["🕹️", "🎮", "⚔️", "👾", "🚀", "🏁", "🎯"];
+                    const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
+
+                    const card = document.createElement('div');
+                    card.className = 'preview-card';
+                    card.innerHTML = `
+                        <img src="${anticipatedImg}" alt="${cleanTitle}" onerror="this.style.display='none'">
