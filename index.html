@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Web Arcade | CalcSolver</title>
+    <title>Wii Web Arcade Hub</title>
     <style>
-        /* Base Reset & Styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         body {
@@ -19,12 +18,10 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            /* FIX: Changed overflow to allow vertical web page scrolling */
-            overflow-y: auto;
             overflow-x: hidden;
+            overflow-y: auto;
         }
 
-        /* Top Header Nav Bar */
         header {
             background-color: #1f2833;
             padding: 15px 30px;
@@ -32,7 +29,6 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #45f3ff;
-            z-index: 10;
         }
 
         .logo {
@@ -40,12 +36,6 @@
             font-weight: bold;
             color: #45f3ff;
             text-decoration: none;
-            text-shadow: 0 0 10px rgba(69, 243, 255, 0.4);
-        }
-
-        .links-group {
-            display: flex;
-            gap: 15px;
         }
 
         .nav-btn {
@@ -57,25 +47,16 @@
             font-size: 14px;
             font-weight: 600;
             border: 1px solid #45f3ff;
-            transition: 0.2s ease;
         }
 
-        .nav-btn:hover {
-            background-color: #45f3ff;
-            color: #0b0c10;
-        }
-
-        /* Main Workspace Container */
         .workspace {
             padding: 30px 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%);
         }
 
-        /* Main Theater/Preview Box Container */
         .theater-box {
             position: relative;
             width: 100%;
@@ -83,12 +64,10 @@
             aspect-ratio: 16/9;
             background-color: #000;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             border: 3px solid #1f2833;
             overflow: hidden;
         }
 
-        /* Embedded Dynamic Game Frame Frame */
         iframe {
             width: 100%;
             height: 100%;
@@ -96,7 +75,6 @@
             background-color: #000;
         }
 
-        /* Fullscreen Overlay Bar */
         .hover-controls {
             position: absolute;
             bottom: 0;
@@ -118,7 +96,6 @@
         .current-title {
             font-size: 18px;
             font-weight: 600;
-            color: #fff;
         }
 
         .fs-btn {
@@ -129,15 +106,8 @@
             border-radius: 6px;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .fs-btn:hover {
-            transform: scale(1.05);
-            background-color: #fff;
-        }
-
-        /* Bottom Previews Deck */
         .deck-shelf {
             width: 100%;
             background-color: #1f2833;
@@ -161,20 +131,20 @@
             padding-bottom: 15px;
         }
 
-        /* Custom Tray Scrollbars */
         .deck-scroll::-webkit-scrollbar {
             height: 8px;
         }
+
         .deck-scroll::-webkit-scrollbar-track {
             background: #0b0c10;
             border-radius: 4px;
         }
+
         .deck-scroll::-webkit-scrollbar-thumb {
             background: #45f3ff;
             border-radius: 4px;
         }
 
-        /* Game Preview Cards */
         .preview-card {
             flex: 0 0 160px;
             height: 115px;
@@ -192,10 +162,8 @@
 
         .preview-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 5px 15px rgba(69, 243, 255, 0.3);
         }
 
-        /* Actual Image Assets Inside Cards */
         .preview-card img {
             width: 100%;
             height: 100%;
@@ -231,17 +199,12 @@
 
     <header>
         <a href="#" class="logo">WII ARCADE</a>
-        <div class="links-group">
-            <a href="https://vercel.app" target="_blank" class="nav-btn">Live Site</a>
-            <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
-        </div>
+        <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
     </header>
 
     <main class="workspace">
         <div class="theater-box" id="mainTheater">
-            <!-- Loading a direct isolated game right from launch instead of your central selection index portal -->
             <iframe id="viewport" src="pacman.html" allowfullscreen></iframe>
-            
             <div class="hover-controls">
                 <div class="current-title" id="displayTitle">Pacman</div>
                 <button class="fs-btn" onclick="goFullscreen()">GO FULLSCREEN</button>
@@ -251,27 +214,24 @@
 
     <section class="deck-shelf">
         <h2 class="deck-title">Select a Game Preview Below</h2>
-        <div class="deck-scroll" id="cardGrid">
-            <!-- Grid cards populated dynamically below -->
-        </div>
+        <div class="deck-scroll" id="cardGrid"></div>
     </section>
 
     <script>
-        // Real names of your workspace game build targets
         const repositoryGames = [
             { title: "Pacman", file: "pacman.html", emoji: "🕹️", imgUrl: "images/pacman.jpg" },
             { title: "Call of Duty 4", file: "COD4.html", emoji: "🔫", imgUrl: "images/cod4.jpg" },
-            { title: "1942 Arcade", file: "1942.html", emoji: "🛩️", imgUrl: "" },
-            { title: "Zelda 2", file: "Zelda2.html", emoji: "⚔️", imgUrl: "" },
-            { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", emoji: "🛡️", imgUrl: "" },
-            { title: "Mortal Kombat", file: "mortalkombat.html", emoji: "🥋", imgUrl: "" },
-            { title: "Pokemon Emerald", file: "pokemonemerald.html", emoji: "🐉", imgUrl: "" },
-            { title: "Smash Bros", file: "smashbros.html", emoji: "💥", imgUrl: "" },
-            { title: "Street Fighter 2", file: "streetfighter2.html", emoji: "🥊", imgUrl: "" },
-            { title: "Super Mario World 2", file: "supermarioworld2.html", emoji: "🍄", imgUrl: "" },
-            { title: "Tennis", file: "tennis.html", emoji: "🎾", imgUrl: "" },
-            { title: "Tony Hawk 2", file: "tonyhawk2.html", emoji: "🛹", imgUrl: "" },
-            { title: "Winter Olympics", file: "winterolympics.html", emoji: "🏂", imgUrl: "" },
+            { title: "1942 Arcade", file: "1942.html", emoji: "🛩️", imgUrl: "images/1942.jpg" },
+            { title: "Zelda 2", file: "Zelda2.html", emoji: "⚔️", imgUrl: "images/zelda2.jpg" },
+            { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", emoji: "🛡️", imgUrl: "images/linktopast.jpg" },
+            { title: "Mortal Kombat", file: "mortalkombat.html", emoji: "🥋", imgUrl: "images/mortalkombat.jpg" },
+            { title: "Pokemon Emerald", file: "pokemonemerald.html", emoji: "🐉", imgUrl: "images/pokemon.jpg" },
+            { title: "Smash Bros", file: "smashbros.html", emoji: "💥", imgUrl: "images/smashbros.jpg" },
+            { title: "Street Fighter 2", file: "streetfighter2.html", emoji: "🥊", imgUrl: "images/streetfighter2.jpg" },
+            { title: "Super Mario World 2", file: "supermarioworld2.html", emoji: "🍄", imgUrl: "images/mario.jpg" },
+            { title: "Tennis", file: "tennis.html", emoji: "🎾", imgUrl: "images/tennis.jpg" },
+            { title: "Tony Hawk 2", file: "tonyhawk2.html", emoji: "🛹", imgUrl: "images/tonyhawk2.jpg" },
+            { title: "Winter Olympics", file: "winterolympics.html", emoji: "🏂", imgUrl: "images/winterolympics.jpg" },
             { title: "Other Stuff", file: "otherstuff.html", emoji: "📦", imgUrl: "" }
         ];
 
@@ -279,25 +239,16 @@
         const view = document.getElementById('viewport');
         const titleText = document.getElementById('displayTitle');
 
-        // Build the game selection tray dynamically
         repositoryGames.forEach(game => {
             const card = document.createElement('div');
             card.className = 'preview-card';
             
-            // Check if a real image path exists; otherwise fall back safely to an emoji anchor
-            if (game.imgUrl && game.imgUrl.trim() !== "") {
-                card.innerHTML = `
-                    <img src="${game.imgUrl}" alt="${game.title}" onerror="this.style.display='none'">
-                    <div class="card-name">${game.title}</div>
-                `;
-            } else {
-                card.innerHTML = `
-                    <div class="card-fallback-emoji">${game.emoji}</div>
-                    <div class="card-name">${game.title}</div>
-                `;
-            }
+            card.innerHTML = `
+                <img src="${game.imgUrl}" alt="${game.title}" onerror="this.style.display='none'">
+                <div class="card-fallback-emoji">${game.emoji}</div>
+                <div class="card-name">${game.title}</div>
+            `;
             
-            // Updates iframe src directly to your root file names
             card.addEventListener('click', () => {
                 view.src = game.file;
                 titleText.textContent = game.title;
@@ -306,5 +257,16 @@
             grid.appendChild(card);
         });
 
-        // Fullscreen Mode Execution
         function goFullscreen() {
+            const box = document.getElementById('mainTheater');
+            if (!document.fullscreenElement) {
+                box.requestFullscreen().catch(err => {
+                    console.warn(err.message);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>
