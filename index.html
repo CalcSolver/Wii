@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Arcade Station</title>
+    <title>Wii Web Arcade | CalcSolver</title>
     <style>
-        /* Base Styling & Theme */
+        /* Base Reset & Styling */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +22,7 @@
             overflow: hidden;
         }
 
-        /* Top Header */
+        /* Top Header Nav Bar */
         header {
             background-color: #1f2833;
             padding: 15px 30px;
@@ -30,6 +30,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #45f3ff;
+            z-index: 10;
         }
 
         .logo {
@@ -40,7 +41,12 @@
             text-shadow: 0 0 10px rgba(69, 243, 255, 0.4);
         }
 
-        .repo-btn {
+        .links-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
             background-color: #0b0c10;
             color: #45f3ff;
             text-decoration: none;
@@ -52,12 +58,12 @@
             transition: 0.2s ease;
         }
 
-        .repo-btn:hover {
+        .nav-btn:hover {
             background-color: #45f3ff;
             color: #0b0c10;
         }
 
-        /* Theater Main Preview Area */
+        /* Main Workspace Container */
         .workspace {
             flex: 1;
             display: flex;
@@ -66,8 +72,10 @@
             justify-content: center;
             padding: 20px;
             background: radial-gradient(circle, #1f2833 0%, #0b0c10 100%);
+            overflow: hidden;
         }
 
+        /* Main Theater/Preview Box Container */
         .theater-box {
             position: relative;
             width: 100%;
@@ -80,6 +88,7 @@
             overflow: hidden;
         }
 
+        /* Embedded Dynamic Game Frame Frame */
         iframe {
             width: 100%;
             height: 100%;
@@ -151,7 +160,7 @@
             padding-bottom: 10px;
         }
 
-        /* Custom Scrollbar */
+        /* Custom Tray Scrollbars */
         .deck-scroll::-webkit-scrollbar {
             height: 6px;
         }
@@ -203,63 +212,74 @@
 <body>
 
     <header>
-        <a href="#" class="logo">WII ARCADE HUB</a>
-        <a href="https://github.com" target="_blank" class="repo-btn">View Code Repository</a>
+        <a href="#" class="logo">WII ARCADE</a>
+        <div class="links-group">
+            <a href="https://vercel.app" target="_blank" class="nav-btn">Live Site</a>
+            <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
+        </div>
     </header>
 
     <main class="workspace">
         <div class="theater-box" id="mainTheater">
-            <!-- This loads the core repository root build first -->
-            <iframe id="viewport" src="index.html" allowfullscreen></iframe>
+            <!-- Loads Pacman as the safe default game view to prevent infinite recursion loop -->
+            <iframe id="viewport" src="pacman.html" allowfullscreen></iframe>
             
             <div class="hover-controls">
-                <div class="current-title" id="displayTitle">Wii System Menu</div>
+                <div class="current-title" id="displayTitle">Pac-Man (Default)</div>
                 <button class="fs-btn" onclick="goFullscreen()">GO FULLSCREEN</button>
             </div>
         </div>
     </main>
 
     <section class="deck-shelf">
-        <h2 class="deck-title">Your Local Repository Game Files</h2>
+        <h2 class="deck-title">Select a Game Preview Below</h2>
         <div class="deck-scroll" id="cardGrid">
-            <!-- Populated via script mapping -->
+            <!-- Grid cards populated dynamically below -->
         </div>
     </section>
 
     <script>
-        // Maps directly to the game modules and folders inside your CalcSolver/Wii structure
-        const localGames = [
-            { title: "Wii Home Menu", path: "index.html", graphic: "💿" },
-            { title: "Mii Channel Mod", path: "mii/index.html", graphic: "👥" },
-            { title: "Wii Sports Lite", path: "sports/index.html", graphic: "🎾" },
-            { title: "Wii Play Arcade", path: "play/index.html", graphic: "🎯" },
-            { title: "Retro Emulator", path: "retro/index.html", graphic: "🕹️" },
-            { title: "Bonus Settings", path: "settings/index.html", graphic: "⚙️" }
+        // Exact real names of files from your GitHub repository screenshot
+        const repositoryGames = [
+            { title: "Pacman", file: "pacman.html", emoji: "🕹️" },
+            { title: "Call of Duty 4", file: "COD4.html", emoji: "🔫" },
+            { title: "1942 Arcade", file: "1942.html", emoji: "🛩️" },
+            { title: "Zelda 2", file: "Zelda2.html", emoji: "⚔️" },
+            { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", emoji: "🛡️" },
+            { title: "Mortal Kombat", file: "mortalkombat.html", emoji: "🥋" },
+            { title: "Pokemon Emerald", file: "pokemonemerald.html", emoji: "🐉" },
+            { title: "Smash Bros", file: "smashbros.html", emoji: "💥" },
+            { title: "Street Fighter 2", file: "streetfighter2.html", emoji: "🥊" },
+            { title: "Super Mario World 2", file: "supermarioworld2.html", emoji: "🍄" },
+            { title: "Tennis", file: "tennis.html", emoji: "🎾" },
+            { title: "Tony Hawk 2", file: "tonyhawk2.html", emoji: "🛹" },
+            { title: "Winter Olympics", file: "winterolympics.html", emoji: "🏂" },
+            { title: "Other Stuff", file: "otherstuff.html", emoji: "📦" }
         ];
 
         const grid = document.getElementById('cardGrid');
         const view = document.getElementById('viewport');
         const titleText = document.getElementById('displayTitle');
 
-        // Dynamically build the shelf elements
-        localGames.forEach(game => {
+        // Build the game selection tray dynamically
+        repositoryGames.forEach(game => {
             const card = document.createElement('div');
             card.className = 'preview-card';
             card.innerHTML = `
-                ${game.graphic}
+                ${game.emoji}
                 <div class="card-name">${game.title}</div>
             `;
             
-            // Updates iframe source relative to your project file directories
+            // Updates iframe src directly to your root file names
             card.addEventListener('click', () => {
-                view.src = game.path;
+                view.src = game.file;
                 titleText.textContent = game.title;
             });
             
             grid.appendChild(card);
         });
 
-        // Hardware-accelerated Fullscreen Engine
+        // Fullscreen Mode Execution
         function goFullscreen() {
             const box = document.getElementById('mainTheater');
             if (!document.fullscreenElement) {
