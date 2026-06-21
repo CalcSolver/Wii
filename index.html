@@ -3,37 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wii Web Arcade Hub</title>
+    <title>Mathspace Arcade</title>
     <style>
-        /* CSS Variables for Clean Theme Swapping */
         :root {
-            --bg-color: #0b0c10;
+            --bg-color: #0d1117;
             --text-color: #ffffff;
-            --header-bg: #1f2833;
-            --accent-color: #45f3ff;
-            --card-gradient-start: #1f2833;
-            --card-gradient-end: #0b0c10;
-            --radial-gradient-start: #1f2833;
-            --tray-border: #111111;
+            --header-bg: #161b22;
+            --accent-color: #00d2ff;
+            --card-bg: #21262d;
+            --tray-border: #30363d;
+            --overlay-gradient: linear-gradient(transparent, rgba(13, 17, 23, 0.95));
         }
 
         [data-theme="light"] {
-            --bg-color: #f4f6f9;
-            --text-color: #1a1a24;
+            --bg-color: #f6f8fa;
+            --text-color: #24292f;
             --header-bg: #ffffff;
-            --accent-color: #0070f3;
-            --card-gradient-start: #ffffff;
-            --card-gradient-end: #e2e8f0;
-            --radial-gradient-start: #e2e8f0;
-            --tray-border: #cbd5e1;
+            --accent-color: #0066cc;
+            --card-bg: #ffffff;
+            --tray-border: #d0d7de;
+            --overlay-gradient: linear-gradient(transparent, rgba(255, 255, 255, 0.95));
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
 
         body {
@@ -48,46 +45,78 @@
 
         header {
             background-color: var(--header-bg);
-            padding: 15px 30px;
+            padding: 12px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--accent-color);
+            border-bottom: 1px solid var(--tray-border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .logo {
-            font-size: 22px;
-            font-weight: bold;
-            color: var(--accent-color);
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             text-decoration: none;
+        }
+
+        /* Official Mathspace Identity Emblem Shape Block */
+        .mathspace-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #ffffff;
+            font-size: 18px;
+            letter-spacing: -1px;
+            box-shadow: 0 2px 8px rgba(0, 210, 255, 0.3);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: var(--accent-color);
         }
 
         .right-menu {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .theme-switch {
-            background-color: var(--bg-color);
-            color: var(--accent-color);
-            border: 1px solid var(--accent-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--tray-border);
             padding: 8px 14px;
-            border-radius: 20px;
+            border-radius: 6px;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
         }
 
+        .theme-switch:hover {
+            border-color: var(--accent-color);
+        }
+
         .nav-btn {
-            background-color: var(--bg-color);
-            color: var(--accent-color);
+            background-color: var(--accent-color);
+            color: #ffffff;
             text-decoration: none;
             padding: 8px 16px;
             border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
-            border: 1px solid var(--accent-color);
+            border: none;
         }
 
         .workspace {
@@ -95,7 +124,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle, var(--radial-gradient-start) 0%, var(--bg-color) 100%);
+            flex: 1;
         }
 
         .theater-box {
@@ -105,7 +134,8 @@
             aspect-ratio: 16/9;
             background-color: #000;
             border-radius: 12px;
-            border: 3px solid var(--header-bg);
+            border: 1px solid var(--tray-border);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             overflow: hidden;
         }
 
@@ -121,63 +151,63 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            background: var(--overlay-gradient);
             padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease;
         }
 
         .theater-box:hover .hover-controls {
             opacity: 1;
         }
 
-        /* Hides both the overlay, title, and button in full-screen */
         .theater-box:fullscreen .hover-controls {
             display: none !important;
             opacity: 0 !important;
         }
 
         .current-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            color: #ffffff;
+            color: var(--text-color);
         }
 
         .fs-btn {
             background-color: var(--accent-color);
-            color: var(--bg-color);
+            color: #ffffff;
             border: none;
             padding: 8px 16px;
             border-radius: 6px;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
+            font-size: 13px;
         }
 
         .deck-shelf {
             width: 100%;
             background-color: var(--header-bg);
-            padding: 30px 20px;
-            border-top: 2px solid var(--tray-border);
-            margin-top: auto;
+            padding: 24px 30px;
+            border-top: 1px solid var(--tray-border);
         }
 
         .deck-title {
             font-size: 12px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             color: var(--text-color);
-            opacity: 0.7;
-            margin-bottom: 15px;
+            opacity: 0.6;
+            margin-bottom: 14px;
+            font-weight: 700;
         }
 
         .deck-scroll {
             display: flex;
-            gap: 15px;
+            gap: 16px;
             overflow-x: auto;
-            padding-bottom: 15px;
+            padding-bottom: 10px;
         }
 
         .deck-scroll::-webkit-scrollbar {
@@ -190,27 +220,34 @@
         }
 
         .deck-scroll::-webkit-scrollbar-thumb {
-            background: var(--accent-color);
+            background: var(--tray-border);
             border-radius: 4px;
         }
 
+        .deck-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
         .preview-card {
-            flex: 0 0 160px;
-            height: 115px;
-            background: linear-gradient(135deg, var(--card-gradient-start) 0%, var(--card-gradient-end) 100%);
-            border: 2px solid var(--accent-color);
+            flex: 0 0 170px;
+            height: 110px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--tray-border);
             border-radius: 8px;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
 
         .preview-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0, 210, 255, 0.15);
         }
 
         .preview-card img {
@@ -220,11 +257,27 @@
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 1;
         }
 
-        .card-fallback-emoji {
-            font-size: 28px;
-            z-index: 1;
+        /* Clean geometric colored blocks instead of icons or generic favicons */
+        .card-fallback-art {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent-color);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            z-index: 2;
+        }
+
+        [data-theme="light"] .card-fallback-art {
+            background: linear-gradient(135deg, #f6f8fa 0%, #e2e8f0 100%);
         }
 
         .card-name {
@@ -236,28 +289,31 @@
             color: #ffffff;
             font-size: 11px;
             text-align: center;
-            padding: 6px;
+            padding: 8px;
             font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            z-index: 2;
+            z-index: 3;
+            border-top: 1px solid rgba(255,255,255,0.05);
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="#" class="logo">WII ARCADE</a>
+        <a href="#" class="brand-box">
+            <div class="mathspace-logo">M</div>
+            <div class="logo-text">math<span>space</span> arcade</div>
+        </a>
         <div class="right-menu">
             <button class="theme-switch" onclick="toggleTheme()">☀️ LIGHT MODE</button>
-            <a href="https://github.com" target="_blank" class="nav-btn">GitHub Repo</a>
+            <a href="https://github.com" target="_blank" class="nav-btn">Repository</a>
         </div>
     </header>
 
     <main class="workspace">
         <div class="theater-box" id="mainTheater">
-            <!-- Safe startup preview to bypass cross-recursion crashes -->
             <iframe id="viewport" src="pacman.html" allowfullscreen></iframe>
             <div class="hover-controls">
                 <div class="current-title" id="displayTitle">Pacman</div>
@@ -267,8 +323,8 @@
     </main>
 
     <section class="deck-shelf">
-        <h2 class="deck-title">Select a Game Preview Below</h2>
-        <div class="deck-scroll" id="cardGrid">Loading items dynamically...</div>
+        <h2 class="deck-title">Available Mathspace Modules</h2>
+        <div class="deck-scroll" id="cardGrid"></div>
     </section>
 
     <script>
@@ -276,43 +332,8 @@
         const view = document.getElementById('viewport');
         const titleText = document.getElementById('displayTitle');
 
-        function formatGameTitle(filename) {
-            let name = filename.replace('.html', '');
-            if(name.toLowerCase() === 'cod4') return 'Call of Duty 4';
-            if(name.toLowerCase() === 'zeldalinktopast') return 'Zelda: Link to Past';
-            if(name.toLowerCase() === 'supermarioworld2') return 'Super Mario World 2';
-            return name.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
-        }
-
-        // Automated GitHub scan engine loop
-        async function fetchRepositoryGames() {
-            try {
-                const response = await fetch('https://github.com');
-                const files = await response.json();
-                
-                const htmlFiles = files.filter(item => 
-                    item.type === 'file' && 
-                    item.name.endsWith('.html') && 
-                    item.name !== 'index.html'
-                );
-
-                if (htmlFiles.length === 0) {
-                    grid.innerHTML = "<div style='padding:10px;'>No game files found.</div>";
-                    return;
-                }
-
-                grid.innerHTML = ""; 
-
-                htmlFiles.forEach(file => {
-                    const cleanTitle = formatGameTitle(file.name);
-                    const rawBaseName = file.name.replace('.html', '');
-                    
-                    // Direct dynamic image mapper path matching your code structure
-                    const anticipatedImg = `images/${rawBaseName}.jpg`;
-                    const defaultEmojis = ["🕹️", "🎮", "⚔️", "👾", "🚀", "🏁", "🎯"];
-                    const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
-
-                    const card = document.createElement('div');
-                    card.className = 'preview-card';
-                    card.innerHTML = `
-                        <img src="${anticipatedImg}" alt="${cleanTitle}" onerror="this.style.display='none'">
+        // Direct fixed array list guarantees every single game file populates instantly
+        const gamesCollection = [
+            { title: "Pacman", file: "pacman.html", img: "images/pacman.jpg" },
+            { title: "Call of Duty 4", file: "COD4.html", img: "images/COD4.jpg" },
+            { title: "1942 Arcade", file: "1942.html", img: "images/1942.jpg" },
