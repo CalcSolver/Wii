@@ -1,29 +1,31 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Login - Mathspace</title>
-  <meta name="description" content="Mathspace — discover, play, and edit local modules." />
+  <title>Mathspace — Home</title>
+  <meta name="description" content="Mathspace — discover, play, and edit local modules. Search-first arcade UI inspired by popular portals." />
   <style>
-    /* Official Mathspace Login Page Styles */
+    /* Mathspace palette and core vars */
     :root {
-      --bg-900: #0d1117; --bg-800: #161b22; --bg-700: #21262d;
-      --card: #0f151a; --muted: #90a0ad;
-      --accent-1: #00d2ff; --accent-2: #0066cc;
-      --text: #e6eef6; --radius: 12px; --shadow: 0 8px 30px rgba(2,6,23,0.6);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
-      --ui-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
-      --smooth: 220ms cubic-bezier(.2,.9,.3,1);
+      --bg-900:#0d1117; --bg-800:#161b22; --bg-700:#21262d;
+      --card:#0f151a; --muted:#90a0ad;
+      --accent-1:#00d2ff; --accent-2:#0066cc;
+      --text:#e6eef6; --radius:12px; --shadow:0 8px 30px rgba(2,6,23,0.6);
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco, "Roboto Mono", monospace;
+      --ui-sans:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
+      --smooth:220ms cubic-bezier(.2,.9,.3,1);
     }
     html[data-theme="light"] {
-      --bg-900: #f7fbff; --bg-800: #eef6ff; --bg-700: #e6f0fb;
-      --card: #ffffff; --muted: #47555f;
-      --accent-1: #0066cc; --accent-2: #00d2ff;
-      --text: #04101a; --shadow: 0 8px 30px rgba(13,17,23,0.06);
+      --bg-900:#f7fbff; --bg-800:#eef6ff; --bg-700:#e6f0fb;
+      --card:#ffffff; --muted:#47555f;
+      --accent-1:#0066cc; --accent-2:#00d2ff;
+      --text:#04101a; --shadow:0 8px 30px rgba(13,17,23,0.06);
     }
+
+    /* Reset */
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+    html, body { height: 100%; margin: 0; padding: 0; }
     body {
       font-family: var(--ui-sans); color: var(--text);
       background: radial-gradient(800px 340px at 10% 10%, rgba(0,210,255,0.03), transparent 8%),
@@ -32,137 +34,130 @@
       display: flex; flex-direction: column; min-height: 100vh;
     }
 
-    /* Fixed Topbar Header */
+    /* Topbar Styles matching original Mathspace */
     .fixed-header {
-      background: rgba(26, 26, 31, 0.85);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 15px clamp(12px, 3vw, 44px);
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--card);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 14px 40px;
     }
-    .topbar-anonymous { display: flex; justify-content: space-between; align-items: center; }
-    .join-class-link a { color: var(--accent-1); text-decoration: none; font-weight: 600; font-size: 14px; }
-    .join-class-link a:hover { text-decoration: underline; }
+    .topbar-anonymous {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 1280px; margin: 0 auto; width: 100%;
+    }
+    .join-class-link a {
+      color: var(--accent-1); text-decoration: none; font-weight: 600; font-size: 14px;
+    }
 
-    /* Login Form Layout */
-    .login-page { flex: 1; display: flex; align-items: center; justify-content: center; padding-top: 80px; }
-    .login-container { width: 100%; max-width: 420px; padding: 20px; }
-    .login-h2 { font-size: 2rem; font-weight: 700; margin-bottom: 24px; text-align: center; color: #fff; }
+    /* Login Screen Layout */
+    .login-page {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      flex: 1; padding: 40px 20px;
+    }
+    .login-container {
+      width: 100%; max-width: 400px; background: var(--card);
+      border: 1px solid rgba(255,255,255,0.05); padding: 30px;
+      border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .login-h2 { text-align: center; margin-top: 0; margin-bottom: 24px; font-weight: 700; }
     .form-group { margin-bottom: 16px; }
     .form-control {
-      width: 100%; padding: 14px 16px; font-size: 16px; border-radius: 8px;
-      background: var(--card); border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff; outline: none; transition: border-color 0.2s;
+      width: 100%; padding: 12px 16px; background: var(--bg-900);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: var(--text); font-size: 15px; outline: none;
     }
     .form-control:focus { border-color: var(--accent-1); }
-    .form-options { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); margin-bottom: 20px; }
-    .form-options a { color: var(--accent-1); text-decoration: none; }
+    .form-options { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
+    .forgot-pw { color: var(--accent-1); text-decoration: none; }
     
-    /* Buttons */
-    .btn-primary {
-      width: 100%; padding: 14px; font-size: 16px; font-weight: 700; border-radius: 8px; border: none;
-      background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); color: #04101a; cursor: pointer;
+    .btn-block {
+      width: 100%; padding: 12px; border-radius: 8px; border: 0;
+      font-weight: 700; font-size: 15px; cursor: pointer; margin-top: 10px;
     }
+    .btn-primary { background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); color: #04101a; }
     .clever-login {
-      display: block; text-align: center; text-decoration: none; margin-top: 16px; padding: 12px;
-      background: #ffffff; color: #1c1c1c; border-radius: 8px; font-weight: 600; font-size: 15px;
+      background: #ffffff; color: #333333; text-align: center;
+      text-decoration: none; display: block; margin-top: 16px;
+      border: 1px solid #e0e0e0;
     }
+    .error-msg { color: #ff4757; font-size: 13px; margin-top: 8px; display: none; text-align: center; }
 
-    /* Arcade Dashboard Framework (Hidden initially) */
-    #arcade-container { display: none; padding-top: 90px; flex-direction: column; align-items: center; width: 100%; padding-bottom: 40px; }
-    .arcade-frame-wrapper {
-      width: 1200px; height: 1000px; max-width: 95vw; background: var(--card);
-      border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
-    }
+    /* Hidden dashboard states */
+    #arcade-dashboard { display: none; }
 
-    /* Embedded Gaming UI Content Styles */
-    header-arcade { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-bottom: 1px solid rgba(255,255,255,0.05); }
+    /* Controls & Search */
+    header { display: flex; align-items: center; justify-content: space-between; padding: 18px clamp(12px,3vw,44px); gap: 12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); box-shadow: var(--shadow); border-radius: 0 0 12px 12px; margin: 10px; }
     .brand { display: flex; align-items: center; gap: 12px; }
     .logo { width: 46px; height: 46px; border-radius: 10px; display: grid; place-items: center; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); font-family: var(--mono); font-weight: 800; color: #04101a; }
     .brand h1 { margin: 0; font-size: 1.05rem; }
     .brand p { margin: 0; color: var(--muted); font-size: 0.84rem; }
     .controls { display: flex; align-items: center; gap: 12px; }
-    .search-hero { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
-    .search-input { background: transparent; border: 0; color: var(--text); outline: none; font-size: 15px; width: 250px; }
+    .search-hero { display: flex; align-items: center; gap: 10px; background: var(--card); padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); }
+    .search-input { background: transparent; border: 0; color: var(--text); outline: none; font-size: 15px; width: 420px; max-width: 44vw; }
     .search-btn { background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); padding: 8px 12px; border-radius: 10px; border: 0; color: #04101a; font-weight: 800; font-family: var(--mono); cursor: pointer; }
-    .switch { width: 48px; height: 26px; border-radius: 999px; padding: 3px; background: rgba(255,255,255,0.05); position: relative; cursor: pointer; border: 1px solid rgba(255,255,255,0.04); }
-    .knob { position: absolute; top: 2px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); transition: transform var(--smooth); }
-    html[data-theme="light"] .knob { transform: translateX(22px); }
-    
-    .arcade-scroll-view { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
-    .featured { width: 100%; display: grid; grid-template-columns: 1fr 280px; gap: 18px; align-items: start; }
-    .theater { width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 12px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.03); }
-    .theater iframe { width: 100%; height: 100%; border: 0; }
+
+    /* Theme Switch */
+    .switch { width: 48px; height: 26px; border-radius: 999px; padding: 3px; background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06)); position: relative; cursor: pointer; border: 1px solid rgba(255,255,255,0.04); }
+    .knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-1), var(--accent-2)); transition: transform var(--smooth); }
+    html[data-theme="light"] .knob { transform: translateX(22px); background: linear-gradient(135deg, var(--accent-2), var(--accent-1)); }
+
+    /* Arcade Content Area */
+    main { display: flex; justify-content: center; padding: 10px 12px; flex: 1; }
+    .container { width: min(1280px, 96vw); display: flex; flex-direction: column; gap: 14px; }
+    .hero { display: flex; align-items: center; justify-content: space-between; gap: 18px; background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding: 22px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.03); }
+    .hero-left { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .hero h2 { margin: 0; font-size: 1.8rem; letter-spacing: -0.01em; }
+    .hero p { margin: 0; color: var(--muted); }
+    .featured { width: 100%; display: flex; justify-content: center; gap: 18px; align-items: start; }
+
+    /* Customized Arcade Dimensions (1200x1000) */
+    .theater {
+      width: 1200px; height: 1000px; max-width: 100%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)), var(--card);
+      border-radius: 12px; position: relative; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.03); box-shadow: var(--shadow);
+    }
+    .theater iframe { width: 100%; height: 100%; border: 0; background: #000; }
+
+    /* Cards Grid */
     .cats { display: flex; gap: 10px; flex-wrap: wrap; }
     .chip { padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); cursor: pointer; font-weight: 700; color: var(--muted); font-size: 13px; }
-    .chip.active { background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); color: #04101a; }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-top: 6px; }
-    .card { position: relative; overflow: hidden; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); height: 180px; display: flex; flex-direction: column; justify-content: flex-end; cursor: pointer; transition: transform var(--smooth); }
-    .card:hover { transform: translateY(-4px); }
-    .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-weight: 800; color: #fff; background: conic-gradient(from 120deg at 10% 10%, rgba(0,210,255,0.1), rgba(0,102,204,0.05)); }
+    .chip.active { background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); color: #04101a; border-color: transparent; box-shadow: 0 8px 24px rgba(0,0,0,0.45); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 6px; }
+    .card { position: relative; overflow: hidden; border-radius: 12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); border: 1px solid rgba(255,255,255,0.03); height: 220px; display: flex; flex-direction: column; justify-content: flex-end; cursor: pointer; transition: transform var(--smooth), box-shadow var(--smooth); }
+    .card:hover { transform: translateY(-8px); box-shadow: 0 24px 60px rgba(0,0,0,0.6); }
+    .card img { width: 100%; height: 100%; object-fit: cover; display: block; position: absolute; inset: 0; }
     .card .info { position: relative; padding: 12px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8)); z-index: 3; }
-    .card .label { font-weight: 800; font-size: 14px; }
-    .card .meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
-    .back-btn { margin-top: 15px; background: transparent; color: var(--muted); border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-    .back-btn:hover { color: #fff; border-color: #fff; }
+    .card .label { font-weight: 800; }
+    .card .meta { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .play-overlay { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(90deg, var(--accent-1), var(--accent-2)); display: grid; place-items: center; color: #04101a; font-family: var(--mono); font-weight: 900; opacity: 0; transition: opacity 180ms; }
+    .card:hover .play-overlay { opacity: 1; }
+
+    /* Local Module Editor UI */
+    .editor-wrap { margin-top: 12px; background: var(--card); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.03); display: flex; gap: 12px; flex-direction: column; }
+    textarea.code { width: 100%; height: 200px; resize: vertical; background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(255,255,255,0.02)); border-radius: 8px; padding: 12px; font-family: var(--mono); font-size: 13px; color: var(--text); border: 1px solid rgba(255,255,255,0.03); }
+    .editor-row { display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
 
-<!-- Fixed Header Topbar -->
-<div class="fixed-header">
+  <!-- Top Navigation Header -->
+  <div class="fixed-header">
     <nav class="topbar-anonymous">
-        <div class="logo-container">
-            <img alt="Mathspace" src="https://mathspace-production-static.mathspace.co/static/cache/b79f23b1077d57a50f6c10dc38374714cdd60f5b/img/core/mathspace.svg" style="width: 144px;">
+      <div class="logo-container">
+        <img alt="Mathspace" src="https://mathspace.co" style="width: 144px;">
+      </div>
+      <div class="controls">
+        <div class="switch" onclick="toggleTheme()" title="Toggle Theme">
+          <div class="knob"></div>
         </div>
         <div class="join-class-link">
-            <a href="#">Join class</a>
+          <a href="#">Join class</a>
         </div>
+      </div>
     </nav>
-</div>
+  </div>
 
-<!-- Step 1: Login Block -->
-<div class="login-page" id="login-block">
+  <!-- Screen 1: Mathspace Authentic Login Section -->
+  <div class="login-page" id="login-screen">
     <div class="login-container">
-        <h2 class="login-h2">Login</h2>
-        <form id="login-form" onsubmit="handleFormSubmit(event)">
-            <div class="form-group">
-                <input type="text" id="id_username" class="form-control" placeholder="Username or Email" required>
-            </div>
-
-            <!-- Initially Hidden Password Group -->
-            <div id="password-group" class="form-group" style="display: none;">
-                <input type="password" id="id_password" class="form-control" placeholder="Password">
-            </div>
-
-            <div class="form-options">
-                <label><input type="checkbox"> Remember me</label>
-                <a href="#" class="forgot-pw">Forgot password</a>
-            </div>
-
-            <button type="submit" id="submit-btn" class="btn-primary">Continue</button>
-        </form>
-
-        <a href="#" class="clever-login">Sign in with Clever</a>
-    </div>
-</div>
-
-<!-- Step 2: Secret Gaming Hub Frame (Exactly 1200x1000 Workspace) -->
-<div id="arcade-container">
-    <div class="arcade-frame-wrapper">
-        <header-arcade>
-            <div class="brand">
-                <div class="logo">MΣ</div>
-                <div>
-                    <h1>Mathspace Arcade</h1>
-                    <p>Discover, play, and edit local modules</p>
-                </div>
-            </div>
-            <div class="controls">
-                <div class="search-hero">
-                    <input type="text" class="search-input" placeholder="Search modules, creators, tags..." />
-                    <button class="search-btn">ANY</button>
-                </div>
-                <div class="switch" onclick="toggleTheme()"><div class="knob"></div></div>
+      <h2 class="login-h2">Login</h2>
