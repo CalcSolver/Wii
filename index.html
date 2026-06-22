@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Mathspace — Login</title>
-
-  <!-- Shared design tokens (used by both login and app) -->
+  <title>Mathspace — Home</title>
+  <meta name="description" content="Mathspace — discover, play, and edit local modules. Search-first arcade UI inspired by popular portals." />
   <style>
+    /* Mathspace palette and core vars */
     :root{
       --bg-900:#0d1117; --bg-800:#161b22; --bg-700:#21262d;
       --card:#0f151a; --muted:#90a0ad;
       --accent-1:#00d2ff; --accent-2:#0066cc;
       --text:#e6eef6; --radius:12px; --shadow:0 8px 30px rgba(2,6,23,0.6);
-      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,"Roboto Mono",monospace;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco, "Roboto Mono", monospace;
       --ui-sans:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue";
-      --smooth:240ms cubic-bezier(.2,.9,.3,1);
+      --smooth:220ms cubic-bezier(.2,.9,.3,1);
     }
     html[data-theme="light"]{
       --bg-900:#f7fbff; --bg-800:#eef6ff; --bg-700:#e6f0fb;
@@ -23,702 +23,698 @@
       --text:#04101a; --shadow:0 8px 30px rgba(13,17,23,0.06);
     }
 
-    /* Global reset */
+    /* Reset */
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:var(--ui-sans);-webkit-font-smoothing:antialiased}
+    html,body{height:100%}
     body{
-      color:var(--text);
+      margin:0; font-family:var(--ui-sans); color:var(--text);
       background:
-        radial-gradient(900px 400px at 12% 12%, rgba(0,210,255,0.03), transparent 10%),
+        radial-gradient(800px 340px at 10% 10%, rgba(0,210,255,0.03), transparent 8%),
         linear-gradient(180deg,var(--bg-900),var(--bg-800) 40%,var(--bg-700));
-      min-height:100vh;
       -webkit-font-smoothing:antialiased;
-    }
-  </style>
-
-  <!-- LOGIN STYLES (designed to match Mathspace theme) -->
-  <style>
-    /* Container overlay that sits on top of the app until login */
-    #loginRoot{
-      position:fixed;
-      inset:0;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      z-index:1200;
-      padding:24px;
-      backdrop-filter: blur(6px) saturate(120%);
-      background: linear-gradient(180deg, rgba(3,6,10,0.3), rgba(3,6,10,0.45));
-      transition:opacity var(--smooth), transform var(--smooth);
+      display:flex; flex-direction:column; min-height:100vh; gap:12px;
     }
 
-    .login-card{
-      width:100%;
-      max-width:900px;
-      border-radius:14px;
-      overflow:hidden;
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;padding:18px clamp(12px,3vw,44px);gap:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);box-shadow:var(--shadow);border-radius:0 0 12px 12px;margin:10px}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:46px;height:46px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));font-family:var(--mono);font-weight:800;color:#04101a}
+    .brand h1{margin:0;font-size:1.05rem}
+    .brand p{margin:0;color:var(--muted);font-size:0.84rem}
+
+    /* Controls */
+    .controls{display:flex;align-items:center;gap:12px}
+    .search-hero{display:flex;align-items:center;gap:10px;background:var(--card);padding:8px 12px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .search-input{background:transparent;border:0;color:var(--text);outline:none;font-size:15px;width:420px;max-width:44vw}
+    .search-btn{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));padding:8px 12px;border-radius:10px;border:0;color:#04101a;font-weight:800;font-family:var(--mono);cursor:pointer}
+
+    /* Theme switch */
+    .switch{width:48px;height:26px;border-radius:999px;padding:3px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(0,0,0,0.06));position:relative;cursor:pointer;border:1px solid rgba(255,255,255,0.04)}
+    .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));transition:transform var(--smooth)}
+    html[data-theme="light"] .knob{transform:translateX(22px); background:linear-gradient(135deg,var(--accent-2),var(--accent-1))}
+
+    /* Page layout */
+    main{display:flex;justify-content:center;padding:10px 12px;flex:1}
+    .container{width:min(1280px,96vw);display:flex;flex-direction:column;gap:14px}
+
+    /* Hero area (search-first look) */
+    .hero{
+      display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:22px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)
+    }
+    .hero-left{flex:1;display:flex;flex-direction:column;gap:10px}
+    .hero h2{margin:0;font-size:1.8rem;letter-spacing:-0.01em}
+    .hero p{margin:0;color:var(--muted)}
+    .hero-right{width:260px;display:flex;flex-direction:column;gap:12px;align-items:center}
+
+    /* Big featured tiles (inspired layout) */
+    .featured{
+      width:100%;display:grid;grid-template-columns:1fr 320px;gap:18px;align-items:start;
+    }
+
+    /* Player/theater (left column) - 16:9 */
+    .theater{width:100%;aspect-ratio:16/9;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.06)), var(--card);border-radius:12px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow)}
+    .theater iframe{width:100%;height:100%;border:0;background:#000}
+
+    /* Overlay controls (bottom anchored) */
+    .overlay{position:absolute;left:0;right:0;bottom:0;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;transform:translateY(120%);opacity:0;transition:transform 240ms ease, opacity 200ms;pointer-events:none;background:linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.6));backdrop-filter:blur(6px)}
+    .theater:hover .overlay,.overlay.show{transform:translateY(0);opacity:1;pointer-events:auto}
+    .theater:fullscreen .overlay, .theater:-webkit-full-screen .overlay{display:none !important; visibility:hidden !important; opacity:0 !important; pointer-events:none !important}
+
+    .title-row{display:flex;flex-direction:column}
+    .title-row .title{font-weight:800;font-size:1.05rem}
+    .title-row .file{font-size:0.8rem;color:var(--muted)}
+
+    .fs-cta{padding:9px 14px;border-radius:999px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#04101a;font-weight:800;font-family:var(--mono);border:0;cursor:pointer}
+
+    /* Categories and chips */
+    .cats{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);cursor:pointer;font-weight:700;color:var(--muted);font-size:13px}
+    .chip.active{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#04101a;border-color:transparent;box-shadow:0 8px 24px rgba(0,0,0,0.45)}
+
+    /* Grid inspired-by Poki/easyhub */
+    .grid{
       display:grid;
-      grid-template-columns:360px 1fr;
-      box-shadow:var(--shadow);
-      border:1px solid rgba(255,255,255,0.04);
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
-      transform:translateY(0);
-      transition:transform var(--smooth), opacity var(--smooth);
-    }
-
-    /* Left column: bold brand and input */
-    .login-left{
-      padding:36px 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.015), transparent),
-        radial-gradient(800px 260px at 20% 15%, rgba(0,210,255,0.03), transparent 10%);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      align-items:flex-start;
-      justify-content:center;
-    }
-    .logo{
-      width:64px;height:64px;border-radius:12px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--accent-1),var(--accent-2));font-family:var(--mono);font-weight:900;color:#04101a;font-size:26px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
-    }
-    .brand-title{font-size:1.6rem;font-weight:900;margin:0}
-    .brand-sub{color:var(--muted);margin:0;font-size:0.95rem}
-
-    .login-pulse{
-      margin-top:6px;padding:8px 12px;border-radius:999px;background:linear-gradient(90deg, rgba(0,210,255,0.06), rgba(0,102,204,0.03));font-weight:700;font-family:var(--mono);color:var(--text);font-size:12px;
-    }
-
-    /* input styling matching app's controls */
-    .login-form{width:100%;margin-top:6px;display:flex;flex-direction:column;gap:12px}
-    .field{
-      width:100%;display:flex;flex-direction:column;gap:8px;
-    }
-    label{font-size:0.85rem;color:var(--muted)}
-    input[type="text"]{
-      width:100%;padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);
-      background:var(--card);color:var(--text);font-size:15px;outline:none;font-family:var(--ui-sans);
-      transition:box-shadow var(--smooth), transform var(--smooth);
-    }
-    input[type="text"]:focus{ box-shadow:0 8px 30px rgba(2,6,23,0.45); transform:translateY(-2px); border-color: rgba(0,210,255,0.12); }
-
-    .actions{display:flex;gap:10px;align-items:center;justify-content:flex-end}
-    .btn{
-      padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:800;
-    }
-    .btn-primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#04101a;font-family:var(--mono)}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
-
-    .hint{color:var(--muted);font-size:13px}
-    .error{color:#ff8b8b;font-size:13px;display:none}
-
-    /* Right column: preview / promo area to show Mathspace vibe */
-    .login-right{
-      padding:20px;
-      display:flex;
-      flex-direction:column;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap:14px;
-      align-items:stretch;
-      justify-content:center;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.05));
+      margin-top:6px;
     }
-    .preview{
-      height:220px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.4)),
-        url('images/pacman.jpg') center/cover no-repeat;
-      display:flex;align-items:flex-end;padding:12px;color:var(--text);
-      box-shadow: 0 12px 40px rgba(2,6,23,0.45) inset;
-    }
-    .preview .meta{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));padding:8px 12px;border-radius:999px;color:#04101a;font-weight:800;font-family:var(--mono);font-size:13px}
 
-    .preview-list{display:flex;gap:10px;flex-wrap:wrap}
-    .small-card{flex:1 0 28%;min-width:86px;height:86px;border-radius:8px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:#04101a;font-weight:900;font-family:var(--mono);font-size:12px}
-
-    @media (max-width:860px){
-      .login-card{grid-template-columns:1fr;max-width:520px}
-      .login-right{order:-1}
-      .preview{height:160px}
+    .card{
+      position:relative; overflow:hidden; border-radius:12px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.05)); border:1px solid rgba(255,255,255,0.03); height:220px; display:flex;flex-direction:column; justify-content:flex-end; cursor:pointer;
+      transition:transform var(--smooth), box-shadow var(--smooth);
     }
-  </style>
+    .card:hover{transform:translateY(-8px); box-shadow:0 24px 60px rgba(0,0,0,0.6)}
+    .card .thumb{position:absolute;inset:0}
+    .card img{width:100%;height:100%;object-fit:cover;display:block}
+    .placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:800;color:rgba(255,255,255,0.95);background:conic-gradient(from 120deg at 10% 10%, rgba(0,210,255,0.06), rgba(0,102,204,0.03))}
+    .card .info{position:relative;padding:12px;background:linear-gradient(180deg, transparent, rgba(0,0,0,0.6));z-index:3}
+    .card .label{font-weight:800}
+    .card .meta{font-size:12px;color:var(--muted);margin-top:6px}
 
-  <!-- Mathspace app styles (original, unchanged) -->
-  <style>
-    /* Mathspace palette and core vars (kept for app consistency) */
-    :root{
-      --smooth:220ms cubic-bezier(.2,.9,.3,1);
+    /* play overlay icon */
+    .play-overlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:#04101a;font-family:var(--mono);font-weight:900;opacity:0;transition:opacity 180ms}
+    .card:hover .play-overlay{opacity:1}
+
+    /* Editor UI (keeps prior functionality) */
+    .editor-wrap{margin-top:12px;background:var(--card);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;flex-direction:column}
+    .editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    textarea.code{width:100%;height:300px;resize:vertical;background:linear-gradient(180deg, rgba(0,0,0,0.05), rgba(255,255,255,0.02));border-radius:8px;padding:12px;font-family:var(--mono);font-size:13px;color:var(--text);border:1px solid rgba(255,255,255,0.03)}
+    .btn{padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:800}
+    .btn.primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#04101a}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
+    .meta{color:var(--muted);font-size:13px}
+
+    /* small screens */
+    @media (max-width:900px){
+      .search-input{width:44vw}
+      .featured{grid-template-columns:1fr}
+      .hero-right{width:100%;display:flex;justify-content:flex-start}
+      .card{height:180px}
+      textarea.code{height:220px}
     }
-    /* ... (rest of app CSS will also be included later; duplicated tokens above are fine) */
   </style>
 </head>
 <body>
-  <!-- LOGIN OVERLAY (styled to match Mathspace) -->
-  <div id="loginRoot" aria-hidden="false">
-    <div class="login-card" role="dialog" aria-label="Mathspace sign in">
-      <div class="login-left" aria-hidden="false">
-        <div style="display:flex;align-items:center;gap:14px">
-          <div class="logo" aria-hidden="true">M</div>
-          <div>
-            <div class="brand-title">Mathspace</div>
-            <div class="brand-sub">Arcade • Editor • Player</div>
-          </div>
-        </div>
-
-        <div class="login-pulse">Welcome — sign in to continue</div>
-
-        <form id="loginForm" class="login-form" autocomplete="off" novalidate>
-          <div class="field">
-            <label for="username">Username</label>
-            <input id="username" name="username" type="text" inputmode="numeric" placeholder="Enter username" aria-label="Username" />
-            <div class="hint">Tip: Enter 4567 to access the app</div>
-            <div class="error" id="error">Invalid username</div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div class="hint">Hosted locally — your files are used directly</div>
-            <div class="actions">
-              <button type="button" id="demoBtn" class="btn btn-ghost">Demo</button>
-              <button type="submit" class="btn btn-primary">Sign in</button>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <div class="login-right" aria-hidden="false">
-        <div class="preview" role="img" aria-label="Preview of Mathspace">
-          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">
-            <div style="font-weight:900;font-size:1rem">Play, edit, publish</div>
-            <div style="color:var(--muted)">Search-first arcade UI • Right-click to edit files</div>
-          </div>
-          <div style="margin-left:auto"></div>
-        </div>
-
-        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
-          <div class="small-card">Arcade</div>
-          <div class="small-card">Editor</div>
-          <div class="small-card">Player</div>
-        </div>
-
-        <div style="color:var(--muted);font-size:13px">Place your game HTML files and images beside this index.html. The app will discover them automatically.</div>
+  <header>
+    <div class="brand">
+      <div class="logo">M</div>
+      <div>
+        <h1>Mathspace</h1>
+        <p>Arcade • Editor • Player</p>
       </div>
     </div>
-  </div>
 
-  <!-- MATHSPACE APP (original content included unchanged) -->
-  <!-- Hidden until login succeeds -->
-  <div id="mathspaceApp" style="display:none">
-    <header>
-      <div class="brand">
-        <div class="logo">M</div>
+    <div class="controls" role="region" aria-label="Controls">
+      <div class="search-hero" title="Search modules">
+        <input id="search" class="search-input" placeholder="Search games, e.g. Pacman, Zelda..." aria-label="Search modules" />
+        <button id="searchBtn" class="search-btn" aria-label="Search">Search</button>
+      </div>
+      <div class="switch" id="themeSwitch" role="button" tabindex="0" aria-pressed="false"><div class="knob"></div></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Hero / featured -->
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-left">
+          <h2 id="heroTitle">Play, edit, and publish modules</h2>
+          <p>Search fast, browse categories, preview in the player, or right-click any tile to edit in the built-in HTML editor.</p>
+          <div class="cats" id="categories"></div>
+        </div>
+
+        <div class="hero-right">
+          <div style="width:100%;display:flex;flex-direction:column;gap:10px;align-items:center">
+            <div class="featured-card">
+              <div style="width:140px;height:86px;border-radius:8px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:#04101a;font-weight:900;font-family:var(--mono)">PLAY</div>
+            </div>
+            <div class="meta">Inspired-by the polished arcade portals — original Mathspace design</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured player and small toolbar -->
+      <div class="featured">
         <div>
-          <h1>Mathspace</h1>
-          <p>Arcade • Editor • Player</p>
-        </div>
-      </div>
-
-      <div class="controls" role="region" aria-label="Controls">
-        <div class="search-hero" title="Search modules">
-          <input id="search" class="search-input" placeholder="Search games, e.g. Pacman, Zelda..." aria-label="Search modules" />
-          <button id="searchBtn" class="search-btn" aria-label="Search">Search</button>
-        </div>
-        <div class="switch" id="themeSwitch" role="button" tabindex="0" aria-pressed="false"><div class="knob"></div></div>
-      </div>
-    </header>
-
-    <main>
-      <div class="container">
-
-        <!-- Hero / featured -->
-        <section class="hero" aria-labelledby="heroTitle">
-          <div class="hero-left">
-            <h2 id="heroTitle">Play, edit, and publish modules</h2>
-            <p>Search fast, browse categories, preview in the player, or right-click any tile to edit in the built-in HTML editor.</p>
-            <div class="cats" id="categories"></div>
-          </div>
-
-          <div class="hero-right">
-            <div style="width:100%;display:flex;flex-direction:column;gap:10px;align-items:center">
-              <div class="featured-card">
-                <div style="width:140px;height:86px;border-radius:8px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:#04101a;font-weight:900;font-family:var(--mono)">PLAY</div>
+          <div class="theater" id="theater" tabindex="0" aria-label="Game theater">
+            <iframe id="player" src="pacman.html" title="Mathspace Player" allowfullscreen sandbox="allow-scripts allow-same-origin"></iframe>
+            <div class="overlay" id="overlay">
+              <div class="title-row">
+                <div class="title" id="current-title">Pacman</div>
+                <div class="file" id="current-sub">pacman.html</div>
               </div>
-              <div class="meta">Inspired-by the polished arcade portals — original Mathspace design</div>
+              <div><button id="fsBtn" class="fs-cta">GO FULLSCREEN</button></div>
             </div>
           </div>
-        </section>
 
-        <!-- Featured player and small toolbar -->
-        <div class="featured">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+            <div class="meta">Hover the player for controls • Click a tile to load • Right-click to edit</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button id="openEditor" class="btn ghost">Open Editor</button>
+              <div class="meta" id="status">Discovering modules…</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- right small column could hold featured content (empty for now) -->
+        <aside style="padding-left:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03)">
+            <div style="font-weight:800">Quick Tips</div>
+            <div class="meta" style="margin-top:8px">• Use search to filter • Arrow keys to scroll grid • Right-click a card to edit</div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- Grid of games (Poki/easyhub-like density) -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:900">Available Modules</div>
+          <div class="meta">Click a card to play • Hover for play CTA</div>
+        </div>
+
+        <div id="grid" class="grid" role="list" aria-label="Module grid"></div>
+      </section>
+
+      <!-- Editor block -->
+      <section class="editor-wrap" id="editArea" style="display:none">
+        <div class="editor-row">
           <div>
-            <div class="theater" id="theater" tabindex="0" aria-label="Game theater">
-              <iframe id="player" src="pacman.html" title="Mathspace Player" allowfullscreen sandbox="allow-scripts allow-same-origin"></iframe>
-              <div class="overlay" id="overlay">
-                <div class="title-row">
-                  <div class="title" id="current-title">Pacman</div>
-                  <div class="file" id="current-sub">pacman.html</div>
-                </div>
-                <div><button id="fsBtn" class="fs-cta">GO FULLSCREEN</button></div>
-              </div>
-            </div>
-
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-              <div class="meta">Hover the player for controls • Click a tile to load • Right-click to edit</div>
-              <div style="display:flex;gap:8px;align-items:center">
-                <button id="openEditor" class="btn ghost">Open Editor</button>
-                <div class="meta" id="status">Discovering modules…</div>
-              </div>
-            </div>
+            <strong id="edit-filename">No file</strong>
+            <div class="meta" id="edit-path"></div>
           </div>
-
-          <!-- right small column could hold featured content (empty for now) -->
-          <aside style="padding-left:18px;display:flex;flex-direction:column;gap:12px">
-            <div style="background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03)">
-              <div style="font-weight:800">Quick Tips</div>
-              <div class="meta" style="margin-top:8px">• Use search to filter • Arrow keys to scroll grid • Right-click a card to edit</div>
-            </div>
-          </aside>
+          <div style="display:flex;gap:8px">
+            <button id="previewBtn" class="btn primary">Preview</button>
+            <button id="downloadBtn" class="btn ghost">Download</button>
+            <button id="commitBtn" class="btn ghost">Commit</button>
+          </div>
         </div>
+        <textarea id="editor" class="code" spellcheck="false" placeholder="Open a module to edit…"></textarea>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="meta">Commit requires a Personal Access Token with repo permissions.</div>
+          <div class="meta" id="lastUpdated"></div>
+        </div>
+      </section>
 
-        <!-- Grid of games (Poki/easyhub-like density) -->
-        <section>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="font-weight:900">Available Modules</div>
-            <div class="meta">Click a card to play • Hover for play CTA</div>
-          </div>
+    </div>
+  </main>
 
-          <div id="grid" class="grid" role="list" aria-label="Module grid"></div>
-        </section>
-
-        <!-- Editor block -->
-        <section class="editor-wrap" id="editArea" style="display:none">
-          <div class="editor-row">
-            <div>
-              <strong id="edit-filename">No file</strong>
-              <div class="meta" id="edit-path"></div>
-            </div>
-            <div style="display:flex;gap:8px">
-              <button id="previewBtn" class="btn primary">Preview</button>
-              <button id="downloadBtn" class="btn ghost">Download</button>
-              <button id="commitBtn" class="btn ghost">Commit</button>
-            </div>
-          </div>
-          <textarea id="editor" class="code" spellcheck="false" placeholder="Open a module to edit…"></textarea>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div class="meta">Commit requires a Personal Access Token with repo permissions.</div>
-            <div class="meta" id="lastUpdated"></div>
-          </div>
-        </section>
-
-      </div>
-    </main>
-
-    <!-- Commit modal -->
-    <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,10,0.5);z-index:1200">
-      <div style="width:min(880px,94vw);background:var(--card);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.04)">
-        <h3>Commit changes to GitHub</h3>
-        <p class="meta">Paste a Personal Access Token (repo scope). Token is used only for this request and not stored.</p>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
-          <input id="input-token" type="password" placeholder="GitHub Personal Access Token" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)" />
-          <input id="input-message" type="text" placeholder="Commit message" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)" value="Update via Mathspace editor" />
-          <div style="display:flex;gap:8px;justify-content:flex-end">
-            <button id="cancelCommit" class="btn ghost">Cancel</button>
-            <button id="doCommit" class="btn primary">Commit</button>
-          </div>
+  <!-- Commit modal -->
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-hidden="true" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,10,0.5);z-index:1200">
+    <div style="width:min(880px,94vw);background:var(--card);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,0.04)">
+      <h3>Commit changes to GitHub</h3>
+      <p class="meta">Paste a Personal Access Token (repo scope). Token is used only for this request and not stored.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+        <input id="input-token" type="password" placeholder="GitHub Personal Access Token" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)" />
+        <input id="input-message" type="text" placeholder="Commit message" style="padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)" value="Update via Mathspace editor" />
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button id="cancelCommit" class="btn ghost">Cancel</button>
+          <button id="doCommit" class="btn primary">Commit</button>
         </div>
       </div>
     </div>
-
-    <script>
-      /* ---------------------------
-         Config & fallback list
-         --------------------------- */
-      const OWNER = 'CalcSolver';
-      const REPO = 'Wii';
-      const API_ROOT = `https://api.github.com/repos/${OWNER}/${REPO}/contents/`;
-
-      const FALLBACK_GAMES = [
-        { title: "Pacman", file: "pacman.html", img: "images/pacman.jpg", categories:["Arcade"] },
-        { title: "Call of Duty 4", file: "COD4.html", img: "images/COD4.jpg", categories:["Shooter"] },
-        { title: "1942 Arcade", file: "1942.html", img: "images/1942.jpg", categories:["Arcade"] },
-        { title: "Zelda 2", file: "Zelda2.html", img: "images/Zelda2.jpg", categories:["Adventure"] },
-        { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", img: "images/Zeldalinktopast.jpg", categories:["Adventure","RPG"] },
-        { title: "Mortal Kombat", file: "mortalkombat.html", img: "images/mortalkombat.jpg", categories:["Fighting"] },
-        { title: "Pokemon Emerald", file: "pokemonemerald.html", img: "images/pokemonemerald.jpg", categories:["RPG"] },
-        { title: "Smash Bros", file: "smashbros.html", img: "images/smashbros.jpg", categories:["Fighting"] },
-        { title: "Street Fighter 2", file: "streetfighter2.html", img: "images/streetfighter2.jpg", categories:["Fighting"] },
-        { title: "Super Mario World 2", file: "supermarioworld2.html", img: "images/supermarioworld2.jpg", categories:["Platformer"] },
-        { title: "Tennis", file: "tennis.html", img: "images/tennis.jpg", categories:["Sports"] },
-        { title: "Tony Hawk 2", file: "tonyhawk2.html", img: "images/tonyhawk2.jpg", categories:["Sports"] },
-        { title: "Winter Olympics", file: "winterolympics.html", img: "images/winterolympics.jpg", categories:["Sports"] },
-        { title: "Other Stuff", file: "otherstuff.html", img: "images/otherstuff.jpg", categories:["Misc"] }
-      ];
-
-      /* ---------------------------
-         DOM refs & state
-         --------------------------- */
-      const searchInput = document.getElementById('search');
-      const searchBtn = document.getElementById('searchBtn');
-      const categoriesEl = document.getElementById('categories');
-      const gridEl = document.getElementById('grid');
-      const player = document.getElementById('player');
-      const currentTitle = document.getElementById('current-title');
-      const currentSub = document.getElementById('current-sub');
-      const theater = document.getElementById('theater');
-      const overlay = document.getElementById('overlay');
-      const fsBtn = document.getElementById('fsBtn');
-      const status = document.getElementById('status');
-      const openEditor = document.getElementById('openEditor');
-
-      const editArea = document.getElementById('editArea');
-      const editor = document.getElementById('editor');
-      const editFilename = document.getElementById('edit-filename');
-      const editPath = document.getElementById('edit-path');
-      const previewBtn = document.getElementById('previewBtn');
-      const downloadBtn = document.getElementById('downloadBtn');
-      const commitBtn = document.getElementById('commitBtn');
-      const modal = document.getElementById('modal');
-      const inputToken = document.getElementById('input-token');
-      const inputMessage = document.getElementById('input-message');
-      const cancelCommit = document.getElementById('cancelCommit');
-      const doCommit = document.getElementById('doCommit');
-      const lastUpdated = document.getElementById('lastUpdated');
-
-      let games = [];
-      let filtered = [];
-      let categories = new Map();
-      let activeCategory = null;
-      let searchTerm = '';
-      let currentFile = null;
-      let editorContentSha = null;
-
-      /* ---------------------------
-         Utilities
-         --------------------------- */
-      function slugToTitle(name){
-        const base = (name||'').replace(/\.html?$/i,'').replace(/[-_]/g,' ');
-        return base.replace(/\b\w/g, c => c.toUpperCase());
-      }
-      function inferCategoriesFromName(name){
-        const lower = (name||'').toLowerCase();
-        const set = new Set();
-        if(/arcade|pacman|1942|super|mario|smash|street/i.test(lower)) set.add('Arcade');
-        if(/call of duty|cod|shooter|fps/i.test(lower)) set.add('Shooter');
-        if(/zelda|link|pokemon|rpg|emerald/i.test(lower)) { if(/pokemon|emerald/i.test(lower)) set.add('RPG'); else set.add('Adventure'); }
-        if(/mortal kombat|fighting|fighter|street fighter/i.test(lower)) set.add('Fighting');
-        if(/tennis|tony hawk|sports|olympics/i.test(lower)) set.add('Sports');
-        if(/other|misc|stuff/i.test(lower)) set.add('Misc');
-        if(set.size===0) set.add('Uncategorized');
-        return Array.from(set);
-      }
-      function setStatus(text){ if(status) status.textContent = text; }
-
-      /* ---------------------------
-         Render helpers
-         --------------------------- */
-      function buildCategories(){
-        categories.clear();
-        for(const g of games){
-          const cats = g.categories || inferCategoriesFromName(g.file || g.title || '');
-          for(const c of cats) categories.set(c, (categories.get(c)||0)+1);
-        }
-      }
-      function renderCategoryChips(){
-        categoriesEl.innerHTML = '';
-        const all = document.createElement('button'); all.className='chip' + (activeCategory===null ? ' active':''); all.textContent = `All (${games.length})`; all.onclick = ()=>{ activeCategory=null; applyFilters(); renderCategoryChips(); }; categoriesEl.appendChild(all);
-        const sorted = Array.from(categories.entries()).sort((a,b)=>b[1]-a[1]).map(x=>({name:x[0],count:x[1]}));
-        for(const c of sorted){
-          const el = document.createElement('button'); el.className='chip' + (activeCategory===c.name ? ' active' : ''); el.textContent = `${c.name} (${c.count})`; el.onclick = ()=>{ activeCategory = (activeCategory===c.name ? null : c.name); applyFilters(); renderCategoryChips(); }; categoriesEl.appendChild(el);
-        }
-      }
-
-      function makeCard(game){
-        const node = document.createElement('article');
-        node.className = 'card';
-        node.setAttribute('role','listitem');
-        node.title = game.title;
-
-        const thumb = document.createElement('div'); thumb.className = 'thumb';
-        const img = document.createElement('img');
-        img.src = game.img || `images/${(game.file||'').replace(/\.html?$/i,'.jpg')}`;
-        img.alt = game.title + ' screenshot';
-        img.setAttribute('onerror', "this.style.display='none'");
-        thumb.appendChild(img);
-        node.appendChild(thumb);
-
-        const placeholder = document.createElement('div'); placeholder.className='placeholder'; placeholder.innerText='Math Module';
-        node.appendChild(placeholder);
-
-        const play = document.createElement('div'); play.className='play-overlay'; play.innerText='▶';
-        node.appendChild(play);
-
-        const info = document.createElement('div'); info.className='info';
-        const label = document.createElement('div'); label.className='label'; label.innerText = game.title;
-        const meta = document.createElement('div'); meta.className='meta'; meta.innerText = (game.categories || []).join(', ') || 'Module';
-        info.appendChild(label); info.appendChild(meta);
-        node.appendChild(info);
-
-        // interactions
-        node.addEventListener('click', ()=> loadGame(game));
-        node.addEventListener('contextmenu', (e)=>{ e.preventDefault(); openEditorForGame(game); });
-
-        return node;
-      }
-
-      function renderGrid(){
-        gridEl.innerHTML = '';
-        if(filtered.length === 0){
-          const empty = document.createElement('div'); empty.className='meta'; empty.style.padding='18px'; empty.style.color='var(--muted)'; empty.innerText='No modules found'; gridEl.appendChild(empty); return;
-        }
-        for(const g of filtered) gridEl.appendChild(makeCard(g));
-      }
-
-      function applyFilters(){
-        const term = (searchTerm||'').toLowerCase();
-        filtered = games.filter(g=>{
-          if(activeCategory){
-            const cats = g.categories || inferCategoriesFromName(g.file || g.title || '');
-            if(!cats.includes(activeCategory)) return false;
-          }
-          if(!term) return true;
-          const hay = (g.title + ' ' + (g.file||'') + ' ' + (g.path||'')).toLowerCase();
-          return hay.includes(term);
-        });
-        renderGrid();
-      }
-
-      /* ---------------------------
-         Discover games (GitHub API) with fallback
-         --------------------------- */
-      async function discoverGames(){
-        setStatus('Discovering modules (live)…');
-        try {
-          const res = await fetch(API_ROOT, { headers: { Accept:'application/vnd.github.v3+json' }});
-          if(!res.ok) throw new Error(`API ${res.status}`);
-          const items = await res.json();
-          const htmlFiles = items.filter(i => i.type === 'file' && /\.html?$/i.test(i.name) && i.name.toLowerCase() !== 'index.html');
-          if(htmlFiles.length === 0) throw new Error('No HTML files discovered');
-          games = htmlFiles.map(i=>({
-            title: slugToTitle(i.name),
-            file: i.name, img: `images/${i.name.replace(/\.html?$/i,'.jpg')}`,
-            download_url: i.download_url, path: i.path, sha: i.sha,
-            categories: inferCategoriesFromName(i.name)
-          }));
-          setStatus(`Live: ${games.length} modules found`);
-        } catch(err){
-          console.warn('Live discover failed; using fallback', err);
-          games = FALLBACK_GAMES.map(g => ({ ...g }));
-          setStatus('Offline fallback: using packaged module list');
-        }
-        buildCategories();
-        renderCategoryChips();
-        applyFilters();
-        // initial load pacman if present
-        const initial = games.find(g=>/pacman\.html$/i.test(g.file)) || games[0];
-        if(initial) loadGame(initial);
-      }
-
-      /* ---------------------------
-         Load to player
-         --------------------------- */
-      function loadGame(game){
-        currentFile = game;
-        currentTitle.textContent = game.title;
-        currentSub.textContent = game.file || game.path || '';
-        // prefer local path
-        player.src = game.file || game.download_url || '';
-        overlay.classList.add('show');
-        setTimeout(()=> overlay.classList.remove('show'), 900);
-      }
-
-      /* ---------------------------
-         Editor functionality
-         --------------------------- */
-      async function fetchFileContent(game){
-        if(game.download_url){
-          const r = await fetch(game.download_url);
-          if(!r.ok) throw new Error(`Failed ${r.status}`);
-          const txt = await r.text();
-          return { content: txt, sha: game.sha || null };
-        }
-        const r2 = await fetch(game.file);
-        if(!r2.ok) throw new Error(`Local fetch failed ${r2.status}`);
-        const t2 = await r2.text();
-        return { content: t2, sha: null };
-      }
-
-      function openEditorForGame(game){
-        currentFile = game;
-        editArea.style.display = 'block';
-        editFilename.textContent = game.title;
-        if(editPath) editPath.textContent = game.path || game.file || '';
-        editor.value = '';
-        lastUpdated.textContent = '';
-        setStatus(`Loading ${game.file || game.path} for editing…`);
-        fetchFileContent(game).then(({content, sha})=>{
-          editor.value = content;
-          editorContentSha = sha || null;
-          lastUpdated.textContent = `Loaded ${new Date().toLocaleString()}`;
-          setStatus(`Editing ${game.title}`);
-        }).catch(err=>{
-          console.warn(err);
-          editor.value = `<!-- Could not fetch ${game.file || game.path}. Paste content here to create new file. -->\n`;
-          editorContentSha = null;
-          setStatus(`Editing (offline) ${game.title}`);
-        });
-      }
-
-      openEditor.addEventListener('click', ()=> {
-        if(currentFile) openEditorForGame(currentFile); else setStatus('Select a module first.');
-      });
-
-      previewBtn.addEventListener('click', ()=>{
-        const html = editor.value;
-        const blob = new Blob([html], { type: 'text/html' });
-        const url = URL.createObjectURL(blob);
-        player.src = url;
-        setTimeout(()=> URL.revokeObjectURL(url), 1000*30);
-        setStatus('Previewing edits in player (temporary)');
-      });
-
-      downloadBtn.addEventListener('click', ()=>{
-        const text = editor.value;
-        const filename = currentFile?.file || 'untitled.html';
-        const blob = new Blob([text], { type: 'text/html' });
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove();
-        setStatus(`Downloaded ${filename}`);
-      });
-
-      commitBtn.addEventListener('click', ()=>{
-        if(!currentFile || (!currentFile.path && !currentFile.file)){ setStatus('Select a repo file to commit.'); return; }
-        modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); inputToken.value=''; inputMessage.value=`Update ${currentFile.file || currentFile.path} via Mathspace`;
-      });
-
-      cancelCommit.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
-
-      doCommit.addEventListener('click', async ()=>{
-        const token = inputToken.value.trim();
-        const message = inputMessage.value.trim() || 'Update via Mathspace';
-        if(!token){ alert('A GitHub token is required to commit.'); return; }
-        modal.style.display='none'; modal.setAttribute('aria-hidden','true');
-        try {
-          setStatus('Committing to GitHub…');
-          const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${currentFile.path || currentFile.file}`;
-          let existingSha = currentFile.sha || null;
-          if(!existingSha){
-            const getR = await fetch(url, { headers:{ Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json' }});
-            if(getR.ok){ const j = await getR.json(); existingSha = j.sha; }
-          }
-          const contentBase64 = btoa(unescape(encodeURIComponent(editor.value)));
-          const body = { message, content: contentBase64, committer: { name: "Mathspace Editor", email: "mathspace@example.com" } };
-          if(existingSha) body.sha = existingSha;
-          const putR = await fetch(url, { method:'PUT', headers:{ Authorization:`token ${token}`, 'Content-Type':'application/json', Accept:'application/vnd.github.v3+json' }, body: JSON.stringify(body) });
-          if(!putR.ok){ const t = await putR.text(); throw new Error(`Commit failed ${putR.status}: ${t}`); }
-          const res = await putR.json();
-          setStatus(`Committed ${currentFile.file || currentFile.path} (${res.commit?.sha?.slice(0,7)})`);
-          currentFile.sha = res.content?.sha || currentFile.sha;
-        } catch(err){ console.error(err); setStatus('Commit failed: ' + (err.message || err)); alert('Commit failed: ' + (err.message || err)); }
-      });
-
-      /* ---------------------------
-         Search, categories, UI bindings
-         --------------------------- */
-      let debounce;
-      searchInput.addEventListener('input', (e)=>{ searchTerm = e.target.value || ''; clearTimeout(debounce); debounce = setTimeout(()=> applyFilters(), 180); });
-      searchBtn.addEventListener('click', ()=> { searchTerm = searchInput.value || ''; applyFilters(); });
-
-      /* ---------------------------
-         Fullscreen and overlay
-         --------------------------- */
-      fsBtn.addEventListener('click', async ()=>{
-        try {
-          if(!document.fullscreenElement){ if(theater.requestFullscreen) await theater.requestFullscreen(); else if(theater.webkitRequestFullscreen) await theater.webkitRequestFullscreen(); else await player.requestFullscreen(); }
-          else await document.exitFullscreen();
-        } catch(e){ console.warn(e); }
-      });
-      theater.addEventListener('keydown', (e)=>{ if(e.key==='f' || e.key==='F'){ e.preventDefault(); fsBtn.click(); }});
-      document.addEventListener('fullscreenchange', ()=> overlay.setAttribute('aria-hidden', !!document.fullscreenElement ? 'true' : 'false'));
-      theater.addEventListener('mouseenter', ()=> overlay.classList.add('show'));
-      theater.addEventListener('mouseleave', ()=> overlay.classList.remove('show'));
-      theater.addEventListener('focusin', ()=> overlay.classList.add('show'));
-      theater.addEventListener('focusout', ()=> overlay.classList.remove('show'));
-
-      /* ---------------------------
-         Theme toggle
-         --------------------------- */
-      const themeSwitch = document.getElementById('themeSwitch');
-      const saved = localStorage.getItem('mathspace-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-      document.documentElement.setAttribute('data-theme', saved);
-      themeSwitch.setAttribute('aria-pressed', saved === 'light' ? 'true' : 'false');
-      themeSwitch.addEventListener('click', ()=> {
-        const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light':'dark';
-        const next = cur === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('mathspace-theme', next);
-        themeSwitch.setAttribute('aria-pressed', next === 'light' ? 'true':'false');
-        document.querySelector('.logo').animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
-      });
-      themeSwitch.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); themeSwitch.click(); } });
-
-      /* ---------------------------
-         Init
-         --------------------------- */
-      discoverGames();
-
-      // keyboard arrow scroll for the grid
-      document.addEventListener('keydown', (e)=>{
-        if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA')) return;
-        if(e.key==='ArrowRight') gridEl.scrollBy({ left: 320, behavior:'smooth' });
-        if(e.key==='ArrowLeft') gridEl.scrollBy({ left: -320, behavior:'smooth' });
-      });
-    </script>
   </div>
 
-  <!-- LOGIN / APP glue script (functionality unchanged) -->
   <script>
+    /* ---------------------------
+       Config & fallback list
+       --------------------------- */
+    const OWNER = 'CalcSolver';
+    const REPO = 'Wii';
+    const API_ROOT = `https://api.github.com/repos/${OWNER}/${REPO}/contents/`;
+
+    const FALLBACK_GAMES = [
+      { title: "Pacman", file: "pacman.html", img: "images/pacman.jpg", categories:["Arcade"] },
+      { title: "Call of Duty 4", file: "COD4.html", img: "images/COD4.jpg", categories:["Shooter"] },
+      { title: "1942 Arcade", file: "1942.html", img: "images/1942.jpg", categories:["Arcade"] },
+      { title: "Zelda 2", file: "Zelda2.html", img: "images/Zelda2.jpg", categories:["Adventure"] },
+      { title: "Zelda: Link to Past", file: "Zeldalinktopast.html", img: "images/Zeldalinktopast.jpg", categories:["Adventure","RPG"] },
+      { title: "Mortal Kombat", file: "mortalkombat.html", img: "images/mortalkombat.jpg", categories:["Fighting"] },
+      { title: "Pokemon Emerald", file: "pokemonemerald.html", img: "images/pokemonemerald.jpg", categories:["RPG"] },
+      { title: "Smash Bros", file: "smashbros.html", img: "images/smashbros.jpg", categories:["Fighting"] },
+      { title: "Street Fighter 2", file: "streetfighter2.html", img: "images/streetfighter2.jpg", categories:["Fighting"] },
+      { title: "Super Mario World 2", file: "supermarioworld2.html", img: "images/supermarioworld2.jpg", categories:["Platformer"] },
+      { title: "Tennis", file: "tennis.html", img: "images/tennis.jpg", categories:["Sports"] },
+      { title: "Tony Hawk 2", file: "tonyhawk2.html", img: "images/tonyhawk2.jpg", categories:["Sports"] },
+      { title: "Winter Olympics", file: "winterolympics.html", img: "images/winterolympics.jpg", categories:["Sports"] },
+      { title: "Other Stuff", file: "otherstuff.html", img: "images/otherstuff.jpg", categories:["Misc"] }
+    ];
+
+    /* ---------------------------
+       DOM refs & state
+       --------------------------- */
+    const searchInput = document.getElementById('search');
+    const searchBtn = document.getElementById('searchBtn');
+    const categoriesEl = document.getElementById('categories');
+    const gridEl = document.getElementById('grid');
+    const player = document.getElementById('player');
+    const currentTitle = document.getElementById('current-title');
+    const currentSub = document.getElementById('current-sub');
+    const theater = document.getElementById('theater');
+    const overlay = document.getElementById('overlay');
+    const fsBtn = document.getElementById('fsBtn');
+    const status = document.getElementById('status');
+    const openEditor = document.getElementById('openEditor');
+
+    const editArea = document.getElementById('editArea');
+    const editor = document.getElementById('editor');
+    const editFilename = document.getElementById('edit-filename');
+    const editPath = document.getElementById('edit-path');
+    const previewBtn = document.getElementById('previewBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const commitBtn = document.getElementById('commitBtn');
+    const modal = document.getElementById('modal');
+    const inputToken = document.getElementById('input-token');
+    const inputMessage = document.getElementById('input-message');
+    const cancelCommit = document.getElementById('cancelCommit');
+    const doCommit = document.getElementById('doCommit');
+    const lastUpdated = document.getElementById('lastUpdated');
+
+    let games = [];
+    let filtered = [];
+    let categories = new Map();
+    let activeCategory = null;
+    let searchTerm = '';
+    let currentFile = null;
+    let editorContentSha = null;
+
+    /* ---------------------------
+       Utilities
+       --------------------------- */
+    function slugToTitle(name){
+      const base = (name||'').replace(/\.html?$/i,'').replace(/[-_]/g,' ');
+      return base.replace(/\b\w/g, c => c.toUpperCase());
+    }
+    function inferCategoriesFromName(name){
+      const lower = (name||'').toLowerCase();
+      const set = new Set();
+      if(/arcade|pacman|1942|super|mario|smash|street/i.test(lower)) set.add('Arcade');
+      if(/call of duty|cod|shooter|fps/i.test(lower)) set.add('Shooter');
+      if(/zelda|link|pokemon|rpg|emerald/i.test(lower)) { if(/pokemon|emerald/i.test(lower)) set.add('RPG'); else set.add('Adventure'); }
+      if(/mortal kombat|fighting|fighter|street fighter/i.test(lower)) set.add('Fighting');
+      if(/tennis|tony hawk|sports|olympics/i.test(lower)) set.add('Sports');
+      if(/other|misc|stuff/i.test(lower)) set.add('Misc');
+      if(set.size===0) set.add('Uncategorized');
+      return Array.from(set);
+    }
+    function setStatus(text){ if(status) status.textContent = text; }
+
+    /* ---------------------------
+       Render helpers
+       --------------------------- */
+    function buildCategories(){
+      categories.clear();
+      for(const g of games){
+        const cats = g.categories || inferCategoriesFromName(g.file || g.title || '');
+        for(const c of cats) categories.set(c, (categories.get(c)||0)+1);
+      }
+    }
+    function renderCategoryChips(){
+      categoriesEl.innerHTML = '';
+      const all = document.createElement('button'); all.className='chip' + (activeCategory===null ? ' active':''); all.textContent = `All (${games.length})`; all.onclick = ()=>{ activeCategory=null; applyFilters(); renderCategoryChips(); }; categoriesEl.appendChild(all);
+      const sorted = Array.from(categories.entries()).sort((a,b)=>b[1]-a[1]).map(x=>({name:x[0],count:x[1]}));
+      for(const c of sorted){
+        const el = document.createElement('button'); el.className='chip' + (activeCategory===c.name ? ' active' : ''); el.textContent = `${c.name} (${c.count})`; el.onclick = ()=>{ activeCategory = (activeCategory===c.name ? null : c.name); applyFilters(); renderCategoryChips(); }; categoriesEl.appendChild(el);
+      }
+    }
+
+    function makeCard(game){
+      const node = document.createElement('article');
+      node.className = 'card';
+      node.setAttribute('role','listitem');
+      node.title = game.title;
+
+      const thumb = document.createElement('div'); thumb.className = 'thumb';
+      const img = document.createElement('img');
+      img.src = game.img || `images/${(game.file||'').replace(/\.html?$/i,'.jpg')}`;
+      img.alt = game.title + ' screenshot';
+      img.setAttribute('onerror', "this.style.display='none'");
+      thumb.appendChild(img);
+      node.appendChild(thumb);
+
+      const placeholder = document.createElement('div'); placeholder.className='placeholder'; placeholder.innerText='Math Module';
+      node.appendChild(placeholder);
+
+      const play = document.createElement('div'); play.className='play-overlay'; play.innerText='▶';
+      node.appendChild(play);
+
+      const info = document.createElement('div'); info.className='info';
+      const label = document.createElement('div'); label.className='label'; label.innerText = game.title;
+      const meta = document.createElement('div'); meta.className='meta'; meta.innerText = (game.categories || []).join(', ') || 'Module';
+      info.appendChild(label); info.appendChild(meta);
+      node.appendChild(info);
+
+      // interactions
+      node.addEventListener('click', ()=> loadGame(game));
+      node.addEventListener('contextmenu', (e)=>{ e.preventDefault(); openEditorForGame(game); });
+
+      return node;
+    }
+
+    function renderGrid(){
+      gridEl.innerHTML = '';
+      if(filtered.length === 0){
+        const empty = document.createElement('div'); empty.className='meta'; empty.style.padding='18px'; empty.style.color='var(--muted)'; empty.innerText='No modules found'; gridEl.appendChild(empty); return;
+      }
+      for(const g of filtered) gridEl.appendChild(makeCard(g));
+    }
+
+    function applyFilters(){
+      const term = (searchTerm||'').toLowerCase();
+      filtered = games.filter(g=>{
+        if(activeCategory){
+          const cats = g.categories || inferCategoriesFromName(g.file || g.title || '');
+          if(!cats.includes(activeCategory)) return false;
+        }
+        if(!term) return true;
+        const hay = (g.title + ' ' + (g.file||'') + ' ' + (g.path||'')).toLowerCase();
+        return hay.includes(term);
+      });
+      renderGrid();
+    }
+
+    /* ---------------------------
+       Discover games (GitHub API) with fallback
+       --------------------------- */
+    async function discoverGames(){
+      setStatus('Discovering modules (live)…');
+      try {
+        const res = await fetch(API_ROOT, { headers: { Accept:'application/vnd.github.v3+json' }});
+        if(!res.ok) throw new Error(`API ${res.status}`);
+        const items = await res.json();
+        const htmlFiles = items.filter(i => i.type === 'file' && /\.html?$/i.test(i.name) && i.name.toLowerCase() !== 'index.html');
+        if(htmlFiles.length === 0) throw new Error('No HTML files discovered');
+        games = htmlFiles.map(i=>({
+          title: slugToTitle(i.name),
+          file: i.name, img: `images/${i.name.replace(/\.html?$/i,'.jpg')}`,
+          download_url: i.download_url, path: i.path, sha: i.sha,
+          categories: inferCategoriesFromName(i.name)
+        }));
+        setStatus(`Live: ${games.length} modules found`);
+      } catch(err){
+        console.warn('Live discover failed; using fallback', err);
+        games = FALLBACK_GAMES.map(g => ({ ...g }));
+        setStatus('Offline fallback: using packaged module list');
+      }
+      buildCategories();
+      renderCategoryChips();
+      applyFilters();
+      // initial load pacman if present
+      const initial = games.find(g=>/pacman\.html$/i.test(g.file)) || games[0];
+      if(initial) loadGame(initial);
+    }
+
+    /* ---------------------------
+       Load to player
+       --------------------------- */
+    function loadGame(game){
+      currentFile = game;
+      currentTitle.textContent = game.title;
+      currentSub.textContent = game.file || game.path || '';
+      // prefer local path
+      player.src = game.file || game.download_url || '';
+      overlay.classList.add('show');
+      setTimeout(()=> overlay.classList.remove('show'), 900);
+    }
+
+    /* ---------------------------
+       Editor functionality
+       --------------------------- */
+    async function fetchFileContent(game){
+      if(game.download_url){
+        const r = await fetch(game.download_url);
+        if(!r.ok) throw new Error(`Failed ${r.status}`);
+        const txt = await r.text();
+        return { content: txt, sha: game.sha || null };
+      }
+      const r2 = await fetch(game.file);
+      if(!r2.ok) throw new Error(`Local fetch failed ${r2.status}`);
+      const t2 = await r2.text();
+      return { content: t2, sha: null };
+    }
+
+    function openEditorForGame(game){
+      currentFile = game;
+      editArea.style.display = 'block';
+      editFilename.textContent = game.title;
+      if(editPath) editPath.textContent = game.path || game.file || '';
+      editor.value = '';
+      lastUpdated.textContent = '';
+      setStatus(`Loading ${game.file || game.path} for editing…`);
+      fetchFileContent(game).then(({content, sha})=>{
+        editor.value = content;
+        editorContentSha = sha || null;
+        lastUpdated.textContent = `Loaded ${new Date().toLocaleString()}`;
+        setStatus(`Editing ${game.title}`);
+      }).catch(err=>{
+        console.warn(err);
+        editor.value = `<!-- Could not fetch ${game.file || game.path}. Paste content here to create new file. -->\n`;
+        editorContentSha = null;
+        setStatus(`Editing (offline) ${game.title}`);
+      });
+    }
+
+    openEditor.addEventListener('click', ()=> {
+      if(currentFile) openEditorForGame(currentFile); else setStatus('Select a module first.');
+    });
+
+    previewBtn.addEventListener('click', ()=>{
+      const html = editor.value;
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      player.src = url;
+      setTimeout(()=> URL.revokeObjectURL(url), 1000*30);
+      setStatus('Previewing edits in player (temporary)');
+    });
+
+    downloadBtn.addEventListener('click', ()=>{
+      const text = editor.value;
+      const filename = currentFile?.file || 'untitled.html';
+      const blob = new Blob([text], { type: 'text/html' });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      setStatus(`Downloaded ${filename}`);
+    });
+
+    commitBtn.addEventListener('click', ()=>{
+      if(!currentFile || (!currentFile.path && !currentFile.file)){ setStatus('Select a repo file to commit.'); return; }
+      modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); inputToken.value=''; inputMessage.value=`Update ${currentFile.file || currentFile.path} via Mathspace`;
+    });
+
+    cancelCommit.addEventListener('click', ()=>{ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); });
+
+    doCommit.addEventListener('click', async ()=>{
+      const token = inputToken.value.trim();
+      const message = inputMessage.value.trim() || 'Update via Mathspace';
+      if(!token){ alert('A GitHub token is required to commit.'); return; }
+      modal.style.display='none'; modal.setAttribute('aria-hidden','true');
+      try {
+        setStatus('Committing to GitHub…');
+        const url = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${currentFile.path || currentFile.file}`;
+        let existingSha = currentFile.sha || null;
+        if(!existingSha){
+          const getR = await fetch(url, { headers:{ Authorization:`token ${token}`, Accept:'application/vnd.github.v3+json' }});
+          if(getR.ok){ const j = await getR.json(); existingSha = j.sha; }
+        }
+        const contentBase64 = btoa(unescape(encodeURIComponent(editor.value)));
+        const body = { message, content: contentBase64, committer: { name: "Mathspace Editor", email: "mathspace@example.com" } };
+        if(existingSha) body.sha = existingSha;
+        const putR = await fetch(url, { method:'PUT', headers:{ Authorization:`token ${token}`, 'Content-Type':'application/json', Accept:'application/vnd.github.v3+json' }, body: JSON.stringify(body) });
+        if(!putR.ok){ const t = await putR.text(); throw new Error(`Commit failed ${putR.status}: ${t}`); }
+        const res = await putR.json();
+        setStatus(`Committed ${currentFile.file || currentFile.path} (${res.commit?.sha?.slice(0,7)})`);
+        currentFile.sha = res.content?.sha || currentFile.sha;
+      } catch(err){ console.error(err); setStatus('Commit failed: ' + (err.message || err)); alert('Commit failed: ' + (err.message || err)); }
+    });
+
+    /* ---------------------------
+       Search, categories, UI bindings
+       --------------------------- */
+    let debounce;
+    searchInput.addEventListener('input', (e)=>{ searchTerm = e.target.value || ''; clearTimeout(debounce); debounce = setTimeout(()=> applyFilters(), 180); });
+    searchBtn.addEventListener('click', ()=> { searchTerm = searchInput.value || ''; applyFilters(); });
+
+    /* ---------------------------
+       Fullscreen and overlay
+       --------------------------- */
+    fsBtn.addEventListener('click', async ()=>{
+      try {
+        if(!document.fullscreenElement){ if(theater.requestFullscreen) await theater.requestFullscreen(); else if(theater.webkitRequestFullscreen) await theater.webkitRequestFullscreen(); else await player.requestFullscreen(); }
+        else await document.exitFullscreen();
+      } catch(e){ console.warn(e); }
+    });
+    theater.addEventListener('keydown', (e)=>{ if(e.key==='f' || e.key==='F'){ e.preventDefault(); fsBtn.click(); }});
+    document.addEventListener('fullscreenchange', ()=> overlay.setAttribute('aria-hidden', !!document.fullscreenElement ? 'true' : 'false'));
+    theater.addEventListener('mouseenter', ()=> overlay.classList.add('show'));
+    theater.addEventListener('mouseleave', ()=> overlay.classList.remove('show'));
+    theater.addEventListener('focusin', ()=> overlay.classList.add('show'));
+    theater.addEventListener('focusout', ()=> overlay.classList.remove('show'));
+
+    /* ---------------------------
+       Theme toggle
+       --------------------------- */
+    const themeSwitch = document.getElementById('themeSwitch');
+    const saved = localStorage.getItem('mathspace-theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', saved);
+    themeSwitch.setAttribute('aria-pressed', saved === 'light' ? 'true' : 'false');
+    themeSwitch.addEventListener('click', ()=> {
+      const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light':'dark';
+      const next = cur === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('mathspace-theme', next);
+      themeSwitch.setAttribute('aria-pressed', next === 'light' ? 'true':'false');
+      document.querySelector('.logo').animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:280,easing:'ease-out'});
+    });
+    themeSwitch.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); themeSwitch.click(); } });
+
+    /* ---------------------------
+       Init
+       --------------------------- */
+    discoverGames();
+
+    // keyboard arrow scroll for the grid
+    document.addEventListener('keydown', (e)=>{
+      if(e.target && (e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA')) return;
+      if(e.key==='ArrowRight') gridEl.scrollBy({ left: 320, behavior:'smooth' });
+      if(e.key==='ArrowLeft') gridEl.scrollBy({ left: -320, behavior:'smooth' });
+    });
+  </script>
+
+  <!-- LOGIN OVERLAY: minimal, unobtrusive, uses Mathspace tokens -->
+  <style id="mathspace-login-style">
+    /* overlay covers the app until login correct */
+    #mathspace-login {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: linear-gradient(180deg, rgba(3,6,10,0.55), rgba(3,6,10,0.65));
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+    #mathspace-login .card {
+      width: 420px;
+      max-width: calc(100% - 40px);
+      border-radius: 12px;
+      padding: 20px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    #mathspace-login .logo {
+      width:56px;height:56px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));font-family:var(--mono);font-weight:900;color:#04101a;font-size:20px;
+      flex: 0 0 56px;
+    }
+    #mathspace-login .col {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    #mathspace-login h2 { margin:0 0 6px 0; font-size:1.05rem; font-weight:900; }
+    #mathspace-login p { margin:0; color:var(--muted); font-size:0.9rem; }
+    #mathspace-login input[type="text"]{
+      width:100%; padding:10px 12px; margin-top:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text);
+      outline:none; font-size:15px;
+    }
+    #mathspace-login .row { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; }
+    #mathspace-login .btn { padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; border:0; }
+    #mathspace-login .btn.primary { background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#04101a; font-family:var(--mono); }
+    #mathspace-login .hint { color:var(--muted); font-size:13px; }
+    #mathspace-login .error { color:#ff7777; font-size:13px; display:none; margin-top:8px; }
+    @media (max-width:480px){ #mathspace-login .card{padding:14px} }
+  </style>
+
+  <div id="mathspace-login" role="dialog" aria-modal="true" aria-label="Mathspace sign-in">
+    <div class="card" role="document">
+      <div class="logo" aria-hidden="true">M</div>
+      <div class="col">
+        <h2>Mathspace</h2>
+        <p class="hint">Enter your username to continue</p>
+        <input id="ms-login-input" type="text" placeholder="Username" aria-label="Username (try 4567)" />
+        <div class="row">
+          <div class="hint">Hint: 4567</div>
+          <div style="display:flex;gap:8px">
+            <button id="ms-demo-btn" class="btn">Demo</button>
+            <button id="ms-login-btn" class="btn primary">Sign in</button>
+          </div>
+        </div>
+        <div id="ms-login-error" class="error">Username not recognized. Try 4567.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Minimal login behavior — overlay is independent and small.
     (function(){
-      const form = document.getElementById('loginForm');
-      const usernameInput = document.getElementById('username');
-      const errorEl = document.getElementById('error');
-      const demoBtn = document.getElementById('demoBtn');
-      const loginRoot = document.getElementById('loginRoot');
-      const mathspaceApp = document.getElementById('mathspaceApp');
+      const overlay = document.getElementById('mathspace-login');
+      const input = document.getElementById('ms-login-input');
+      const btn = document.getElementById('ms-login-btn');
+      const demo = document.getElementById('ms-demo-btn');
+      const err = document.getElementById('ms-login-error');
+
+      // Focus immediately
+      try { input.focus(); } catch(e){}
 
       function showError(msg){
-        errorEl.textContent = msg || 'Invalid username';
-        errorEl.style.display = 'block';
+        err.textContent = msg || 'Invalid username';
+        err.style.display = 'block';
       }
-      function hideError(){ errorEl.style.display = 'none'; }
+      function hideError(){ err.style.display = 'none'; }
 
-      form.addEventListener('submit', function(evt){
-        evt.preventDefault();
+      function unlock(){
+        // hide overlay
+        overlay.style.transition = 'opacity 200ms ease, transform 200ms ease';
+        overlay.style.opacity = '0';
+        overlay.style.transform = 'scale(0.995)';
+        setTimeout(()=> { overlay.remove(); }, 240);
+      }
+
+      btn.addEventListener('click', ()=>{
         hideError();
-        const val = (usernameInput.value || '').trim();
-        if(val === '4567'){
-          // Reveal the embedded Mathspace app in-page (no navigation)
-          loginRoot.style.opacity = '0';
-          loginRoot.style.transform = 'scale(0.98)';
-          setTimeout(()=> { loginRoot.style.display = 'none'; mathspaceApp.style.display = ''; }, 220);
-          // focus search for immediate use
-          setTimeout(()=> { const s = document.getElementById('search'); if(s) s.focus(); }, 300);
+        const v = (input.value || '').trim();
+        if(v === '4567'){
+          unlock();
         } else {
           showError('Username not recognized. Try 4567.');
         }
       });
 
-      // Quick demo button fills the username
-      demoBtn.addEventListener('click', ()=>{ usernameInput.value='4567'; usernameInput.focus(); });
-
-      // Allow Enter on input to submit
-      usernameInput.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter'){ e.preventDefault(); form.dispatchEvent(new Event('submit', {cancelable:true})); }
+      demo.addEventListener('click', ()=>{
+        input.value = '4567';
+        input.focus();
       });
 
-      // subtle entry animation
-      document.addEventListener('DOMContentLoaded', ()=>{
-        const card = document.querySelector('.login-card');
-        if(card){
-          card.animate([{opacity:0, transform:'translateY(8px)'},{opacity:1, transform:'translateY(0)'}], {duration:420,easing:'cubic-bezier(.2,.9,.3,1)'});
+      input.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){ e.preventDefault(); btn.click(); }
+      });
+
+      // allow pressing Escape to hide overlay in dev (optional)
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape' && input.value.trim() === '4567'){
+          unlock();
         }
       });
     })();
