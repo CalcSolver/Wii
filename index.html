@@ -115,7 +115,7 @@
     .play-overlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));display:grid;place-items:center;color:#04101a;font-family:var(--mono);font-weight:900;opacity:0;transition:opacity 180ms}
     .card:hover .play-overlay{opacity:1}
 
-    /* Editor UI (keeps prior functionality) */
+    /* editor UI */
     .editor-wrap{margin-top:12px;background:var(--card);border-radius:12px;padding:12px;border:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;flex-direction:column}
     .editor-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
     textarea.code{width:100%;height:300px;resize:vertical;background:linear-gradient(180deg, rgba(0,0,0,0.05), rgba(255,255,255,0.02));border-radius:8px;padding:12px;font-family:var(--mono);font-size:13px;color:var(--text);border:1px solid rgba(255,255,255,0.03)}
@@ -132,9 +132,96 @@
       .card{height:180px}
       textarea.code{height:220px}
     }
+
+    /* --- Login UI styles (uses structure from your supplied snippet) --- */
+    .fixed-header.fixed-header-login-page{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1100;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.12));
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      display: none; /* hidden on app view, shown while login overlay present */
+    }
+    .topbar-anonymous{display:flex;align-items:center;justify-content:space-between;max-width:1200px;margin:0 auto;width:100%}
+    .logo-container img{height:34px}
+    .join-class-link a{color:var(--accent-1);text-decoration:none;font-weight:700}
+
+    .login-page {
+      display: none; /* will show while overlay is active */
+      min-height: 100vh;
+      padding-top: 86px; /* leave space for header */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .login-inner {
+      width:100%;
+      max-width:720px;
+      margin: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,0.03);
+      padding: 28px;
+      box-shadow: var(--shadow);
+      display:flex;
+      gap:24px;
+      align-items:flex-start;
+    }
+    .login-left { flex: 1 1 320px; }
+    .login-right { width:320px; color:var(--muted); }
+
+    .login-h2 { margin:0 0 8px 0; font-size:1.25rem; font-weight:900; }
+    .form { margin-top:12px; }
+    .form-group { margin-bottom:12px; }
+    .form-control { width:100%; padding:12px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); background:var(--card); color:var(--text); font-size:15px; outline:none; }
+    .input-lg { font-size:15px; padding:14px 12px; }
+
+    .btn-lg { padding:12px 16px; border-radius:10px; font-weight:800; cursor:pointer; border:0; background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#04101a; font-family:var(--mono); width:100%; }
+    .btn-block { display:block; width:100%; }
+
+    .clever-login { display:block; text-align:center; padding:12px; border-radius:10px; background:linear-gradient(90deg,#2C98D7,#1A74C0); color:white; text-decoration:none; font-weight:800; }
+
+    /* Games iframe (snippet-prescribed) */
+    #game-iframe-container { display: none; padding: 40px 20px; text-align:center; }
+    #game-iframe { border: 3px solid #1ABC9C; border-radius: 12px; max-width: 1200px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+
+    /* Centered overlay to block the app until login */
+    #login-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      background: linear-gradient(180deg, rgba(3,6,10,0.55), rgba(3,6,10,0.65));
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+    }
+
+    @media (max-width:860px){
+      .login-inner { flex-direction: column; padding:18px; }
+      .login-right { width:100%; }
+      .login-left { width:100%; }
+    }
   </style>
 </head>
 <body>
+  <!-- Fixed header (matches your snippet) -->
+  <div class="fixed-header fixed-header-login-page" id="fixedHeader">
+    <nav class="topbar-anonymous">
+      <div class="logo-container">
+        <img alt="Mathspace" src="https://mathspace-production-static.mathspace.co/static/cache/b79f23b1077d57a50f6c10dc38374714cdd60f5b/img/core/mathspace.svg" style="height:34px;">
+      </div>
+      <div class="join-class-link">
+        <a href="#">Join class</a>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Original Mathspace app (unchanged) -->
   <header>
     <div class="brand">
       <div class="logo">M</div>
@@ -258,6 +345,7 @@
   <script>
     /* ---------------------------
        Config & fallback list
+       (unchanged app logic)
        --------------------------- */
     const OWNER = 'CalcSolver';
     const REPO = 'Wii';
@@ -599,124 +687,146 @@
     });
   </script>
 
-  <!-- LOGIN OVERLAY: minimal, unobtrusive, uses Mathspace tokens -->
-  <style id="mathspace-login-style">
-    /* overlay covers the app until login correct */
-    #mathspace-login {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      background: linear-gradient(180deg, rgba(3,6,10,0.55), rgba(3,6,10,0.65));
-      -webkit-backdrop-filter: blur(6px);
-      backdrop-filter: blur(6px);
-    }
-    #mathspace-login .card {
-      width: 420px;
-      max-width: calc(100% - 40px);
-      border-radius: 12px;
-      padding: 20px;
-      background: var(--card);
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: var(--shadow);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-    #mathspace-login .logo {
-      width:56px;height:56px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent-1),var(--accent-2));font-family:var(--mono);font-weight:900;color:#04101a;font-size:20px;
-      flex: 0 0 56px;
-    }
-    #mathspace-login .col {
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-    #mathspace-login h2 { margin:0 0 6px 0; font-size:1.05rem; font-weight:900; }
-    #mathspace-login p { margin:0; color:var(--muted); font-size:0.9rem; }
-    #mathspace-login input[type="text"]{
-      width:100%; padding:10px 12px; margin-top:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background:transparent; color:var(--text);
-      outline:none; font-size:15px;
-    }
-    #mathspace-login .row { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; }
-    #mathspace-login .btn { padding:8px 12px; border-radius:10px; font-weight:800; cursor:pointer; border:0; }
-    #mathspace-login .btn.primary { background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#04101a; font-family:var(--mono); }
-    #mathspace-login .hint { color:var(--muted); font-size:13px; }
-    #mathspace-login .error { color:#ff7777; font-size:13px; display:none; margin-top:8px; }
-    @media (max-width:480px){ #mathspace-login .card{padding:14px} }
-  </style>
+  <!-- LOGIN OVERLAY (reworked to match the snippet you provided) -->
+  <div id="login-overlay" role="dialog" aria-modal="true" aria-label="Mathspace sign-in">
+    <div class="login-inner" role="document">
+      <div class="login-left">
+        <h2 class="login-h2">Login</h2>
 
-  <div id="mathspace-login" role="dialog" aria-modal="true" aria-label="Mathspace sign-in">
-    <div class="card" role="document">
-      <div class="logo" aria-hidden="true">M</div>
-      <div class="col">
-        <h2>Mathspace</h2>
-        <p class="hint">Enter your username to continue</p>
-        <input id="ms-login-input" type="text" placeholder="Username" aria-label="Username (try 4567)" />
-        <div class="row">
-          <div class="hint">Hint: 4567</div>
-          <div style="display:flex;gap:8px">
-            <button id="ms-demo-btn" class="btn">Demo</button>
-            <button id="ms-login-btn" class="btn primary">Sign in</button>
-          </div>
+        <div class="form">
+          <form id="login-form" novalidate>
+            <div class="form-group">
+              <input type="text" id="id_username" class="form-control input-lg" placeholder="Username or Email" required autocomplete="off" />
+            </div>
+
+            <div id="password-group" class="form-group" style="display: none;">
+              <input type="password" id="id_password" class="form-control input-lg" placeholder="Password" />
+            </div>
+
+            <div class="form-group">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <label style="display:flex;align-items:center;gap:8px;">
+                  <input type="checkbox" id="remember_me"> <span style="color:var(--muted);font-size:13px">Remember me</span>
+                </label>
+                <div>
+                  <a href="#" class="forgot-pw" style="color:var(--accent-1);text-decoration:none;font-weight:700">Forgot password</a>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn btn-lg btn-block btn-primary btn-block">
+              Continue
+            </button>
+          </form>
         </div>
-        <div id="ms-login-error" class="error">Username not recognized. Try 4567.</div>
+
+        <div style="margin-top:12px;">
+          <a href="#" id="clever-login" class="clever-login" style="display:inline-block">Sign in with Clever</a>
+        </div>
+
+        <div id="login-error" class="meta" style="color:#ff7777;margin-top:10px;display:none">Invalid credentials</div>
+      </div>
+
+      <div class="login-right">
+        <div style="font-weight:900;font-size:1.05rem;margin-bottom:8px">Welcome to Mathspace</div>
+        <div style="color:var(--muted);margin-bottom:16px">Sign in to access the arcade player, editor, and module library.</div>
+
+        <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.03);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.04));padding:10px">
+          <img src="images/pacman.jpg" alt="preview" style="width:100%;height:120px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'">
+          <div style="margin-top:8px;color:var(--muted)">Available modules will appear after login if present in the repo.</div>
+        </div>
+
+        <div style="margin-top:12px; font-size:13px; color:var(--muted)">
+          Place games (e.g. pacman.html) and images beside this index.html. The app discovers them automatically.
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
-    // Minimal login behavior — overlay is independent and small.
-    (function(){
-      const overlay = document.getElementById('mathspace-login');
-      const input = document.getElementById('ms-login-input');
-      const btn = document.getElementById('ms-login-btn');
-      const demo = document.getElementById('ms-demo-btn');
-      const err = document.getElementById('ms-login-error');
+  <!-- Optional games iframe container (matches snippet but hidden by default) -->
+  <div id="game-iframe-container" style="display:none; padding: 40px 20px; text-align:center;">
+    <h2 style="color: #1ABC9C; margin-bottom: 20px;">Welcome! Loading Games...</h2>
+    <iframe id="game-iframe" width="100%" height="760px" allowfullscreen></iframe>
+    <br><br>
+    <button onclick="backToLogin()" class="btn btn-primary" style="width: auto; padding: 12px 30px;">
+      ← Back to Login
+    </button>
+  </div>
 
-      // Focus immediately
-      try { input.focus(); } catch(e){}
+  <script>
+    // Login behavior:
+    // - First submit reveals password if password group is hidden and username != '4567'
+    // - If username === '4567' the overlay is removed and app becomes usable (no navigation)
+    // - Clever sign-in button fills 4567 and submits
+    (function(){
+      const overlay = document.getElementById('login-overlay');
+      const fixedHeader = document.getElementById('fixedHeader');
+      const username = document.getElementById('id_username');
+      const passwordGroup = document.getElementById('password-group');
+      const password = document.getElementById('id_password');
+      const form = document.getElementById('login-form');
+      const error = document.getElementById('login-error');
+      const clever = document.getElementById('clever-login');
+
+      // Show the fixed header and login-page-like header while overlay is active
+      fixedHeader.style.display = '';
 
       function showError(msg){
-        err.textContent = msg || 'Invalid username';
-        err.style.display = 'block';
+        error.textContent = msg || 'Invalid credentials';
+        error.style.display = 'block';
       }
-      function hideError(){ err.style.display = 'none'; }
+      function hideError(){ error.style.display = 'none'; }
 
-      function unlock(){
-        // hide overlay
-        overlay.style.transition = 'opacity 200ms ease, transform 200ms ease';
-        overlay.style.opacity = '0';
-        overlay.style.transform = 'scale(0.995)';
-        setTimeout(()=> { overlay.remove(); }, 240);
+      function unlockUI(){
+        // remove overlay and header helper
+        if(overlay) overlay.remove();
+        if(fixedHeader) fixedHeader.remove();
+        // focus search input in app if available
+        setTimeout(()=> { const s = document.getElementById('search'); if(s) s.focus(); }, 120);
       }
 
-      btn.addEventListener('click', ()=>{
+      form.addEventListener('submit', function(evt){
+        evt.preventDefault();
         hideError();
-        const v = (input.value || '').trim();
-        if(v === '4567'){
-          unlock();
-        } else {
-          showError('Username not recognized. Try 4567.');
+        const userVal = (username.value || '').trim();
+        const pwVisible = window.getComputedStyle(passwordGroup).display !== 'none';
+        // If correct username, unlock immediately
+        if(userVal === '4567'){
+          unlockUI();
+          return;
+        }
+        // If password not shown yet, reveal password field
+        if(!pwVisible){
+          passwordGroup.style.display = '';
+          password.focus();
+          return;
+        }
+        // If password shown and username incorrect, show error (no remote auth)
+        showError('Username not recognized. Try 4567.');
+      });
+
+      // Clever sign-in: emulate filling username and submit
+      clever.addEventListener('click', function(evt){
+        evt.preventDefault();
+        username.value = '4567';
+        form.dispatchEvent(new Event('submit', {cancelable:true}));
+      });
+
+      // Demo: allow pressing Esc to dismiss (dev only)
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape'){
+          // keep behavior safe: only dismiss if username is 4567
+          if((username.value || '').trim() === '4567') unlockUI();
         }
       });
 
-      demo.addEventListener('click', ()=>{
-        input.value = '4567';
-        input.focus();
-      });
-
-      input.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter'){ e.preventDefault(); btn.click(); }
-      });
-
-      // allow pressing Escape to hide overlay in dev (optional)
-      document.addEventListener('keydown', (e)=>{
-        if(e.key === 'Escape' && input.value.trim() === '4567'){
-          unlock();
-        }
-      });
+      // Expose backToLogin for the iframe area (unused by default)
+      window.backToLogin = function(){
+        // show overlay again
+        document.body.appendChild(overlay);
+        fixedHeader.style.display = '';
+        document.getElementById('game-iframe-container').style.display = 'none';
+      };
     })();
   </script>
 </body>
