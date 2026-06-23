@@ -49,10 +49,11 @@
     .theater iframe { width: 100%; height: 100%; border: none; }
 
     .overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85));
+      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
       padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
+      z-index: 10;
     }
-    .theater:hover .overlay { opacity: 1; }
+    .theater:hover .overlay, .theater:active .overlay { opacity: 1; }
 
     .grid {
       display: grid;
@@ -94,7 +95,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Base64 + URL icons supported • Click Refresh after adding new files</p>
+          <p>Icons from Icon/ folder • Click Refresh after adding new files</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -106,7 +107,7 @@
             <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
             <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
           </div>
-          <button id="fsBtn" style="padding:10px 20px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
             ⛶ Fullscreen
           </button>
         </div>
@@ -146,9 +147,9 @@
         if (res.ok) {
           let content = await res.text();
           content = content.trim();
-          
-          if (content.startsWith('data:image')) return content;
-          if (content.startsWith('http')) return content;
+          if (content.startsWith('data:image') || content.startsWith('http')) {
+            return content;
+          }
         }
       } catch (e) {}
       return 'https://picsum.photos/id/180/300/200';
@@ -180,10 +181,11 @@
     }
 
     async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1; padding:60px; text-align:center; color:var(--muted);">Loading games...</div>';
+      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games from repository...</div>';
 
       try {
-        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`);
+        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('API error');
         const items = await res.json();
 
         games = items
@@ -196,11 +198,7 @@
 
       } catch (e) {
         console.error(e);
-        games = [
-          { title: "Among Us", file: "Amongus.html", categories: ["Arcade"] },
-          { title: "Bloxorz", file: "Bloxorz.html", categories: ["Arcade"] },
-          { title: "Backrooms", file: "Backrooms.html", categories: ["Horror"] }
-        ];
+        games = games.length ? games : [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
       }
 
       filtered = [...games];
@@ -213,11 +211,10 @@
       const n = name.toLowerCase();
       if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942/.test(n)) return ["Arcade"];
       if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
-      if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
       return ["Classic"];
     }
 
-    function renderCategories() {
+    function renderCategories() { /* same as previous */ 
       categoriesEl.innerHTML = '';
       const all = document.createElement('div');
       all.className = `chip ${activeCategory===null ? 'active' : ''}`;
@@ -230,11 +227,7 @@
         const el = document.createElement('div');
         el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
         el.textContent = cat;
-        el.onclick = () => {
-          activeCategory = activeCategory === cat ? null : cat;
-          renderCategories();
-          applyFilters();
-        };
+        el.onclick = () => { activeCategory = activeCategory === cat ? null : cat; renderCategories(); applyFilters(); };
         categoriesEl.appendChild(el);
       });
     }
@@ -261,14 +254,20 @@
     document.getElementById('searchBtn').addEventListener('click', applyFilters);
     document.getElementById('refreshBtn').addEventListener('click', discoverGames);
 
-    // Fullscreen Button
-    document.getElementById('fsBtn').addEventListener('click', () => {
+    // Fullscreen
+    const fsBtn = document.getElementById('fsBtn');
+    fsBtn.addEventListener('click', () => {
       if (!document.fullscreenElement) {
-        theater.requestFullscreen().catch(() => {});
+        theater.requestFullscreen();
       } else {
         document.exitFullscreen();
       }
     });
+
+    // Prevent accidental exit on swipe (mobile)
+    theater.addEventListener('touchmove', (e) => {
+      if (document.fullscreenElement) e.stopPropagation();
+    }, { passive: false });
 
     // Start
     discoverGames();
