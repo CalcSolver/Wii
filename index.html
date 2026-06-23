@@ -26,7 +26,7 @@
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
     .octo-logo { width: 42px; height: 42px; background: #fff; border-radius: 50%; display: grid; place-items: center; font-size: 28px; }
 
-    .search-hero { display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 6px; padding: 6px; }
+    .search-hero { display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 6px; padding: 6px; min-width: 380px; }
     .search-input { background: transparent; border: none; color: var(--text-light); padding: 8px 12px; flex: 1; outline: none; }
     .search-btn { background: var(--github-green); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; }
 
@@ -59,10 +59,10 @@
     }
     .card {
       background: var(--card); border: 1px solid var(--github-border); border-radius: 10px;
-      overflow: hidden; cursor: pointer; transition: all 0.25s;
+      overflow: hidden; cursor: pointer; transition: all 0.25s; height: 260px;
     }
     .card:hover { transform: translateY(-8px); border-color: var(--github-green); }
-    .card .thumb { height: 170px; position: relative; }
+    .card .thumb { height: 170px; position: relative; overflow: hidden; }
     .card img { width: 100%; height: 100%; object-fit: cover; }
     .play-overlay {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
@@ -89,7 +89,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Fast loading via jsDelivr • Right-click any game to edit</p>
+          <p>Using raw.githack for reliable loading • Icons from <code>Icon/</code> folder</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -116,7 +116,10 @@
     const OWNER = 'CalcSolver';
     const REPO = 'Wii';
     const BRANCH = 'main';
-    const JSD = `https://cdn.jsdelivr.net/gh/${OWNER}/${REPO}@${BRANCH}`;
+
+    // raw.githack for better game loading (especially HTML/JS games)
+    const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
+    const ICON_BASE = `${RAW_BASE}/Icon`;   // ← Icons in Icon/ folder
 
     let games = [];
     let filtered = [];
@@ -130,11 +133,11 @@
     const player = document.getElementById('player');
     const currentTitle = document.getElementById('current-title');
     const currentSub = document.getElementById('current-sub');
+    const theater = document.getElementById('theater');
 
     function getIconUrl(file) {
-      const baseName = file.replace(/\.html?$/i, '');
-      // Try .icon first (you already have some like 1942.icon)
-      return `${JSD}/${baseName}.icon`;
+      const base = file.replace(/\.html?$/i, '');
+      return `${ICON_BASE}/${base}.icon`;   // e.g. Icon/pacman.icon
     }
 
     function makeCard(game) {
@@ -152,7 +155,7 @@
         </div>
       `;
       card.onclick = () => loadGame(game);
-      card.oncontextmenu = (e) => { e.preventDefault(); alert('Editor coming soon!'); };
+      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click editor coming soon'); };
       return card;
     }
 
@@ -160,7 +163,9 @@
       currentGame = game;
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
-      player.src = `${JSD}/${game.file}`;
+      
+      // Use raw.githack for the actual game
+      player.src = `${RAW_BASE}/${game.file}`;
     }
 
     async function discoverGames() {
@@ -177,26 +182,54 @@
           }));
 
       } catch (e) {
-        console.log("Using fallback");
         games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
       }
 
       renderCategories();
-      filtered = games;
+      filtered = [...games];
       renderGrid();
       if (games.length) loadGame(games[0]);
     }
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/gunspin|slope|run|vex/.test(n)) return ["Arcade"];
+      if (/gunspin|slope|run|vex|pacman|1942/.test(n)) return ["Arcade"];
       if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
       if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
       return ["Classic"];
     }
 
-    function renderCategories() { /* same as before */ 
-      // (omitted for brevity - same logic)
+    function renderCategories() {
+      categoriesEl.innerHTML = '';
+      const all = document.createElement('div');
+      all.className = `chip ${activeCategory===null?'active':''}`;
+      all.textContent = `All (${games.length})`;
+      all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
+      categoriesEl.appendChild(all);
+
+      // Simple category rendering
+      const catSet = new Set();
+      games.forEach(g => g.categories.forEach(c => catSet.add(c)));
+      catSet.forEach(cat => {
+        const el = document.createElement('div');
+        el.className = `chip ${activeCategory===cat?'active':''}`;
+        el.textContent = cat;
+        el.onclick = () => {
+          activeCategory = activeCategory === cat ? null : cat;
+          renderCategories();
+          applyFilters();
+        };
+        categoriesEl.appendChild(el);
+      });
+    }
+
+    function applyFilters() {
+      const term = searchTerm.toLowerCase();
+      filtered = games.filter(g => {
+        if (activeCategory && !g.categories.includes(activeCategory)) return false;
+        return !term || g.title.toLowerCase().includes(term);
+      });
+      renderGrid();
     }
 
     function renderGrid() {
@@ -204,13 +237,16 @@
       filtered.forEach(g => gridEl.appendChild(makeCard(g)));
     }
 
-    // Search
     searchInput.addEventListener('input', () => {
-      searchTerm = searchInput.value.toLowerCase();
-      filtered = games.filter(g => g.title.toLowerCase().includes(searchTerm));
-      renderGrid();
+      searchTerm = searchInput.value;
+      applyFilters();
     });
 
+    document.getElementById('fsBtn').addEventListener('click', () => {
+      if (theater.requestFullscreen) theater.requestFullscreen();
+    });
+
+    // Start
     discoverGames();
   </script>
 </body>
