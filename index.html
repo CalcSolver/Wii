@@ -89,7 +89,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Icons loaded from <strong>Icon/</strong> folder • Games via raw.githack</p>
+          <p>Icons from <strong>Icon/</strong> folder (URL files)</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -118,7 +118,7 @@
     const BRANCH = 'main';
 
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
-    const ICON_BASE = `${RAW_BASE}/Icon`;   // Icon/pacman.icon
+    const ICON_BASE = `${RAW_BASE}/Icon`;
 
     let games = [];
     let filtered = [];
@@ -134,17 +134,31 @@
     const currentSub = document.getElementById('current-sub');
     const theater = document.getElementById('theater');
 
-    function getIconUrl(file) {
+    // Fetch the .icon file content (which contains the image URL)
+    async function getIconUrl(file) {
       const baseName = file.replace(/\.html?$/i, '');
-      return `${ICON_BASE}/${baseName}.icon`;   // Example: https://raw.githack.com/CalcSolver/Wii/main/Icon/1942.icon
+      const iconUrl = `${ICON_BASE}/${baseName}.icon`;
+      
+      try {
+        const res = await fetch(iconUrl);
+        if (res.ok) {
+          const text = await res.text();
+          return text.trim();   // This should be your Google/image link
+        }
+      } catch (e) {}
+      
+      return 'https://picsum.photos/id/180/300/200'; // fallback
     }
 
-    function makeCard(game) {
+    async function makeCard(game) {
       const card = document.createElement('div');
       card.className = 'card';
+      
+      const imgSrc = await getIconUrl(game.file);
+      
       card.innerHTML = `
         <div class="thumb">
-          <img src="${getIconUrl(game.file)}" alt="${game.title}" 
+          <img src="${imgSrc}" alt="${game.title}" 
                onerror="this.src='https://picsum.photos/id/180/300/200'">
           <div class="play-overlay">▶</div>
         </div>
@@ -187,8 +201,7 @@
       }
 
       renderCategories();
-      filtered = [...games];
-      renderGrid();
+      await renderGrid();
       if (games.length) loadGame(games[0]);
     }
 
@@ -222,6 +235,14 @@
       });
     }
 
+    async function renderGrid() {
+      gridEl.innerHTML = '';
+      for (const g of filtered) {
+        const card = await makeCard(g);
+        gridEl.appendChild(card);
+      }
+    }
+
     function applyFilters() {
       const term = searchTerm.toLowerCase();
       filtered = games.filter(g => {
@@ -229,11 +250,6 @@
         return !term || g.title.toLowerCase().includes(term);
       });
       renderGrid();
-    }
-
-    function renderGrid() {
-      gridEl.innerHTML = '';
-      filtered.forEach(g => gridEl.appendChild(makeCard(g)));
     }
 
     searchInput.addEventListener('input', () => {
@@ -245,7 +261,7 @@
       theater.requestFullscreen();
     });
 
-    // Start the app
+    // Start
     discoverGames();
   </script>
 </body>
