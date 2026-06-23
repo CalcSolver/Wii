@@ -89,7 +89,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Using raw.githack for reliable loading • Icons from <code>Icon/</code> folder</p>
+          <p>Games via raw.githack • Icons from <strong>Icon/</strong> folder</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -117,9 +117,8 @@
     const REPO = 'Wii';
     const BRANCH = 'main';
 
-    // raw.githack for better game loading (especially HTML/JS games)
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
-    const ICON_BASE = `${RAW_BASE}/Icon`;   // ← Icons in Icon/ folder
+    const ICON_BASE = `${RAW_BASE}/Icon`;   // Icons folder
 
     let games = [];
     let filtered = [];
@@ -135,9 +134,10 @@
     const currentSub = document.getElementById('current-sub');
     const theater = document.getElementById('theater');
 
+    // Get icon from Icon/ folder: Icon/pacman.icon
     function getIconUrl(file) {
-      const base = file.replace(/\.html?$/i, '');
-      return `${ICON_BASE}/${base}.icon`;   // e.g. Icon/pacman.icon
+      const baseName = file.replace(/\.html?$/i, '');
+      return `${ICON_BASE}/${baseName}.icon`;
     }
 
     function makeCard(game) {
@@ -155,7 +155,7 @@
         </div>
       `;
       card.onclick = () => loadGame(game);
-      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click editor coming soon'); };
+      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click for editor coming soon'); };
       return card;
     }
 
@@ -163,8 +163,6 @@
       currentGame = game;
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
-      
-      // Use raw.githack for the actual game
       player.src = `${RAW_BASE}/${game.file}`;
     }
 
@@ -182,7 +180,10 @@
           }));
 
       } catch (e) {
-        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
+        games = [
+          { title: "Pac-Man", file: "pacman.html", categories: ["Arcade"] },
+          { title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }
+        ];
       }
 
       renderCategories();
@@ -193,9 +194,9 @@
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/gunspin|slope|run|vex|pacman|1942/.test(n)) return ["Arcade"];
-      if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
+      if (/pacman|1942|gunspin|slope|run/.test(n)) return ["Arcade"];
       if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
+      if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
       return ["Classic"];
     }
 
@@ -207,9 +208,7 @@
       all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
       categoriesEl.appendChild(all);
 
-      // Simple category rendering
-      const catSet = new Set();
-      games.forEach(g => g.categories.forEach(c => catSet.add(c)));
+      const catSet = new Set(games.flatMap(g => g.categories));
       catSet.forEach(cat => {
         const el = document.createElement('div');
         el.className = `chip ${activeCategory===cat?'active':''}`;
@@ -246,7 +245,7 @@
       if (theater.requestFullscreen) theater.requestFullscreen();
     });
 
-    // Start
+    // Initialize
     discoverGames();
   </script>
 </body>
