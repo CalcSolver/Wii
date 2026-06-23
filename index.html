@@ -89,7 +89,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Games via raw.githack • Icons from <strong>Icon/</strong> folder</p>
+          <p>Icons loaded from <strong>Icon/</strong> folder • Games via raw.githack</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -118,7 +118,7 @@
     const BRANCH = 'main';
 
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
-    const ICON_BASE = `${RAW_BASE}/Icon`;   // Icons folder
+    const ICON_BASE = `${RAW_BASE}/Icon`;   // Icon/pacman.icon
 
     let games = [];
     let filtered = [];
@@ -134,10 +134,9 @@
     const currentSub = document.getElementById('current-sub');
     const theater = document.getElementById('theater');
 
-    // Get icon from Icon/ folder: Icon/pacman.icon
     function getIconUrl(file) {
       const baseName = file.replace(/\.html?$/i, '');
-      return `${ICON_BASE}/${baseName}.icon`;
+      return `${ICON_BASE}/${baseName}.icon`;   // Example: https://raw.githack.com/CalcSolver/Wii/main/Icon/1942.icon
     }
 
     function makeCard(game) {
@@ -155,7 +154,7 @@
         </div>
       `;
       card.onclick = () => loadGame(game);
-      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click for editor coming soon'); };
+      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click editor coming soon'); };
       return card;
     }
 
@@ -182,6 +181,7 @@
       } catch (e) {
         games = [
           { title: "Pac-Man", file: "pacman.html", categories: ["Arcade"] },
+          { title: "1942", file: "1942.html", categories: ["Arcade"] },
           { title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }
         ];
       }
@@ -194,9 +194,9 @@
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/pacman|1942|gunspin|slope|run/.test(n)) return ["Arcade"];
+      if (/pacman|1942|gunspin|slope|run|vex/.test(n)) return ["Arcade"];
       if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
-      if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
+      if (/fnaf|granny/.test(n)) return ["Horror"];
       return ["Classic"];
     }
 
@@ -242,10 +242,10 @@
     });
 
     document.getElementById('fsBtn').addEventListener('click', () => {
-      if (theater.requestFullscreen) theater.requestFullscreen();
+      theater.requestFullscreen();
     });
 
-    // Initialize
+    // Start the app
     discoverGames();
   </script>
 </body>
