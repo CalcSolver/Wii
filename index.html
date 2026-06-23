@@ -42,16 +42,6 @@
     }
     .chip.active, .chip:hover { background: var(--github-green); color: white; }
 
-    .featured { display: grid; grid-template-columns: 1fr 340px; gap: 24px; margin-bottom: 40px; }
-    .theater { background: #000; border-radius: 12px; overflow: hidden; position: relative; aspect-ratio: 16/9; border: 1px solid var(--github-border); }
-    .theater iframe { width: 100%; height: 100%; border: none; }
-
-    .overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      padding: 20px; opacity: 0; transition: 0.3s; display: flex; justify-content: space-between; align-items: flex-end;
-    }
-    .theater:hover .overlay { opacity: 1; }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -78,9 +68,12 @@
       <div class="octo-logo">🐙</div>
       <div><h1>OctoArcade</h1><p>GitHub Gaming</p></div>
     </a>
-    <div class="search-hero">
-      <input id="search" class="search-input" placeholder="Search games..." />
-      <button id="searchBtn" class="search-btn">Search</button>
+    <div style="display:flex; gap:12px; align-items:center">
+      <div class="search-hero">
+        <input id="search" class="search-input" placeholder="Search games..." />
+        <button id="searchBtn" class="search-btn">Search</button>
+      </div>
+      <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻ Refresh</button>
     </div>
   </header>
 
@@ -89,22 +82,13 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Icons from <strong>Icon/</strong> folder (URL files)</p>
+          <p>Icons from <strong>Icon/</strong> folder • Games load automatically</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
 
-      <div class="featured">
-        <div class="theater" id="theater">
-          <iframe id="player" allowfullscreen></iframe>
-          <div class="overlay">
-            <div>
-              <div id="current-title" style="font-size:1.4rem;font-weight:700"></div>
-              <div id="current-sub" style="color:var(--muted)"></div>
-            </div>
-            <button id="fsBtn" style="padding:10px 20px;background:var(--github-green);color:white;border:none;border-radius:6px;cursor:pointer">Fullscreen</button>
-          </div>
-        </div>
+      <div id="theater" style="margin-bottom:30px; background:#000; border-radius:12px; overflow:hidden; aspect-ratio:16/9; border:1px solid var(--github-border);">
+        <iframe id="player" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>
       </div>
 
       <h3>Available Games</h3>
@@ -130,36 +114,26 @@
     const gridEl = document.getElementById('grid');
     const categoriesEl = document.getElementById('categories');
     const player = document.getElementById('player');
-    const currentTitle = document.getElementById('current-title');
-    const currentSub = document.getElementById('current-sub');
-    const theater = document.getElementById('theater');
 
-    // Fetch the .icon file content (which contains the image URL)
     async function getIconUrl(file) {
       const baseName = file.replace(/\.html?$/i, '');
-      const iconUrl = `${ICON_BASE}/${baseName}.icon`;
-      
       try {
-        const res = await fetch(iconUrl);
+        const res = await fetch(`${ICON_BASE}/${baseName}.icon`);
         if (res.ok) {
-          const text = await res.text();
-          return text.trim();   // This should be your Google/image link
+          const url = await res.text();
+          return url.trim();
         }
       } catch (e) {}
-      
-      return 'https://picsum.photos/id/180/300/200'; // fallback
+      return 'https://picsum.photos/id/180/300/200';
     }
 
     async function makeCard(game) {
+      const imgSrc = await getIconUrl(game.file);
       const card = document.createElement('div');
       card.className = 'card';
-      
-      const imgSrc = await getIconUrl(game.file);
-      
       card.innerHTML = `
         <div class="thumb">
-          <img src="${imgSrc}" alt="${game.title}" 
-               onerror="this.src='https://picsum.photos/id/180/300/200'">
+          <img src="${imgSrc}" alt="${game.title}" onerror="this.src='https://picsum.photos/id/180/300/200'">
           <div class="play-overlay">▶</div>
         </div>
         <div style="padding:14px">
@@ -168,18 +142,21 @@
         </div>
       `;
       card.onclick = () => loadGame(game);
-      card.oncontextmenu = (e) => { e.preventDefault(); alert('Right-click editor coming soon'); };
       return card;
     }
 
     function loadGame(game) {
       currentGame = game;
-      currentTitle.textContent = game.title;
-      currentSub.textContent = game.file;
       player.src = `${RAW_BASE}/${game.file}`;
     }
 
     async function discoverGames() {
+      const status = document.createElement('div');
+      status.style.margin = "10px 0";
+      status.textContent = "Loading games...";
+      gridEl.innerHTML = '';
+      gridEl.appendChild(status);
+
       try {
         const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`);
         const items = await res.json();
@@ -193,13 +170,11 @@
           }));
 
       } catch (e) {
-        games = [
-          { title: "Pac-Man", file: "pacman.html", categories: ["Arcade"] },
-          { title: "1942", file: "1942.html", categories: ["Arcade"] },
-          { title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }
-        ];
+        console.error(e);
+        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
       }
 
+      filtered = [...games];
       renderCategories();
       await renderGrid();
       if (games.length) loadGame(games[0]);
@@ -207,16 +182,17 @@
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/pacman|1942|gunspin|slope|run|vex/.test(n)) return ["Arcade"];
+      if (/amongus|pacman|1942|gunspin|slope/.test(n)) return ["Arcade"];
       if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
-      if (/fnaf|granny/.test(n)) return ["Horror"];
+      if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
       return ["Classic"];
     }
 
     function renderCategories() {
       categoriesEl.innerHTML = '';
+      // All
       const all = document.createElement('div');
-      all.className = `chip ${activeCategory===null?'active':''}`;
+      all.className = `chip ${activeCategory===null ? 'active' : ''}`;
       all.textContent = `All (${games.length})`;
       all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
       categoriesEl.appendChild(all);
@@ -224,7 +200,7 @@
       const catSet = new Set(games.flatMap(g => g.categories));
       catSet.forEach(cat => {
         const el = document.createElement('div');
-        el.className = `chip ${activeCategory===cat?'active':''}`;
+        el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
         el.textContent = cat;
         el.onclick = () => {
           activeCategory = activeCategory === cat ? null : cat;
@@ -237,8 +213,8 @@
 
     async function renderGrid() {
       gridEl.innerHTML = '';
-      for (const g of filtered) {
-        const card = await makeCard(g);
+      for (const game of filtered) {
+        const card = await makeCard(game);
         gridEl.appendChild(card);
       }
     }
@@ -247,21 +223,22 @@
       const term = searchTerm.toLowerCase();
       filtered = games.filter(g => {
         if (activeCategory && !g.categories.includes(activeCategory)) return false;
-        return !term || g.title.toLowerCase().includes(term);
+        return !term || g.title.toLowerCase().includes(term) || g.file.toLowerCase().includes(term);
       });
       renderGrid();
     }
 
+    // Event Listeners
     searchInput.addEventListener('input', () => {
       searchTerm = searchInput.value;
       applyFilters();
     });
 
-    document.getElementById('fsBtn').addEventListener('click', () => {
-      theater.requestFullscreen();
-    });
+    document.getElementById('searchBtn').addEventListener('click', () => applyFilters());
 
-    // Start
+    document.getElementById('refreshBtn').addEventListener('click', discoverGames);
+
+    // Initial load
     discoverGames();
   </script>
 </body>
