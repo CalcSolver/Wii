@@ -183,7 +183,6 @@
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
       
-      // Force reload the iframe with correct game
       player.src = ''; 
       setTimeout(() => {
         player.src = `${RAW_BASE}/${game.file}`;
@@ -195,10 +194,11 @@
 
       try {
         const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('API failed');
+        
         const items = await res.json();
-
         games = items
-          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name))
+          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name) && i.name !== 'index.html')
           .map(i => ({
             title: i.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
             file: i.name,
@@ -206,18 +206,23 @@
           }));
 
       } catch (e) {
-        console.error(e);
+        console.error('Fetch error:', e);
+        games = [];
       }
 
       if (games.length === 0) {
-        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
+        games = [
+          { title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] },
+          { title: "Bloxorz", file: "bloxorz.html", categories: ["Arcade"] },
+          { title: "Among Us", file: "amongus.html", categories: ["Arcade"] },
+          { title: "Pacman", file: "pacman.html", categories: ["Arcade"] }
+        ];
       }
 
       filtered = [...games];
       renderCategories();
       await renderGrid();
       
-      // Load first game only once
       if (games.length && !currentGame) loadGame(games[0]);
     }
 
@@ -267,22 +272,18 @@
       renderGrid();
     }
 
-    // Event Listeners
     searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
     document.getElementById('searchBtn').addEventListener('click', applyFilters);
     document.getElementById('refreshBtn').addEventListener('click', discoverGames);
 
-    // Fullscreen - works in iframe
     document.getElementById('fsBtn').addEventListener('click', () => {
       theater.classList.toggle('fullscreen');
       document.body.classList.toggle('fullscreen-mode');
       document.querySelector('main').classList.toggle('fullscreen-mode');
     });
 
-    // Bookmarklet safety
     document.documentElement.style.setProperty('--safe', '1');
 
-    // Start
     discoverGames();
   </script>
 </body>
