@@ -53,7 +53,7 @@
       padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
       z-index: 10;
     }
-    .theater:hover .overlay { opacity: 1; }
+    .theater:hover .overlay, .theater:active .overlay { opacity: 1; }
 
     .grid {
       display: grid;
@@ -95,7 +95,7 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Bookmarklet friendly version</p>
+          <p>Icons from Icon/ folder • Click Refresh after adding new files</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
@@ -107,6 +107,9 @@
             <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
             <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
           </div>
+          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+            ⛶ Fullscreen
+          </button>
         </div>
       </div>
 
@@ -118,8 +121,9 @@
   <script>
     const OWNER = 'CalcSolver';
     const REPO = 'Wii';
-    
-    const RAW_BASE = `https://${OWNER.toLowerCase()}.github.io/${REPO}`;
+    const BRANCH = 'main';
+
+    const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
     const ICON_BASE = `${RAW_BASE}/Icon`;
 
     let games = [];
@@ -143,7 +147,9 @@
         if (res.ok) {
           let content = await res.text();
           content = content.trim();
-          if (content.startsWith('data:image') || content.startsWith('http')) return content;
+          if (content.startsWith('data:image') || content.startsWith('http')) {
+            return content;
+          }
         }
       } catch (e) {}
       return 'https://picsum.photos/id/180/300/200';
@@ -163,79 +169,52 @@
           <div style="color:var(--muted);font-size:0.85rem">${game.categories.join(', ')}</div>
         </div>
       `;
-      card.onclick = (e) => {
-        e.stopImmediatePropagation();
-        loadGame(game);
-      };
+      card.onclick = () => loadGame(game);
       return card;
     }
 
     function loadGame(game) {
-      if (!game) return;
       currentGame = game;
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
-      
-      player.src = ''; 
-      setTimeout(() => {
-        player.src = `${RAW_BASE}/${game.file}`;
-      }, 10);
+      player.src = `${RAW_BASE}/${game.file}`;
     }
 
     async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
+      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games from repository...</div>';
 
       try {
-        let allFiles = [];
-        let page = 1;
-        let hasMore = true;
+        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('API error');
+        const items = await res.json();
 
-        while (hasMore) {
-          const res = await fetch(
-            `https://api.github.com/repos/${OWNER}/${REPO}/contents/?page=${page}&per_page=100`,
-            { cache: 'no-store' }
-          );
-          
-          if (!res.ok) throw new Error('API failed');
-          
-          const items = await res.json();
-          if (items.length === 0) {
-            hasMore = false;
-          } else {
-            allFiles = allFiles.concat(items);
-            page++;
-          }
-        }
-
-        games = allFiles
-          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name) && i.name !== 'index.html')
+        games = items
+          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name))
           .map(i => ({
             title: i.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
             file: i.name,
             categories: inferCategories(i.name)
           }));
 
-        console.log(`Found ${games.length} games`);
-
       } catch (e) {
-        console.error('Fetch error:', e);
-        games = [];
+        console.error(e);
+        games = games.length ? games : [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
       }
 
       filtered = [...games];
       renderCategories();
       await renderGrid();
-      
-      if (games.length && !currentGame) loadGame(games[0]);
+      if (games.length) loadGame(games[0]);
     }
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon|backrooms|fnaf|granny/.test(n)) return ["Arcade"];
+      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942/.test(n)) return ["Arcade"];
+      if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
       return ["Classic"];
     }
 
-    function renderCategories() {
+    function renderCategories() { /* same as previous */ 
       categoriesEl.innerHTML = '';
       const all = document.createElement('div');
       all.className = `chip ${activeCategory===null ? 'active' : ''}`;
@@ -248,11 +227,7 @@
         const el = document.createElement('div');
         el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
         el.textContent = cat;
-        el.onclick = () => {
-          activeCategory = activeCategory === cat ? null : cat;
-          renderCategories();
-          applyFilters();
-        };
+        el.onclick = () => { activeCategory = activeCategory === cat ? null : cat; renderCategories(); applyFilters(); };
         categoriesEl.appendChild(el);
       });
     }
@@ -274,12 +249,27 @@
       renderGrid();
     }
 
+    // Event Listeners
     searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
     document.getElementById('searchBtn').addEventListener('click', applyFilters);
     document.getElementById('refreshBtn').addEventListener('click', discoverGames);
 
-    document.documentElement.style.setProperty('--safe', '1');
+    // Fullscreen
+    const fsBtn = document.getElementById('fsBtn');
+    fsBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        theater.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    });
 
+    // Prevent accidental exit on swipe (mobile)
+    theater.addEventListener('touchmove', (e) => {
+      if (document.fullscreenElement) e.stopPropagation();
+    }, { passive: false });
+
+    // Start
     discoverGames();
   </script>
 </body>
