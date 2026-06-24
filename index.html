@@ -42,19 +42,6 @@
     }
     .chip.active, .chip:hover { background: var(--github-green); color: white; }
 
-    .theater {
-      margin-bottom: 30px; background: #000; border-radius: 12px; overflow: hidden;
-      aspect-ratio: 16/9; border: 1px solid var(--github-border); position: relative;
-    }
-    .theater iframe { width: 100%; height: 100%; border: none; }
-
-    .overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
-      z-index: 10;
-    }
-    .theater:hover .overlay { opacity: 1; }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
@@ -95,22 +82,13 @@
       <div class="hero">
         <div>
           <h2>Play Games from GitHub</h2>
-          <p>Bookmarklet friendly version</p>
+          <p>Base64 icons from <strong>Icon/</strong> folder now supported</p>
           <div class="cats" id="categories"></div>
         </div>
       </div>
 
-      <div class="theater" id="theater">
-        <iframe id="player" allowfullscreen></iframe>
-        <div class="overlay">
-          <div>
-            <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
-            <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
-          </div>
-          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
-            ⛶ Fullscreen
-          </button>
-        </div>
+      <div id="theater" style="margin-bottom:30px; background:#000; border-radius:12px; overflow:hidden; aspect-ratio:16/9; border:1px solid var(--github-border);">
+        <iframe id="player" allowfullscreen style="width:100%; height:100%; border:none;"></iframe>
       </div>
 
       <h3>Available Games</h3>
@@ -130,24 +108,28 @@
     let filtered = [];
     let activeCategory = null;
     let searchTerm = '';
-    let currentGame = null;
 
     const searchInput = document.getElementById('search');
     const gridEl = document.getElementById('grid');
     const categoriesEl = document.getElementById('categories');
     const player = document.getElementById('player');
-    const currentTitle = document.getElementById('current-title');
-    const currentSub = document.getElementById('current-sub');
-    const theater = document.getElementById('theater');
 
     async function getIconUrl(file) {
       const baseName = file.replace(/\.html?$/i, '');
       try {
         const res = await fetch(`${ICON_BASE}/${baseName}.icon`);
         if (res.ok) {
-          let content = await res.text();
-          content = content.trim();
-          if (content.startsWith('data:image') || content.startsWith('http')) return content;
+          const content = await res.text();
+          const trimmed = content.trim();
+          
+          // Handle base64 data
+          if (trimmed.startsWith('data:image')) {
+            return trimmed;
+          }
+          // Handle plain URL
+          if (trimmed.startsWith('http')) {
+            return trimmed;
+          }
         }
       } catch (e) {}
       return 'https://picsum.photos/id/180/300/200';
@@ -167,31 +149,15 @@
           <div style="color:var(--muted);font-size:0.85rem">${game.categories.join(', ')}</div>
         </div>
       `;
-      card.onclick = (e) => {
-        e.stopImmediatePropagation();
-        loadGame(game);
-      };
+      card.onclick = () => { player.src = `${RAW_BASE}/${game.file}`; };
       return card;
     }
 
-    function loadGame(game) {
-      if (!game) return;
-      currentGame = game;
-      currentTitle.textContent = game.title;
-      currentSub.textContent = game.file;
-      
-      // Force reload the iframe with correct game
-      player.src = ''; 
-      setTimeout(() => {
-        player.src = `${RAW_BASE}/${game.file}`;
-      }, 10);
-    }
-
     async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
+      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--muted);">Loading games from GitHub...</div>';
 
       try {
-        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
+        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`);
         const items = await res.json();
 
         games = items
@@ -203,25 +169,24 @@
           }));
 
       } catch (e) {
-        console.error(e);
-      }
-
-      if (games.length === 0) {
-        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
+        games = [
+          { title: "Among Us", file: "Amongus.html", categories: ["Arcade"] },
+          { title: "Attack Hole", file: "Attackhole.html", categories: ["Arcade"] },
+          { title: "Ado Car Drifter", file: "AdoCarDrifter.html", categories: ["Arcade"] }
+        ];
       }
 
       filtered = [...games];
       renderCategories();
       await renderGrid();
-      
-      // Load first game only once
-      if (games.length && !currentGame) loadGame(games[0]);
+      if (games.length) player.src = `${RAW_BASE}/${games[0].file}`;
     }
 
     function inferCategories(name) {
       const n = name.toLowerCase();
-      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return ["Arcade"];
-      if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
+      if (/amongus|attackhole|adocar|pacman|1942|gunspin|slope/.test(n)) return ["Arcade"];
+      if (/zelda|pokemon|mario/.test(n)) return ["Adventure"];
+      if (/fnaf|granny|backrooms/.test(n)) return ["Horror"];
       return ["Classic"];
     }
 
@@ -264,22 +229,9 @@
       renderGrid();
     }
 
-    // Event Listeners
     searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
     document.getElementById('searchBtn').addEventListener('click', applyFilters);
     document.getElementById('refreshBtn').addEventListener('click', discoverGames);
-
-    // Fullscreen
-    document.getElementById('fsBtn').addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        theater.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
-
-    // Bookmarklet safety
-    document.documentElement.style.setProperty('--safe', '1');
 
     // Start
     discoverGames();
