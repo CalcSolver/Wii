@@ -73,13 +73,6 @@
       display: grid; place-items: center; font-size: 28px; opacity: 0; color: white;
     }
     .card:hover .play-overlay { opacity: 1; }
-
-    /* Highlights active feed navigation element */
-    .card.active-feed-item {
-      border-color: var(--github-green) !important;
-      box-shadow: 0 0 16px var(--github-green);
-      transform: scale(1.02);
-    }
   </style>
 </head>
 <body>
@@ -93,7 +86,7 @@
         <input id="search" class="search-input" placeholder="Search games..." />
         <button id="searchBtn" class="search-btn">Search</button>
       </div>
-      <button id="feedBtn" style="padding:8px 16px; background:#0052cc; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🎮 Start Feed Mode</button>
+      <a href="feed.html" style="padding:8px 16px; background:#0052cc; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; text-decoration:none; font-size:0.9rem;">🎮 Open Game Feed</a>
       <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻ Refresh</button>
     </div>
   </header>
@@ -147,7 +140,6 @@
     const currentTitle = document.getElementById('current-title');
     const currentSub = document.getElementById('current-sub');
     const theater = document.getElementById('theater');
-    const feedBtn = document.getElementById('feedBtn');
 
     async function getIconUrl(file) {
       const baseName = file.replace(/\.html?$/i, '');
@@ -162,11 +154,10 @@
       return 'https://picsum.photos/id/180/300/200';
     }
 
-    async function makeCard(game, index) {
+    async function makeCard(game) {
       const imgSrc = await getIconUrl(game.file);
       const card = document.createElement('div');
       card.className = 'card';
-      card.setAttribute('data-index', index);
       card.innerHTML = `
         <div class="thumb">
           <img src="${imgSrc}" alt="${game.title}" onerror="this.src='https://picsum.photos/id/180/300/200'">
@@ -190,12 +181,11 @@
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
       
+      // Force reload the iframe with correct game
       player.src = ''; 
       setTimeout(() => {
         player.src = `${RAW_BASE}/${game.file}`;
       }, 10);
-
-      updateActiveCardHighlight();
     }
 
     async function discoverGames() {
@@ -225,6 +215,7 @@
       renderCategories();
       await renderGrid();
       
+      // Load first game only once
       if (games.length && !currentGame) loadGame(games[0]);
     }
 
@@ -259,11 +250,10 @@
 
     async function renderGrid() {
       gridEl.innerHTML = '';
-      for (let i = 0; i < filtered.length; i++) {
-        const card = await makeCard(filtered[i], i);
+      for (const game of filtered) {
+        const card = await makeCard(game);
         gridEl.appendChild(card);
       }
-      updateActiveCardHighlight();
     }
 
     function applyFilters() {
@@ -274,60 +264,6 @@
       });
       renderGrid();
     }
-
-    function updateActiveCardHighlight() {
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active-feed-item'));
-      if (!currentGame) return;
-      let targetIdx = filtered.findIndex(g => g.file === currentGame.file);
-      if (targetIdx !== -1) {
-        const card = document.querySelector(`.card[data-index="${targetIdx}"]`);
-        if (card) card.classList.add('active-feed-item');
-      }
-    }
-
-    function handleFeedNavigation(key) {
-      if (filtered.length === 0) return;
-      let currentIndex = filtered.findIndex(g => g.file === (currentGame ? currentGame.file : ''));
-
-      if (key === 'ArrowDown') {
-        let nextIndex = currentIndex + 1;
-        if (nextIndex < filtered.length) {
-          loadGame(filtered[nextIndex]);
-          scrollToCard(nextIndex);
-        }
-      } else if (key === 'ArrowUp') {
-        let prevIndex = currentIndex - 1;
-        if (prevIndex >= 0) {
-          loadGame(filtered[prevIndex]);
-          scrollToCard(prevIndex);
-        }
-      }
-    }
-
-    // Capture arrow inputs globally
-    window.addEventListener('keydown', (e) => {
-      if (document.activeElement === searchInput) return;
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        handleFeedNavigation(e.key);
-      }
-    });
-
-    function scrollToCard(index) {
-      const card = document.querySelector(`.card[data-index="${index}"]`);
-      if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-
-    // Feed Button Focus Trigger
-    feedBtn.addEventListener('click', () => {
-      theater.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.focus();
-      // Temporarily flash message to guide user
-      feedBtn.textContent = "🎮 Feed Mode Active (Use Up/Down Arrows)";
-      setTimeout(() => { feedBtn.textContent = "🎮 Start Feed Mode"; }, 3000);
-    });
 
     // Event Listeners
     searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
