@@ -73,6 +73,12 @@
       display: grid; place-items: center; font-size: 28px; opacity: 0; color: white;
     }
     .card:hover .play-overlay { opacity: 1; }
+    
+    /* Added a minimal active class style just so you can physically see which one is selected when pressing keys */
+    .card.active-feed-item {
+      border-color: var(--github-green) !important;
+      box-shadow: 0 0 12px rgba(35,134,54,0.5);
+    }
   </style>
 </head>
 <body>
@@ -186,6 +192,9 @@
       setTimeout(() => {
         player.src = `${RAW_BASE}/${game.file}`;
       }, 10);
+
+      // Highlight the updated card state visually
+      updateActiveCardHighlight();
     }
 
     async function discoverGames() {
@@ -215,7 +224,6 @@
       renderCategories();
       await renderGrid();
       
-      // Load first game only once
       if (games.length && !currentGame) loadGame(games[0]);
     }
 
@@ -250,10 +258,11 @@
 
     async function renderGrid() {
       gridEl.innerHTML = '';
-      filtered.forEach(async (game, index) => {
-        const card = await makeCard(game, index);
+      for (let i = 0; i < filtered.length; i++) {
+        const card = await makeCard(filtered[i], i);
         gridEl.appendChild(card);
-      });
+      }
+      updateActiveCardHighlight();
     }
 
     function applyFilters() {
@@ -265,27 +274,42 @@
       renderGrid();
     }
 
-    // Key Listener handling Up and Down controls for the feed navigation
-    window.addEventListener('keydown', (e) => {
-      if (filtered.length === 0) return;
-      if (document.activeElement === searchInput) return; // Prevent hijacking user typing in search box
+    function updateActiveCardHighlight() {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active-feed-item'));
+      if (!currentGame) return;
+      let targetIdx = filtered.findIndex(g => g.file === currentGame.file);
+      if (targetIdx !== -1) {
+        const card = document.querySelector(`.card[data-index="${targetIdx}"]`);
+        if (card) card.classList.add('active-feed-item');
+      }
+    }
 
+    // Handles arrow operations cleanly
+    function handleFeedNavigation(key) {
+      if (filtered.length === 0) return;
       let currentIndex = filtered.findIndex(g => g.file === (currentGame ? currentGame.file : ''));
-      
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
+
+      if (key === 'ArrowDown') {
         let nextIndex = currentIndex + 1;
         if (nextIndex < filtered.length) {
           loadGame(filtered[nextIndex]);
           scrollToCard(nextIndex);
         }
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
+      } else if (key === 'ArrowUp') {
         let prevIndex = currentIndex - 1;
         if (prevIndex >= 0) {
           loadGame(filtered[prevIndex]);
           scrollToCard(prevIndex);
         }
+      }
+    }
+
+    // Main event handler
+    window.addEventListener('keydown', (e) => {
+      if (document.activeElement === searchInput) return;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        handleFeedNavigation(e.key);
       }
     });
 
