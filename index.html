@@ -26,41 +26,53 @@
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
     .octo-logo { width: 42px; height: 42px; background: #fff; border-radius: 50%; display: grid; place-items: center; font-size: 28px; }
 
-    .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .search-hero { display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 6px; padding: 6px; min-width: 380px; }
+    .search-input { background: transparent; border: none; color: var(--text-light); padding: 8px 12px; flex: 1; outline: none; }
+    .search-btn { background: var(--github-green); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; }
 
     main { flex: 1; padding: 24px; overflow: auto; }
     .container { max-width: 1280px; margin: 0 auto; }
 
-    .view-toggle {
-      display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 8px; padding: 4px;
-    }
-    .view-btn {
-      padding: 8px 16px; border-radius: 6px; cursor: pointer;
-    }
-    .view-btn.active { background: var(--github-green); color: white; }
-
     .hero { background: var(--card); border: 1px solid var(--github-border); border-radius: 12px; padding: 32px; margin-bottom: 32px; }
+    .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 
-    .feed {
-      display: flex; flex-direction: column; gap: 16px; max-height: 70vh; overflow-y: auto; padding-right: 10px;
+    .chip {
+      background: var(--github-bg); color: var(--muted); border: 1px solid var(--github-border);
+      padding: 6px 14px; border-radius: 9999px; cursor: pointer;
     }
-    .feed-card {
-      background: var(--card); border: 1px solid var(--github-border); border-radius: 12px;
-      padding: 12px; display: flex; gap: 16px; cursor: pointer; transition: all 0.2s;
-    }
-    .feed-card:hover { border-color: var(--github-green); transform: translateX(8px); }
+    .chip.active, .chip:hover { background: var(--github-green); color: white; }
 
-    .feed-card img { width: 140px; height: 100px; object-fit: cover; border-radius: 8px; }
-    .feed-info { flex: 1; }
-    .like-btn { font-size: 1.4rem; cursor: pointer; background: none; border: none; }
+    .theater {
+      margin-bottom: 30px; background: #000; border-radius: 12px; overflow: hidden;
+      aspect-ratio: 16/9; border: 1px solid var(--github-border); position: relative;
+    }
+    .theater iframe { width: 100%; height: 100%; border: none; }
+
+    .overlay {
+      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
+      padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
+      z-index: 10;
+    }
+    .theater:hover .overlay { opacity: 1; }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 20px;
     }
-    /* ... existing card styles ... */
-    .card { /* same as before */ }
+    .card {
+      background: var(--card); border: 1px solid var(--github-border); border-radius: 10px;
+      overflow: hidden; cursor: pointer; transition: all 0.25s; height: 260px;
+    }
+    .card:hover { transform: translateY(-8px); border-color: var(--github-green); }
+    .card .thumb { height: 170px; position: relative; overflow: hidden; }
+    .card img { width: 100%; height: 100%; object-fit: cover; }
+    .play-overlay {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+      width: 60px; height: 60px; background: rgba(35,134,54,0.95); border-radius: 50%;
+      display: grid; place-items: center; font-size: 28px; opacity: 0; color: white;
+    }
+    .card:hover .play-overlay { opacity: 1; }
   </style>
 </head>
 <body>
@@ -69,59 +81,48 @@
       <div class="octo-logo">🐙</div>
       <div><h1>OctoArcade</h1><p>GitHub Gaming</p></div>
     </a>
-    <div class="controls">
-      <div class="view-toggle">
-        <div class="view-btn active" id="gridViewBtn">Grid</div>
-        <div class="view-btn" id="feedViewBtn">Feed</div>
-      </div>
+    <div style="display:flex; gap:12px; align-items:center">
       <div class="search-hero">
         <input id="search" class="search-input" placeholder="Search games..." />
         <button id="searchBtn" class="search-btn">Search</button>
       </div>
-      <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻</button>
+      <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻ Refresh</button>
     </div>
   </header>
 
   <main>
     <div class="container">
       <div class="hero">
-        <h2>Play Games from GitHub</h2>
-        <p>Scroll Feed • Like your favorites • Bookmarklet ready</p>
-        <div class="cats" id="categories"></div>
+        <div>
+          <h2>Play Games from GitHub</h2>
+          <p>Bookmarklet friendly version</p>
+          <div class="cats" id="categories"></div>
+        </div>
       </div>
 
-      <!-- Player -->
       <div class="theater" id="theater">
         <iframe id="player" allowfullscreen></iframe>
         <div class="overlay">
           <div>
-            <div id="current-title" style="font-size:1.35rem;font-weight:700"></div>
-            <div id="current-sub" style="color:var(--muted)"></div>
+            <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
+            <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
           </div>
-          <button id="fsBtn" style="padding:10px 22px;background:var(--github-green);color:white;border:none;border-radius:6px;cursor:pointer">⛶ Fullscreen</button>
+          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
+            ⛶ Fullscreen
+          </button>
         </div>
       </div>
 
-      <!-- Grid View -->
-      <div id="gridView">
-        <h3>Available Games</h3>
-        <div id="grid" class="grid"></div>
-      </div>
-
-      <!-- Scroll Feed View -->
-      <div id="feedView" style="display:none">
-        <h3>Scroll Feed <span style="font-size:0.9rem;color:var(--muted)">(↑ ↓ arrows to navigate)</span></h3>
-        <div id="feed" class="feed"></div>
-      </div>
+      <h3>Available Games</h3>
+      <div id="grid" class="grid"></div>
     </div>
   </main>
 
   <script>
-    // ... (same config and functions as before) ...
-
     const OWNER = 'CalcSolver';
     const REPO = 'Wii';
     const BRANCH = 'main';
+
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
     const ICON_BASE = `${RAW_BASE}/Icon`;
 
@@ -130,73 +131,157 @@
     let activeCategory = null;
     let searchTerm = '';
     let currentGame = null;
-    let likedGames = JSON.parse(localStorage.getItem('octoLiked') || '[]');
 
-    // View Toggle
-    const gridView = document.getElementById('gridView');
-    const feedView = document.getElementById('feedView');
-    const gridBtn = document.getElementById('gridViewBtn');
-    const feedBtn = document.getElementById('feedViewBtn');
+    const searchInput = document.getElementById('search');
+    const gridEl = document.getElementById('grid');
+    const categoriesEl = document.getElementById('categories');
+    const player = document.getElementById('player');
+    const currentTitle = document.getElementById('current-title');
+    const currentSub = document.getElementById('current-sub');
+    const theater = document.getElementById('theater');
 
-    gridBtn.onclick = () => { gridView.style.display = 'block'; feedView.style.display = 'none'; gridBtn.classList.add('active'); feedBtn.classList.remove('active'); };
-    feedBtn.onclick = () => { gridView.style.display = 'none'; feedView.style.display = 'block'; gridBtn.classList.remove('active'); feedBtn.classList.add('active'); renderFeed(); };
-
-    async function getIconUrl(file) { /* same as previous */ }
-
-    function isLiked(file) {
-      return likedGames.includes(file);
+    async function getIconUrl(file) {
+      const baseName = file.replace(/\.html?$/i, '');
+      try {
+        const res = await fetch(`${ICON_BASE}/${baseName}.icon`);
+        if (res.ok) {
+          let content = await res.text();
+          content = content.trim();
+          if (content.startsWith('data:image') || content.startsWith('http')) return content;
+        }
+      } catch (e) {}
+      return 'https://picsum.photos/id/180/300/200';
     }
 
-    function toggleLike(file) {
-      if (likedGames.includes(file)) {
-        likedGames = likedGames.filter(f => f !== file);
-      } else {
-        likedGames.push(file);
-      }
-      localStorage.setItem('octoLiked', JSON.stringify(likedGames));
-      renderGrid();
-      renderFeed();
-    }
-
-    // Feed Card
-    async function makeFeedCard(game) {
+    async function makeCard(game) {
       const imgSrc = await getIconUrl(game.file);
       const card = document.createElement('div');
-      card.className = 'feed-card';
+      card.className = 'card';
       card.innerHTML = `
-        <img src="${imgSrc}" onerror="this.src='https://picsum.photos/id/180/300/200'">
-        <div class="feed-info">
-          <div style="font-weight:600;font-size:1.1rem">${game.title}</div>
-          <div style="color:var(--muted)">${game.categories.join(', ')}</div>
+        <div class="thumb">
+          <img src="${imgSrc}" alt="${game.title}" onerror="this.src='https://picsum.photos/id/180/300/200'">
+          <div class="play-overlay">▶</div>
         </div>
-        <button class="like-btn">${isLiked(game.file) ? '❤️' : '♡'}</button>
+        <div style="padding:14px">
+          <div style="font-weight:600">${game.title}</div>
+          <div style="color:var(--muted);font-size:0.85rem">${game.categories.join(', ')}</div>
+        </div>
       `;
       card.onclick = (e) => {
-        if (!e.target.classList.contains('like-btn')) loadGame(game);
-      };
-      card.querySelector('.like-btn').onclick = (e) => {
-        e.stopPropagation();
-        toggleLike(game.file);
+        e.stopImmediatePropagation();
+        loadGame(game);
       };
       return card;
     }
 
-    async function renderFeed() {
-      const feedEl = document.getElementById('feed');
-      feedEl.innerHTML = '';
+    function loadGame(game) {
+      if (!game) return;
+      currentGame = game;
+      currentTitle.textContent = game.title;
+      currentSub.textContent = game.file;
+      
+      // Force reload the iframe with correct game
+      player.src = ''; 
+      setTimeout(() => {
+        player.src = `${RAW_BASE}/${game.file}`;
+      }, 10);
+    }
+
+    async function discoverGames() {
+      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
+
+      try {
+        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
+        const items = await res.json();
+
+        games = items
+          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name))
+          .map(i => ({
+            title: i.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            file: i.name,
+            categories: inferCategories(i.name)
+          }));
+
+      } catch (e) {
+        console.error(e);
+      }
+
+      if (games.length === 0) {
+        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
+      }
+
+      filtered = [...games];
+      renderCategories();
+      await renderGrid();
+      
+      // Load first game only once
+      if (games.length && !currentGame) loadGame(games[0]);
+    }
+
+    function inferCategories(name) {
+      const n = name.toLowerCase();
+      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return ["Arcade"];
+      if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
+      return ["Classic"];
+    }
+
+    function renderCategories() {
+      categoriesEl.innerHTML = '';
+      const all = document.createElement('div');
+      all.className = `chip ${activeCategory===null ? 'active' : ''}`;
+      all.textContent = `All (${games.length})`;
+      all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
+      categoriesEl.appendChild(all);
+
+      const catSet = new Set(games.flatMap(g => g.categories));
+      catSet.forEach(cat => {
+        const el = document.createElement('div');
+        el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
+        el.textContent = cat;
+        el.onclick = () => {
+          activeCategory = activeCategory === cat ? null : cat;
+          renderCategories();
+          applyFilters();
+        };
+        categoriesEl.appendChild(el);
+      });
+    }
+
+    async function renderGrid() {
+      gridEl.innerHTML = '';
       for (const game of filtered) {
-        feedEl.appendChild(await makeFeedCard(game));
+        const card = await makeCard(game);
+        gridEl.appendChild(card);
       }
     }
 
-    // Rest of the code (discoverGames, loadGame, etc.) stays mostly the same
-    // ... (I'll keep it short here - full code is ready) ...
+    function applyFilters() {
+      const term = searchTerm.toLowerCase();
+      filtered = games.filter(g => {
+        if (activeCategory && !g.categories.includes(activeCategory)) return false;
+        return !term || g.title.toLowerCase().includes(term) || g.file.toLowerCase().includes(term);
+      });
+      renderGrid();
+    }
 
+    // Event Listeners
+    searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
+    document.getElementById('searchBtn').addEventListener('click', applyFilters);
+    document.getElementById('refreshBtn').addEventListener('click', discoverGames);
+
+    // Fullscreen
     document.getElementById('fsBtn').addEventListener('click', () => {
-      if (!document.fullscreenElement) theater.requestFullscreen();
-      else document.exitFullscreen();
+      if (!document.fullscreenElement) {
+        theater.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
     });
 
+    // Bookmarklet safety
+    document.documentElement.style.setProperty('--safe', '1');
+
+    // Start
     discoverGames();
   </script>
 </body>
