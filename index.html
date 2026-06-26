@@ -1,288 +1,387 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OctoArcade — GitHub Games</title>
-  <style>
-    :root {
-      --github-dark: #0d1117;
-      --github-bg: #161b22;
-      --github-border: #30363d;
-      --github-green: #238636;
-      --text-light: #c9d1d9;
-      --muted: #8b949e;
-      --card: #21262d;
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin:0; padding:0; font-family: system-ui, sans-serif; background: var(--github-dark); color: var(--text-light); }
-    body { display: flex; flex-direction: column; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wii Games Feed</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    header {
-      background: var(--github-bg); border-bottom: 1px solid var(--github-border);
-      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-    .octo-logo { width: 42px; height: 42px; background: #fff; border-radius: 50%; display: grid; place-items: center; font-size: 28px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .search-hero { display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 6px; padding: 6px; min-width: 380px; }
-    .search-input { background: transparent; border: none; color: var(--text-light); padding: 8px 12px; flex: 1; outline: none; }
-    .search-btn { background: var(--github-green); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; }
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
 
-    main { flex: 1; padding: 24px; overflow: auto; }
-    .container { max-width: 1280px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
 
-    .hero { background: var(--card); border: 1px solid var(--github-border); border-radius: 12px; padding: 32px; margin-bottom: 32px; }
-    .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
 
-    .chip {
-      background: var(--github-bg); color: var(--muted); border: 1px solid var(--github-border);
-      padding: 6px 14px; border-radius: 9999px; cursor: pointer;
-    }
-    .chip.active, .chip:hover { background: var(--github-green); color: white; }
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
 
-    .theater {
-      margin-bottom: 30px; background: #000; border-radius: 12px; overflow: hidden;
-      aspect-ratio: 16/9; border: 1px solid var(--github-border); position: relative;
-    }
-    .theater iframe { width: 100%; height: 100%; border: none; }
+        .game-feed {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
 
-    .overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
-      z-index: 10;
-    }
-    .theater:hover .overlay { opacity: 1; }
+        .game-card {
+            padding: 30px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 20px;
-    }
-    .card {
-      background: var(--card); border: 1px solid var(--github-border); border-radius: 10px;
-      overflow: hidden; cursor: pointer; transition: all 0.25s; height: 260px;
-    }
-    .card:hover { transform: translateY(-8px); border-color: var(--github-green); }
-    .card .thumb { height: 170px; position: relative; overflow: hidden; }
-    .card img { width: 100%; height: 100%; object-fit: cover; }
-    .play-overlay {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 60px; height: 60px; background: rgba(35,134,54,0.95); border-radius: 50%;
-      display: grid; place-items: center; font-size: 28px; opacity: 0; color: white;
-    }
-    .card:hover .play-overlay { opacity: 1; }
-  </style>
+        .game-card.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .game-info {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .game-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .game-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .counter {
+            color: #333;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .counter span {
+            color: #667eea;
+        }
+
+        .no-games {
+            padding: 30px;
+            text-align: center;
+            color: #999;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .game-card {
+                padding: 20px;
+            }
+
+            .controls {
+                padding: 15px 20px;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <a href="#" class="brand">
-      <div class="octo-logo">🐙</div>
-      <div><h1>OctoArcade</h1><p>GitHub Gaming</p></div>
-    </a>
-    <div style="display:flex; gap:12px; align-items:center">
-      <div class="search-hero">
-        <input id="search" class="search-input" placeholder="Search games..." />
-        <button id="searchBtn" class="search-btn">Search</button>
-      </div>
-      <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻ Refresh</button>
-    </div>
-  </header>
-
-  <main>
     <div class="container">
-      <div class="hero">
-        <div>
-          <h2>Play Games from GitHub</h2>
-          <p>Bookmarklet friendly version</p>
-          <div class="cats" id="categories"></div>
+        <div class="header">
+            <h1>🎮 WII GAMES</h1>
+            <p>Browse your game collection</p>
         </div>
-      </div>
 
-      <div class="theater" id="theater">
-        <iframe id="player" allowfullscreen></iframe>
-        <div class="overlay">
-          <div>
-            <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
-            <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
-          </div>
-          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
-            ⛶ Fullscreen
-          </button>
+        <div class="game-feed">
+            <div id="gameContainer"></div>
+
+            <div class="controls">
+                <button class="button" id="prevBtn" onclick="previousGame()">⬆ UP</button>
+                <div class="counter">
+                    <span id="currentIndex">1</span> / <span id="totalCount">0</span>
+                </div>
+                <button class="button" id="nextBtn" onclick="nextGame()">DOWN ⬇</button>
+            </div>
         </div>
-      </div>
-
-      <h3>Available Games</h3>
-      <div id="grid" class="grid"></div>
     </div>
-  </main>
 
-  <script>
-    const OWNER = 'CalcSolver';
-    const REPO = 'Wii';
-    const BRANCH = 'main';
+    <script>
+        // Game data array
+        const games = [
+            { name: '1942', file: '1942.html' },
+            { name: '1v1 LOL', file: '1v1lol.html' },
+            { name: 'Ado Car Drifter', file: 'AdoCarDrifter.html' },
+            { name: 'Among Us', file: 'Amongus.html' },
+            { name: 'Aquapark', file: 'Aquapark.html' },
+            { name: 'Attack Hole', file: 'Attackhole.html' },
+            { name: 'Backrooms', file: 'Backrooms.html' },
+            { name: 'Basketball Stars', file: 'Basketballstars.html' },
+            { name: 'Bitlife', file: 'Bitlife.html' },
+            { name: 'Bitplanes', file: 'Bitplanes.html' },
+            { name: 'Blackjack', file: 'Blackjack.html' },
+            { name: 'Bloxorz', file: 'Bloxorz.html' },
+            { name: 'COD4', file: 'COD4.html' },
+            { name: 'Chess', file: 'Chess.html' },
+            { name: 'Cookie Clicker', file: 'Cookieclicker.html' },
+            { name: 'Dogeminer', file: 'Dogeminer.html' },
+            { name: 'Dogeminer 2', file: 'Dogeminer2.html' },
+            { name: 'Doodle Jump', file: 'Doodlejump.html' },
+            { name: 'Doom', file: 'Doom.html' },
+            { name: 'Douchbag Life', file: 'Douchbaglife.html' },
+            { name: 'Drift Boss', file: 'Driftboss.html' },
+            { name: 'Drift Sim', file: 'Driftsim.html' },
+            { name: 'Drive Mad', file: 'Drivemad.html' },
+            { name: 'Duck Life', file: 'Ducklife.html' },
+            { name: 'Duck Life 2', file: 'Ducklife2.html' },
+            { name: 'Duck Life 3', file: 'ducklife3.html' },
+            { name: 'Duck Life 4', file: 'Ducklife4.html' },
+            { name: 'Duck Life 5', file: 'ducklife5.html' },
+            { name: 'Eaglercraft 1.20', file: 'Eaglercraft1.20.html' },
+            { name: 'Eggy Car', file: 'Eggycar.html' },
+            { name: 'FIFA 10', file: 'FIFA10.html' },
+            { name: 'FNAC', file: 'FNAC.html' },
+            { name: 'FNAE', file: 'FNAE.html' },
+            { name: 'FNAW', file: 'FNAW.html' },
+            { name: 'Footballers', file: 'Footballers.html' },
+            { name: 'Fortzone', file: 'Fortzone.html' },
+            { name: 'Friday Night Funking', file: 'Fridaynightfunking.html' },
+            { name: 'Fruit Ninja', file: 'FruitNinja.html' },
+            { name: 'Funny Shooter 2', file: 'Funnyshooter2.html' },
+            { name: 'Galaga', file: 'Galaga.html' },
+            { name: 'Geoguesser', file: 'Geoguesser.html' },
+            { name: 'Geometry Dash', file: 'Geomatrydash.html' },
+            { name: 'Google Baseball', file: 'Googlebaseball.html' },
+            { name: 'Google Dino', file: 'Googledino.html' },
+            { name: 'GTA Advance', file: 'Grandtheftautoadvance.html' },
+            { name: 'Granny', file: 'Granny.html' },
+            { name: 'Grindcraft', file: 'Grindcraft.html' },
+            { name: 'House of Hazards', file: 'Houseofhazards.html' },
+            { name: 'Idle Breakout', file: 'Idlebreakout.html' },
+            { name: 'Idle Miner Tycoon', file: 'Idleminertycoon.html' },
+            { name: 'Infinite Craft', file: 'Infinitecraft.html' },
+            { name: 'Learn to Fly', file: 'Learntofly.html' },
+            { name: 'Learn to Fly 2', file: 'Learntofly2.html' },
+            { name: 'Learn to Fly 3', file: 'learntofly3.html' },
+            { name: 'Learn to Fly Idle', file: 'learntoflyidle.html' },
+            { name: 'Money Rush', file: 'Moneyrush.html' },
+            { name: 'Monkey Mart', file: 'Monkeymart.html' },
+            { name: 'Need for Speed', file: 'Needforspeed.html' },
+            { name: 'Omoggle', file: 'Omoggle.html' },
+            { name: 'OVO', file: 'Ovo.html' },
+            { name: 'OVO 2', file: 'Ovo2.html' },
+            { name: 'Ragdoll Archers', file: 'RagdollArchers.html' },
+            { name: 'Run 3', file: 'Run3.html' },
+            { name: 'Sandboxels', file: 'Sandboxels.html' },
+            { name: 'Slice It All', file: 'Sliceitall.html' },
+            { name: 'Slope', file: 'Slope.html' },
+            { name: 'Smash Karts', file: 'Smashkarts.html' },
+            { name: 'Snow Rider', file: 'Snowrider.html' },
+            { name: 'Sonic Advance', file: 'SonicAdvance.html' },
+            { name: 'Steal a Brainrot', file: 'Stealabrainrot.html' },
+            { name: 'Stick Man GTA', file: 'Stickmangta.html' },
+            { name: 'Stick Man Hook', file: 'Stickmanhook.html' },
+            { name: 'Stick Merge', file: 'Stickmerge.html' },
+            { name: 'Street Fighter 2', file: 'Streetfighter2.html' },
+            { name: 'Subway Surfers Beijing', file: 'Subwaysurfersbeijing.html' },
+            { name: 'Subway Surfers Miami', file: 'subwaysurfersmiami.html' },
+            { name: 'Super Mario 64', file: 'Supermario64.html' },
+            { name: 'Super Mario Kart', file: 'Supermariokart.html' },
+            { name: 'Super Mario World 2', file: 'supermarioworld2.html' },
+            { name: 'Table Tennis World Tour', file: 'Tabletennisworldtour.html' },
+            { name: 'Tanuki Sunset', file: 'Tanukisunset.html' },
+            { name: 'Temple Run 2', file: 'Templerun2.html' },
+            { name: 'The Impossible Game', file: 'theimpossiblegame.html' },
+            { name: 'The Impossible Quiz', file: 'Theimposiblequiz.html' },
+            { name: 'The Password Game', file: 'Thepasswordgame.html' },
+            { name: 'They Are Coming', file: 'theyarecoming.html' },
+            { name: 'Tiny Fishing', file: 'tinyfishing.html' },
+            { name: 'Tony Hawk 2', file: 'tonyhawk2.html' },
+            { name: 'Tunnel Rush', file: 'TunnelRush.thml' },
+            { name: 'Twerk Race 3D', file: 'Twerkrace3d.html' },
+            { name: 'Vex', file: 'vex.html' },
+            { name: 'Vex 2', file: 'vex2.html' },
+            { name: 'Vex 3', file: 'Vex3.html' },
+            { name: 'Vex 3 Mas', file: 'Vex3mas.html' },
+            { name: 'Vex 4', file: 'Vex4.html' },
+            { name: 'Vex 5', file: 'Vex5.html' },
+            { name: 'Vex 6', file: 'Vex6.html' },
+            { name: 'Vex 7', file: 'Vex7.html' },
+            { name: 'Vex 8', file: 'Vex8.html' },
+            { name: 'Wave Dash', file: 'Wavedash.html' },
+            { name: 'Wheelie Life', file: 'WheelieLife.html' },
+            { name: 'Winter Olympics', file: 'winterolympics.html' },
+            { name: 'Wordle', file: 'Wordle.html' },
+            { name: 'Zelda 2', file: 'Zelda2.html' },
+            { name: 'Zelda: Link to the Past', file: 'Zeldalinktopast.html' },
+            { name: 'Angry Birds', file: 'angrybirds.html' },
+            { name: 'Bridge Race', file: 'bridgerace.html' },
+            { name: 'Escape Roads', file: 'escaperoads.html' },
+            { name: 'Gun Spin', file: 'gunspin.html' },
+            { name: 'Happy Wheels', file: 'happywheels.html' },
+            { name: 'Highway Traffic 3D', file: 'highwaytraffic3d.html' },
+            { name: 'Hole.io', file: 'holeio.html' },
+            { name: 'Kour.io', file: 'kour.io.html' },
+            { name: 'Metal Slug Advance', file: 'metalslugadvance.html' },
+            { name: 'Mortal Kombat', file: 'mortalkombat.html' },
+            { name: 'Orbit Golf', file: 'orbitgolf.html' },
+            { name: 'Pacman', file: 'pacman.html' },
+            { name: 'Pokemon Emerald', file: 'pokemonemerald.html' },
+            { name: 'Retro Bowl', file: 'retrobowl.html' },
+            { name: 'Smash Bros', file: 'smashbros.html' },
+            { name: 'Survival Race', file: 'survivalrace.html' },
+            { name: 'Tennis', file: 'tennis.html' },
+            { name: 'Yo-Ho-Ho.io', file: 'YoHoHo.Io' }
+        ];
 
-    const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
-    const ICON_BASE = `${RAW_BASE}/Icon`;
+        let currentIndex = 0;
 
-    let games = [];
-    let filtered = [];
-    let activeCategory = null;
-    let searchTerm = '';
-    let currentGame = null;
-
-    const searchInput = document.getElementById('search');
-    const gridEl = document.getElementById('grid');
-    const categoriesEl = document.getElementById('categories');
-    const player = document.getElementById('player');
-    const currentTitle = document.getElementById('current-title');
-    const currentSub = document.getElementById('current-sub');
-    const theater = document.getElementById('theater');
-
-    async function getIconUrl(file) {
-      const baseName = file.replace(/\.html?$/i, '');
-      try {
-        const res = await fetch(`${ICON_BASE}/${baseName}.icon`);
-        if (res.ok) {
-          let content = await res.text();
-          content = content.trim();
-          if (content.startsWith('data:image') || content.startsWith('http')) return content;
+        function initializeFeed() {
+            const totalCount = document.getElementById('totalCount');
+            totalCount.textContent = games.length;
+            renderGame();
         }
-      } catch (e) {}
-      return 'https://picsum.photos/id/180/300/200';
-    }
 
-    async function makeCard(game) {
-      const imgSrc = await getIconUrl(game.file);
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="thumb">
-          <img src="${imgSrc}" alt="${game.title}" onerror="this.src='https://picsum.photos/id/180/300/200'">
-          <div class="play-overlay">▶</div>
-        </div>
-        <div style="padding:14px">
-          <div style="font-weight:600">${game.title}</div>
-          <div style="color:var(--muted);font-size:0.85rem">${game.categories.join(', ')}</div>
-        </div>
-      `;
-      card.onclick = (e) => {
-        e.stopImmediatePropagation();
-        loadGame(game);
-      };
-      return card;
-    }
+        function renderGame() {
+            const container = document.getElementById('gameContainer');
+            container.innerHTML = '';
 
-    function loadGame(game) {
-      if (!game) return;
-      currentGame = game;
-      currentTitle.textContent = game.title;
-      currentSub.textContent = game.file;
-      
-      // Force reload the iframe with correct game
-      player.src = ''; 
-      setTimeout(() => {
-        player.src = `${RAW_BASE}/${game.file}`;
-      }, 10);
-    }
+            if (games.length === 0) {
+                container.innerHTML = '<div class="no-games">No games available</div>';
+                return;
+            }
 
-    async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
+            const game = games[currentIndex];
+            const card = document.createElement('div');
+            card.className = 'game-card active';
+            card.innerHTML = `
+                <div class="game-title">🎮 ${game.name}</div>
+                <div class="game-info">
+                    <p>Ready to play? Click below to start!</p>
+                </div>
+                <a href="${game.file}" class="game-link">▶ PLAY NOW</a>
+            `;
+            container.appendChild(card);
 
-      try {
-        const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
-        const items = await res.json();
+            // Update counter
+            document.getElementById('currentIndex').textContent = currentIndex + 1;
 
-        games = items
-          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name))
-          .map(i => ({
-            title: i.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-            file: i.name,
-            categories: inferCategories(i.name)
-          }));
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === games.length - 1;
+        }
 
-      } catch (e) {
-        console.error(e);
-      }
+        function nextGame() {
+            if (currentIndex < games.length - 1) {
+                currentIndex++;
+                renderGame();
+            }
+        }
 
-      if (games.length === 0) {
-        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
-      }
+        function previousGame() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderGame();
+            }
+        }
 
-      filtered = [...games];
-      renderCategories();
-      await renderGrid();
-      
-      // Load first game only once
-      if (games.length && !currentGame) loadGame(games[0]);
-    }
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') previousGame();
+            if (e.key === 'ArrowDown') nextGame();
+        });
 
-    function inferCategories(name) {
-      const n = name.toLowerCase();
-      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return ["Arcade"];
-      if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
-      return ["Classic"];
-    }
-
-    function renderCategories() {
-      categoriesEl.innerHTML = '';
-      const all = document.createElement('div');
-      all.className = `chip ${activeCategory===null ? 'active' : ''}`;
-      all.textContent = `All (${games.length})`;
-      all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
-      categoriesEl.appendChild(all);
-
-      const catSet = new Set(games.flatMap(g => g.categories));
-      catSet.forEach(cat => {
-        const el = document.createElement('div');
-        el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
-        el.textContent = cat;
-        el.onclick = () => {
-          activeCategory = activeCategory === cat ? null : cat;
-          renderCategories();
-          applyFilters();
-        };
-        categoriesEl.appendChild(el);
-      });
-    }
-
-    async function renderGrid() {
-      gridEl.innerHTML = '';
-      for (const game of filtered) {
-        const card = await makeCard(game);
-        gridEl.appendChild(card);
-      }
-    }
-
-    function applyFilters() {
-      const term = searchTerm.toLowerCase();
-      filtered = games.filter(g => {
-        if (activeCategory && !g.categories.includes(activeCategory)) return false;
-        return !term || g.title.toLowerCase().includes(term) || g.file.toLowerCase().includes(term);
-      });
-      renderGrid();
-    }
-
-    // Event Listeners
-    searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
-    document.getElementById('searchBtn').addEventListener('click', applyFilters);
-    document.getElementById('refreshBtn').addEventListener('click', discoverGames);
-
-    // Fullscreen
-    document.getElementById('fsBtn').addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        theater.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
-
-    // Bookmarklet safety
-    document.documentElement.style.setProperty('--safe', '1');
-
-    // Start
-    discoverGames();
-  </script>
+        // Initialize on page load
+        window.addEventListener('load', initializeFeed);
+    </script>
 </body>
 </html>
