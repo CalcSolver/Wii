@@ -169,7 +169,8 @@
         </div>
       `;
       card.onclick = (e) => {
-        e.stopImmediatePropagation();
+        e.preventDefault();
+        e.stopPropagation(); // Stop click from bubbling up and crashing execution state
         loadGame(game);
       };
       return card;
@@ -181,15 +182,14 @@
       currentTitle.textContent = game.title;
       currentSub.textContent = game.file;
       
-      // Force reload the iframe with correct game
       player.src = ''; 
       setTimeout(() => {
         player.src = `${RAW_BASE}/${game.file}`;
       }, 10);
     }
 
-    async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
+    async function discoverGames(isInitialLoad = false) {
+      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);>Loading games...</div>';
 
       try {
         const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
@@ -215,8 +215,10 @@
       renderCategories();
       await renderGrid();
       
-      // Load first game only once
-      if (games.length && !currentGame) loadGame(games[0]);
+      // Only force automatic loading of the 1st game on genuine fresh page initializes
+      if (games.length && isInitialLoad && !currentGame) {
+        loadGame(games[0]);
+      }
     }
 
     function inferCategories(name) {
@@ -231,7 +233,7 @@
       const all = document.createElement('div');
       all.className = `chip ${activeCategory===null ? 'active' : ''}`;
       all.textContent = `All (${games.length})`;
-      all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
+      all.onclick = (e) => { e.stopPropagation(); activeCategory = null; renderCategories(); applyFilters(); };
       categoriesEl.appendChild(all);
 
       const catSet = new Set(games.flatMap(g => g.categories));
@@ -239,7 +241,8 @@
         const el = document.createElement('div');
         el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
         el.textContent = cat;
-        el.onclick = () => {
+        el.onclick = (e) => {
+          e.stopPropagation();
           activeCategory = activeCategory === cat ? null : cat;
           renderCategories();
           applyFilters();
@@ -267,13 +270,18 @@
 
     // Event Listeners
     searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
-    document.getElementById('searchBtn').addEventListener('click', applyFilters);
-    document.getElementById('refreshBtn').addEventListener('click', discoverGames);
+    document.getElementById('searchBtn').addEventListener('click', (e) => { e.stopPropagation(); applyFilters(); });
+    document.getElementById('refreshBtn').addEventListener('click', (e) => { e.stopPropagation(); discoverGames(false); });
 
-    // Fullscreen
-    document.getElementById('fsBtn').addEventListener('click', () => {
+    // FULLSCREEN FIXED: Requesting fullscreen directly on the player iframe element 
+    // ensures the browser grants keyboard inputs/typing focus while active.
+    document.getElementById('fsBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       if (!document.fullscreenElement) {
-        theater.requestFullscreen();
+        player.requestFullscreen().catch(err => {
+          console.error(`Error enabling fullscreen: ${err.message}`);
+        });
       } else {
         document.exitFullscreen();
       }
@@ -282,8 +290,8 @@
     // Bookmarklet safety
     document.documentElement.style.setProperty('--safe', '1');
 
-    // Start
-    discoverGames();
+    // Start with a true load validation token flag
+    discoverGames(true);
   </script>
 </body>
 </html>
