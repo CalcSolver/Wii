@@ -3,128 +3,110 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OctoArcade — GitHub Games</title>
+  <title>OctoArcade — Vertical Stream</title>
   <style>
     :root {
-      --github-dark: #0d1117;
-      --github-bg: #161b22;
-      --github-border: #30363d;
-      --github-green: #238636;
-      --text-light: #c9d1d9;
-      --muted: #8b949e;
-      --card: #21262d;
+      --bg-dark: #05070a;
+      --card-bg: #0d1117;
+      --border-accent: #30363d;
+      --accent-green: #238636;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
     }
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin:0; padding:0; font-family: system-ui, sans-serif; background: var(--github-dark); color: var(--text-light); }
-    body { display: flex; flex-direction: column; }
-
-    header {
-      background: var(--github-bg); border-bottom: 1px solid var(--github-border);
-      padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
+    html, body { 
+      margin: 0; padding: 0; height: 100%; 
+      background-color: var(--bg-dark); 
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
     }
-    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-    .octo-logo { width: 42px; height: 42px; background: #fff; border-radius: 50%; display: grid; place-items: center; font-size: 28px; }
 
-    .search-hero { display: flex; background: var(--github-bg); border: 1px solid var(--github-border); border-radius: 6px; padding: 6px; min-width: 380px; }
-    .search-input { background: transparent; border: none; color: var(--text-light); padding: 8px 12px; flex: 1; outline: none; }
-    .search-btn { background: var(--github-green); color: white; border: none; padding: 8px 18px; border-radius: 5px; cursor: pointer; }
-
-    main { flex: 1; padding: 24px; overflow: auto; }
-    .container { max-width: 1280px; margin: 0 auto; }
-
-    .hero { background: var(--card); border: 1px solid var(--github-border); border-radius: 12px; padding: 32px; margin-bottom: 32px; }
-    .cats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-
-    .chip {
-      background: var(--github-bg); color: var(--muted); border: 1px solid var(--github-border);
-      padding: 6px 14px; border-radius: 9999px; cursor: pointer;
+    /* Fixed Minimal Top Navigation bar */
+    .feed-header {
+      position: fixed; top: 0; left: 0; right: 0; height: 60px;
+      background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-accent);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; z-index: 1000;
     }
-    .chip.active, .chip:hover { background: var(--github-green); color: white; }
+    .feed-header a {
+      color: var(--text-main); text-decoration: none; font-weight: 600;
+      display: flex; align-items: center; gap: 8px; font-size: 0.95rem;
+    }
+    .feed-header .exit-btn {
+      background: var(--accent-green); padding: 6px 14px; border-radius: 6px;
+    }
 
-    .theater {
-      margin-bottom: 30px; background: #000; border-radius: 12px; overflow: hidden;
-      aspect-ratio: 16/9; border: 1px solid var(--github-border); position: relative;
+    /* Container holding the single vertical column stream */
+    .stream-container {
+      max-width: 680px; margin: 80px auto 40px auto;
+      padding: 0 16px; display: flex; flex-direction: column; gap: 40px;
     }
-    .theater iframe { width: 100%; height: 100%; border: none; }
 
-    .overlay {
-      position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9));
-      padding: 15px 20px; opacity: 0; transition: opacity 0.3s; display: flex; justify-content: space-between; align-items: center;
-      z-index: 10;
+    /* Big Vertical Feed Post Blocks */
+    .feed-post {
+      background: var(--card-bg); border: 1px solid var(--border-accent);
+      border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5); transition: border-color 0.3s, transform 0.3s;
+      scroll-margin-top: 80px; /* Snapping spacing offset */
     }
-    .theater:hover .overlay { opacity: 1; }
+    .feed-post.active-focus {
+      border-color: var(--accent-green);
+      transform: scale(1.01);
+    }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 20px;
+    /* Interactive Game Canvas Frame Window wrapper */
+    .media-window {
+      width: 100%; aspect-ratio: 16/9; background: #000;
+      position: relative; border-bottom: 1px solid var(--border-accent);
     }
-    .card {
-      background: var(--card); border: 1px solid var(--github-border); border-radius: 10px;
-      overflow: hidden; cursor: pointer; transition: all 0.25s; height: 260px;
+    .media-window iframe {
+      width: 100%; height: 100%; border: none; display: block;
     }
-    .card:hover { transform: translateY(-8px); border-color: var(--github-green); }
-    .card .thumb { height: 170px; position: relative; overflow: hidden; }
-    .card img { width: 100%; height: 100%; object-fit: cover; }
-    .play-overlay {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-      width: 60px; height: 60px; background: rgba(35,134,54,0.95); border-radius: 50%;
-      display: grid; place-items: center; font-size: 28px; opacity: 0; color: white;
-    }
-    .card:hover .play-overlay { opacity: 1; }
 
-    /* Highlights active feed navigation element */
-    .card.active-feed-item {
-      border-color: var(--github-green) !important;
-      box-shadow: 0 0 16px var(--github-green);
-      transform: scale(1.02);
+    /* Text details layout stack inside the feed post block */
+    .post-details { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .post-tag {
+      font-size: 0.75rem; font-weight: 700; color: var(--accent-green);
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .post-title { font-size: 1.6rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+    .post-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
+
+    /* Controls block section inside each block */
+    .post-actions {
+      margin-top: 8px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .play-trigger-btn {
+      background: #21262d; border: 1px solid var(--border-accent); color: var(--text-main);
+      padding: 10px 20px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s;
+    }
+    .play-trigger-btn:hover { background: var(--accent-green); border-color: transparent; }
+    .fullscreen-post-btn {
+      background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.9rem;
+    }
+    .fullscreen-post-btn:hover { color: var(--text-main); }
+
+    /* Global shortcut hint overlay box */
+    .keyboard-hint {
+      position: fixed; bottom: 20px; right: 20px; background: rgba(13,17,23,0.9);
+      border: 1px solid var(--border-accent); padding: 8px 14px; border-radius: 20px;
+      font-size: 0.8rem; color: var(--text-muted); pointer-events: none; z-index: 100;
     }
   </style>
 </head>
 <body>
-  <header>
-    <a href="#" class="brand">
-      <div class="octo-logo">🐙</div>
-      <div><h1>OctoArcade</h1><p>GitHub Gaming</p></div>
-    </a>
-    <div style="display:flex; gap:12px; align-items:center">
-      <div class="search-hero">
-        <input id="search" class="search-input" placeholder="Search games..." />
-        <button id="searchBtn" class="search-btn">Search</button>
-      </div>
-      <button id="feedBtn" style="padding:8px 16px; background:#0052cc; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🎮 Start Feed Mode</button>
-      <button id="refreshBtn" style="padding:8px 16px; background:#238636; color:white; border:none; border-radius:6px; cursor:pointer;">↻ Refresh</button>
-    </div>
+
+  <header class="feed-header">
+    <a href="index.html">🐙 <span>OctoArcade Stream</span></a>
+    <a href="index.html" class="exit-btn">Close Feed</a>
   </header>
 
-  <main>
-    <div class="container">
-      <div class="hero">
-        <div>
-          <h2>Play Games from GitHub</h2>
-          <p>Bookmarklet friendly version</p>
-          <div class="cats" id="categories"></div>
-        </div>
-      </div>
+  <main class="stream-container" id="streamContainer">
+    </main>
 
-      <div class="theater" id="theater">
-        <iframe id="player" allowfullscreen></iframe>
-        <div class="overlay">
-          <div>
-            <div id="current-title" style="font-size:1.35rem; font-weight:700;"></div>
-            <div id="current-sub" style="color:var(--muted); font-size:0.9rem;"></div>
-          </div>
-          <button id="fsBtn" style="padding:10px 22px; background:var(--github-green); color:white; border:none; border-radius:6px; cursor:pointer; font-weight:600;">
-            ⛶ Fullscreen
-          </button>
-        </div>
-      </div>
-
-      <h3>Available Games</h3>
-      <div id="grid" class="grid"></div>
-    </div>
-  </main>
+  <div class="keyboard-hint">Use <b>↑</b> and <b>↓</b> Arrow Keys to change posts</div>
 
   <script>
     const OWNER = 'CalcSolver';
@@ -134,220 +116,132 @@
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
     const ICON_BASE = `${RAW_BASE}/Icon`;
 
-    let games = [];
-    let filtered = [];
-    let activeCategory = null;
-    let searchTerm = '';
-    let currentGame = null;
+    let feedItems = [];
+    let focusedIndex = 0;
 
-    const searchInput = document.getElementById('search');
-    const gridEl = document.getElementById('grid');
-    const categoriesEl = document.getElementById('categories');
-    const player = document.getElementById('player');
-    const currentTitle = document.getElementById('current-title');
-    const currentSub = document.getElementById('current-sub');
-    const theater = document.getElementById('theater');
-    const feedBtn = document.getElementById('feedBtn');
+    const streamContainer = document.getElementById('streamContainer');
 
-    async function getIconUrl(file) {
-      const baseName = file.replace(/\.html?$/i, '');
-      try {
-        const res = await fetch(`${ICON_BASE}/${baseName}.icon`);
-        if (res.ok) {
-          let content = await res.text();
-          content = content.trim();
-          if (content.startsWith('data:image') || content.startsWith('http')) return content;
-        }
-      } catch (e) {}
-      return 'https://picsum.photos/id/180/300/200';
+    function inferCategory(name) {
+      const n = name.toLowerCase();
+      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return "Arcade System";
+      if (/backrooms|fnaf|granny/.test(n)) return "Horror Vault";
+      return "Classic Emulator";
     }
 
-    async function makeCard(game, index) {
-      const imgSrc = await getIconUrl(game.file);
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.setAttribute('data-index', index);
-      card.innerHTML = `
-        <div class="thumb">
-          <img src="${imgSrc}" alt="${game.title}" onerror="this.src='https://picsum.photos/id/180/300/200'">
-          <div class="play-overlay">▶</div>
-        </div>
-        <div style="padding:14px">
-          <div style="font-weight:600">${game.title}</div>
-          <div style="color:var(--muted);font-size:0.85rem">${game.categories.join(', ')}</div>
-        </div>
-      `;
-      card.onclick = (e) => {
-        e.stopImmediatePropagation();
-        loadGame(game);
-      };
-      return card;
+    function createDescription(title, category) {
+      return `Now streaming live component from repository node: Experience full gameplay optimization on ${title}. Dispatched directly from the server onto an instant structural frame view.`;
     }
 
-    function loadGame(game) {
-      if (!game) return;
-      currentGame = game;
-      currentTitle.textContent = game.title;
-      currentSub.textContent = game.file;
+    async function loadStream() {
+      streamContainer.innerHTML = '<div style="text-align:center; padding:100px 0; color:var(--text-muted)">Connecting to stream instance...</div>';
       
-      player.src = ''; 
-      setTimeout(() => {
-        player.src = `${RAW_BASE}/${game.file}`;
-      }, 10);
-
-      updateActiveCardHighlight();
-    }
-
-    async function discoverGames() {
-      gridEl.innerHTML = '<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--muted);">Loading games...</div>';
-
       try {
         const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
-        const items = await res.json();
+        const data = await res.json();
 
-        games = items
-          .filter(i => i.type === 'file' && /\.html?$/i.test(i.name))
-          .map(i => ({
-            title: i.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
-            file: i.name,
-            categories: inferCategories(i.name)
-          }));
-
-      } catch (e) {
-        console.error(e);
+        feedItems = data
+          .filter(file => file.type === 'file' && /\.html?$/i.test(file.name))
+          .map(file => {
+            const parsedTitle = file.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+            const cat = inferCategory(file.name);
+            return {
+              title: parsedTitle,
+              filename: file.name,
+              category: cat,
+              description: createDescription(parsedTitle, cat)
+            };
+          });
+      } catch (err) {
+        console.error(err);
       }
 
-      if (games.length === 0) {
-        games = [{ title: "Gun Spin", file: "gunspin.html", categories: ["Arcade"] }];
+      if (feedItems.length === 0) {
+        feedItems = [{ title: "Gun Spin", filename: "gunspin.html", category: "Arcade System", description: "Weaponized flight dynamic emulation engine modules." }];
       }
 
-      filtered = [...games];
-      renderCategories();
-      await renderGrid();
+      streamContainer.innerHTML = '';
+      renderStreamBlocks();
+    }
+
+    function renderStreamBlocks() {
+      feedItems.forEach((item, index) => {
+        const post = document.createElement('div');
+        post.className = `feed-post ${index === 0 ? 'active-focus' : ''}`;
+        post.id = `post-${index}`;
+        
+        post.innerHTML = `
+          <div class="media-window">
+            <iframe id="iframe-${index}" data-src="${RAW_BASE}/${item.filename}" allowfullscreen src="${index === 0 ? RAW_BASE + '/' + item.filename : ''}"></iframe>
+          </div>
+          <div class="post-details">
+            <span class="post-tag">${item.category}</span>
+            <h2 class="post-title">${item.title}</h2>
+            <p class="post-desc">${item.description}</p>
+            <div class="post-actions">
+              <button class="play-trigger-btn" onclick="activateAndScroll(${index})">⚡ Reload Channel</button>
+              <button class="fullscreen-post-btn" onclick="triggerPostFullscreen(${index})">⛶ Fullscreen view</button>
+            </div>
+          </div>
+        `;
+        
+        streamContainer.appendChild(post);
+      });
+    }
+
+    function syncFocusedPost(index) {
+      if (index < 0 || index >= feedItems.length) return;
       
-      if (games.length && !currentGame) loadGame(games[0]);
-    }
+      // Update visual border highlights
+      document.querySelectorAll('.feed-post').forEach(el => el.classList.remove('active-focus'));
+      const activePost = document.getElementById(`post-${index}`);
+      if (activePost) activePost.classList.add('active-focus');
 
-    function inferCategories(name) {
-      const n = name.toLowerCase();
-      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return ["Arcade"];
-      if (/backrooms|fnaf|granny/.test(n)) return ["Horror"];
-      return ["Classic"];
-    }
+      focusedIndex = index;
 
-    function renderCategories() {
-      categoriesEl.innerHTML = '';
-      const all = document.createElement('div');
-      all.className = `chip ${activeCategory===null ? 'active' : ''}`;
-      all.textContent = `All (${games.length})`;
-      all.onclick = () => { activeCategory = null; renderCategories(); applyFilters(); };
-      categoriesEl.appendChild(all);
-
-      const catSet = new Set(games.flatMap(g => g.categories));
-      catSet.forEach(cat => {
-        const el = document.createElement('div');
-        el.className = `chip ${activeCategory===cat ? 'active' : ''}`;
-        el.textContent = cat;
-        el.onclick = () => {
-          activeCategory = activeCategory === cat ? null : cat;
-          renderCategories();
-          applyFilters();
-        };
-        categoriesEl.appendChild(el);
-      });
-    }
-
-    async function renderGrid() {
-      gridEl.innerHTML = '';
-      for (let i = 0; i < filtered.length; i++) {
-        const card = await makeCard(filtered[i], i);
-        gridEl.appendChild(card);
-      }
-      updateActiveCardHighlight();
-    }
-
-    function applyFilters() {
-      const term = searchTerm.toLowerCase();
-      filtered = games.filter(g => {
-        if (activeCategory && !g.categories.includes(activeCategory)) return false;
-        return !term || g.title.toLowerCase().includes(term) || g.file.toLowerCase().includes(term);
-      });
-      renderGrid();
-    }
-
-    function updateActiveCardHighlight() {
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active-feed-item'));
-      if (!currentGame) return;
-      let targetIdx = filtered.findIndex(g => g.file === currentGame.file);
-      if (targetIdx !== -1) {
-        const card = document.querySelector(`.card[data-index="${targetIdx}"]`);
-        if (card) card.classList.add('active-feed-item');
-      }
-    }
-
-    function handleFeedNavigation(key) {
-      if (filtered.length === 0) return;
-      let currentIndex = filtered.findIndex(g => g.file === (currentGame ? currentGame.file : ''));
-
-      if (key === 'ArrowDown') {
-        let nextIndex = currentIndex + 1;
-        if (nextIndex < filtered.length) {
-          loadGame(filtered[nextIndex]);
-          scrollToCard(nextIndex);
+      // Lazy load current frame src, drop past frame src context to avoid audio overlay bugs
+      feedItems.forEach((item, idx) => {
+        const frame = document.getElementById(`iframe-${idx}`);
+        if (frame) {
+          if (idx === index) {
+            if (!frame.src) frame.src = frame.getAttribute('data-src');
+          } else {
+            frame.src = ''; // Clear inactive tabs to kill audio crosstalk
+          }
         }
-      } else if (key === 'ArrowUp') {
-        let prevIndex = currentIndex - 1;
-        if (prevIndex >= 0) {
-          loadGame(filtered[prevIndex]);
-          scrollToCard(prevIndex);
-        }
-      }
+      });
+
+      // Smooth scroll viewport onto layout segment block
+      activePost.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Capture arrow inputs globally
+    function activateAndScroll(index) {
+      const frame = document.getElementById(`iframe-${index}`);
+      if (frame) frame.src = frame.getAttribute('data-src');
+      syncFocusedPost(index);
+    }
+
+    function triggerPostFullscreen(index) {
+      const frame = document.getElementById(`iframe-${index}`);
+      if (frame) frame.requestFullscreen().catch(err => console.log(err));
+    }
+
+    // Keyboard navigation mappings
     window.addEventListener('keydown', (e) => {
-      if (document.activeElement === searchInput) return;
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown') {
         e.preventDefault();
-        handleFeedNavigation(e.key);
+        if (focusedIndex + 1 < feedItems.length) {
+          syncFocusedPost(focusedIndex + 1);
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (focusedIndex - 1 >= 0) {
+          syncFocusedPost(focusedIndex - 1);
+        }
       }
     });
 
-    function scrollToCard(index) {
-      const card = document.querySelector(`.card[data-index="${index}"]`);
-      if (card) {
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-
-    // Feed Button Focus Trigger
-    feedBtn.addEventListener('click', () => {
-      theater.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      window.focus();
-      // Temporarily flash message to guide user
-      feedBtn.textContent = "🎮 Feed Mode Active (Use Up/Down Arrows)";
-      setTimeout(() => { feedBtn.textContent = "🎮 Start Feed Mode"; }, 3000);
-    });
-
-    // Event Listeners
-    searchInput.addEventListener('input', () => { searchTerm = searchInput.value; applyFilters(); });
-    document.getElementById('searchBtn').addEventListener('click', applyFilters);
-    document.getElementById('refreshBtn').addEventListener('click', discoverGames);
-
-    // Fullscreen
-    document.getElementById('fsBtn').addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        theater.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
-    });
-
-    // Bookmarklet safety
-    document.documentElement.style.setProperty('--safe', '1');
-
-    // Start
-    discoverGames();
+    // Run setup routine
+    loadStream();
   </script>
 </body>
 </html>
