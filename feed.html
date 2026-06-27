@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OctoArcade — Vertical Stream</title>
+  <title>OctoArcade — Random Stream Feed</title>
   <style>
     :root {
       --bg-dark: #05070a;
       --card-bg: #0d1117;
-      --border-accent: #30363d;
+      --border-accent: #21262d;
       --accent-green: #238636;
       --text-main: #f0f6fc;
       --text-muted: #8b949e;
@@ -19,13 +19,13 @@
       background-color: var(--bg-dark); 
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      overflow-x: hidden;
+      overflow: hidden; /* Lock main body scroll */
     }
 
     /* Fixed Minimal Top Navigation bar */
     .feed-header {
       position: fixed; top: 0; left: 0; right: 0; height: 60px;
-      background: rgba(13, 17, 23, 0.85); backdrop-filter: blur(12px);
+      background: rgba(13, 17, 23, 0.9); backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-accent);
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 20px; z-index: 1000;
@@ -38,22 +38,44 @@
       background: var(--accent-green); padding: 6px 14px; border-radius: 6px;
     }
 
-    /* Container holding the single vertical column stream */
+    /* Full screen container enforcing full-page section snapping */
     .stream-container {
-      max-width: 680px; margin: 80px auto 40px auto;
-      padding: 0 16px; display: flex; flex-direction: column; gap: 40px;
+      height: 100vh;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
     }
 
-    /* Big Vertical Feed Post Blocks */
+    /* Full Window Feed Post Blocks: Each block takes up exactly 1 viewport screen */
     .feed-post {
-      background: var(--card-bg); border: 1px solid var(--border-accent);
-      border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5); transition: border-color 0.3s, transform 0.3s;
-      scroll-margin-top: 80px; /* Snapping spacing offset */
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px 40px 20px; /* offset for top header */
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      opacity: 0.1;
+      transition: opacity 0.4s ease;
     }
+    
+    /* Make ONLY the active game visible in the stream feed */
     .feed-post.active-focus {
-      border-color: var(--accent-green);
-      transform: scale(1.01);
+      opacity: 1;
+    }
+
+    /* Card Box holding the content components */
+    .card-wrapper {
+      width: 100%;
+      max-width: 720px;
+      background: var(--card-bg); 
+      border: 1px solid var(--border-accent);
+      border-radius: 16px; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.7);
     }
 
     /* Interactive Game Canvas Frame Window wrapper */
@@ -71,8 +93,8 @@
       font-size: 0.75rem; font-weight: 700; color: var(--accent-green);
       text-transform: uppercase; letter-spacing: 1px;
     }
-    .post-title { font-size: 1.6rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
-    .post-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
+    .post-title { font-size: 1.5rem; font-weight: 800; margin: 0; letter-spacing: -0.5px; }
+    .post-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin: 0; }
 
     /* Controls block section inside each block */
     .post-actions {
@@ -104,9 +126,10 @@
   </header>
 
   <main class="stream-container" id="streamContainer">
-    </main>
+    <!-- Items loaded dynamically here into an endless vertical stack -->
+  </main>
 
-  <div class="keyboard-hint">Use <b>↑</b> and <b>↓</b> Arrow Keys to change posts</div>
+  <div class="keyboard-hint">Scroll down or use <b>↓ Arrow Key</b> to discover next game</div>
 
   <script>
     const OWNER = 'CalcSolver';
@@ -114,32 +137,41 @@
     const BRANCH = 'main';
 
     const RAW_BASE = `https://raw.githack.com/${OWNER}/${REPO}/${BRANCH}`;
-    const ICON_BASE = `${RAW_BASE}/Icon`;
 
     let feedItems = [];
     let focusedIndex = 0;
+    let isScrolling = false;
 
     const streamContainer = document.getElementById('streamContainer');
 
     function inferCategory(name) {
       const n = name.toLowerCase();
-      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return "Arcade System";
-      if (/backrooms|fnaf|granny/.test(n)) return "Horror Vault";
-      return "Classic Emulator";
+      if (/bloxorz|amongus|attackhole|adocar|gunspin|slope|pacman|1942|cloudmoon/.test(n)) return "Arcade Module";
+      if (/backrooms|fnaf|granny/.test(n)) return "Horror Core";
+      return "Classic Terminal";
     }
 
     function createDescription(title, category) {
-      return `Now streaming live component from repository node: Experience full gameplay optimization on ${title}. Dispatched directly from the server onto an instant structural frame view.`;
+      return `Synchronized payload node. Successfully fetched file asset bundle. Stream optimization initialized online for ${title}.`;
+    }
+
+    // Fisher-Yates Array Shuffle Algorithm to enforce full sequence randomness
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
     }
 
     async function loadStream() {
-      streamContainer.innerHTML = '<div style="text-align:center; padding:100px 0; color:var(--text-muted)">Connecting to stream instance...</div>';
+      streamContainer.innerHTML = '<div style="display:grid; place-items:center; height:100vh; color:var(--text-muted)">Generating randomized stream components...</div>';
       
       try {
         const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`, { cache: 'no-store' });
         const data = await res.json();
 
-        feedItems = data
+        let basicItems = data
           .filter(file => file.type === 'file' && /\.html?$/i.test(file.name))
           .map(file => {
             const parsedTitle = file.name.replace(/\.html?$/i, '').replace(/[-_]/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
@@ -151,35 +183,42 @@
               description: createDescription(parsedTitle, cat)
             };
           });
+
+        // Randomize the game array completely
+        feedItems = shuffleArray(basicItems);
+
       } catch (err) {
         console.error(err);
       }
 
       if (feedItems.length === 0) {
-        feedItems = [{ title: "Gun Spin", filename: "gunspin.html", category: "Arcade System", description: "Weaponized flight dynamic emulation engine modules." }];
+        feedItems = [{ title: "Gun Spin", filename: "gunspin.html", category: "Arcade Module", description: "Weaponized velocity tracking parameters." }];
       }
 
       streamContainer.innerHTML = '';
       renderStreamBlocks();
+      syncFocusedPost(0);
     }
 
     function renderStreamBlocks() {
       feedItems.forEach((item, index) => {
         const post = document.createElement('div');
-        post.className = `feed-post ${index === 0 ? 'active-focus' : ''}`;
+        post.className = `feed-post`;
         post.id = `post-${index}`;
         
         post.innerHTML = `
-          <div class="media-window">
-            <iframe id="iframe-${index}" data-src="${RAW_BASE}/${item.filename}" allowfullscreen src="${index === 0 ? RAW_BASE + '/' + item.filename : ''}"></iframe>
-          </div>
-          <div class="post-details">
-            <span class="post-tag">${item.category}</span>
-            <h2 class="post-title">${item.title}</h2>
-            <p class="post-desc">${item.description}</p>
-            <div class="post-actions">
-              <button class="play-trigger-btn" onclick="activateAndScroll(${index})">⚡ Reload Channel</button>
-              <button class="fullscreen-post-btn" onclick="triggerPostFullscreen(${index})">⛶ Fullscreen view</button>
+          <div class="card-wrapper">
+            <div class="media-window">
+              <iframe id="iframe-${index}" data-src="${RAW_BASE}/${item.filename}" allowfullscreen></iframe>
+            </div>
+            <div class="post-details">
+              <span class="post-tag">${item.category}</span>
+              <h2 class="post-title">${item.title}</h2>
+              <p class="post-desc">${item.description}</p>
+              <div class="post-actions">
+                <button class="play-trigger-btn" onclick="forceReloadFrame(${index})">⚡ Reload Channel</button>
+                <button class="fullscreen-post-btn" onclick="triggerPostFullscreen(${index})">⛶ Fullscreen view</button>
+              </div>
             </div>
           </div>
         `;
@@ -190,34 +229,30 @@
 
     function syncFocusedPost(index) {
       if (index < 0 || index >= feedItems.length) return;
-      
-      // Update visual border highlights
+
       document.querySelectorAll('.feed-post').forEach(el => el.classList.remove('active-focus'));
+      
       const activePost = document.getElementById(`post-${index}`);
       if (activePost) activePost.classList.add('active-focus');
 
       focusedIndex = index;
 
-      // Lazy load current frame src, drop past frame src context to avoid audio overlay bugs
+      // Unload all frames except the single visible entry to block sound overlap and maximize execution performance
       feedItems.forEach((item, idx) => {
         const frame = document.getElementById(`iframe-${idx}`);
         if (frame) {
           if (idx === index) {
             if (!frame.src) frame.src = frame.getAttribute('data-src');
           } else {
-            frame.src = ''; // Clear inactive tabs to kill audio crosstalk
+            frame.src = ''; 
           }
         }
       });
-
-      // Smooth scroll viewport onto layout segment block
-      activePost.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function activateAndScroll(index) {
+    function forceReloadFrame(index) {
       const frame = document.getElementById(`iframe-${index}`);
       if (frame) frame.src = frame.getAttribute('data-src');
-      syncFocusedPost(index);
     }
 
     function triggerPostFullscreen(index) {
@@ -225,22 +260,37 @@
       if (frame) frame.requestFullscreen().catch(err => console.log(err));
     }
 
-    // Keyboard navigation mappings
+    // Intercept native container scroll offsets to figure out active page snapping location
+    streamContainer.addEventListener('scroll', () => {
+      if (isScrolling) return;
+      
+      const topOffset = streamContainer.scrollTop;
+      const windowHeight = window.innerHeight;
+      const calculatedIndex = Math.round(topOffset / windowHeight);
+
+      if (calculatedIndex !== focusedIndex && calculatedIndex >= 0 && calculatedIndex < feedItems.length) {
+        syncFocusedPost(calculatedIndex);
+      }
+    });
+
+    // Keyboard navigation handlers
     window.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         if (focusedIndex + 1 < feedItems.length) {
-          syncFocusedPost(focusedIndex + 1);
+          const target = document.getElementById(`post-${focusedIndex + 1}`);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
         if (focusedIndex - 1 >= 0) {
-          syncFocusedPost(focusedIndex - 1);
+          const target = document.getElementById(`post-${focusedIndex - 1}`);
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
         }
       }
     });
 
-    // Run setup routine
+    // Fire setup routine
     loadStream();
   </script>
 </body>
