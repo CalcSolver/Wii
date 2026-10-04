@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extra Easter Eggs</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #7f8c8d;
+    }
+
+    .search-container {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 2rem;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      border: 2px solid #bdc3c7;
+      border-radius: 25px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: #3498db;
+      box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .content-area {
+      background: #ffffff;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      max-width: 700px;
+      width: 100%;
+      line-height: 1.6;
+    }
+
+    /* Falling Apple Styling */
+    .falling-apple {
+      position: absolute;
+      font-size: 2rem;
+      pointer-events: none; /* Allows clicking through falling apples */
+      user-select: none;
+      z-index: 9999;
+      will-change: transform, opacity;
+      animation: dropAndBounce 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    }
+
+    /* Drop and slight bounce animation */
+    @keyframes dropAndBounce {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(calc(100vh - var(--start-y) - 50px)) scale(1, 0.8) rotate(180deg);
+        opacity: 1;
+      }
+      85% {
+        transform: translateY(calc(100vh - var(--start-y) - 90px)) scale(0.9, 1.1) rotate(220deg);
+      }
+      100% {
+        transform: translateY(calc(100vh - var(--start-y) - 50px)) scale(1, 1) rotate(240deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Welcome to My Website</h1>
+    <p>Search around or explore the page!</p>
+  </header>
+
+  <div class="search-container">
+    <input 
+      type="text" 
+      id="searchInput" 
+      class="search-input" 
+      placeholder="Search something..." 
+      autocomplete="off"
+    >
+  </div>
+
+  <main class="content-area">
+    <h2>Main Content</h2>
+    <p>Try searching for different terms in the search bar above to trigger hidden secrets and easter eggs!</p>
+  </main>
+
+  <script>
+    (function () {
+      let isAppleModeActive = false;
+
+      const searchInput = document.getElementById('searchInput');
+
+      // Listen for search input changes
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+
+        // Trigger 'apple' easter egg
+        if (query === 'apple') {
+          isAppleModeActive = true;
+        } else {
+          isAppleModeActive = false;
+        }
+      });
+
+      // Click event handler for spawning falling apples
+      document.addEventListener('click', (e) => {
+        if (!isAppleModeActive) return;
+
+        // Create the apple element
+        const apple = document.createElement('div');
+        apple.classList.add('falling-apple');
+        apple.textContent = '🍎';
+
+        // Position the apple at cursor coordinates
+        const startX = e.pageX;
+        const startY = e.pageY;
+
+        apple.style.left = `${startX - 15}px`;
+        apple.style.top = `${startY - 15}px`;
+        
+        // Pass the starting Y position to CSS custom variable for dynamic screen-bottom targeting
+        apple.style.setProperty('--start-y', `${e.clientY}px`);
+
+        document.body.appendChild(apple);
+
+        // Remove the apple from DOM after animation completes
+        setTimeout(() => {
+          apple.remove();
+        }, 1500);
+      });
+    })();
+  </script>
+
+</body>
+</html>
