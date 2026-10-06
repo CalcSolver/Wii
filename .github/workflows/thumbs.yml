@@ -1,0 +1,28 @@
+name: Make thumbnails
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  thumbs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm init -y && npm i playwright && npx playwright install --with-deps chromium
+      - run: |
+          python3 -m http.server 8080 &
+          sleep 2
+          node make-thumbs.mjs
+      - run: |
+          git config user.name "thumb-bot"
+          git config user.email "thumb-bot@users.noreply.github.com"
+          git add Icon
+          git commit -m "Add thumbnails" || echo "nothing new"
+          git push
