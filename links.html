@@ -1,100 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OctoArcade Unblocked Alternative Links</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0f172a',
+                        cardBg: '#1e293b',
+                        borderCol: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen py-10 px-4">
-    <div class="max-w-4xl mx-auto bg-slate-800 rounded-xl shadow-xl p-6 md:p-8 border border-slate-700">
+<body class="bg-darkBg text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    
+    <div class="max-w-5xl mx-auto space-y-8">
         
-        <!-- Header & Total Count -->
-        <div class="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-700 pb-6 mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-white">Vercel Domains Directory</h1>
-                <p class="text-slate-400 text-sm mt-1">Organized list of project, school, and student domains</p>
+        <!-- Header & Stats Card -->
+        <header class="bg-cardBg rounded-2xl shadow-2xl p-6 sm:p-8 border border-borderCol flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="space-y-2 text-center md:text-left">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-400 text-xs font-semibold uppercase tracking-wider">
+                    <i class="fa-solid fa-shield-halved"></i> Official Mirror Directory
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-white">OctoArcade Unblocked</h1>
+                <p class="text-slate-400 text-sm sm:text-base">Alternative working links, tools, and mirror domains.</p>
             </div>
-            <div class="bg-indigo-600 text-white px-5 py-3 rounded-lg shadow-md flex items-center justify-center space-x-2">
-                <span class="text-sm font-medium uppercase tracking-wider">Total Domains:</span>
-                <span class="text-xl font-ext500 font-bold" id="total-count">42</span>
+
+            <div class="bg-indigo-600 hover:bg-indigo-500 transition text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-4 border border-indigo-400/30">
+                <div class="p-3 bg-white/10 rounded-lg">
+                    <i class="fa-solid fa-link text-2xl"></i>
+                </div>
+                <div>
+                    <span class="block text-xs font-medium uppercase tracking-wider text-indigo-200">Total Available</span>
+                    <span class="text-3xl font-bold" id="total-count">42</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="bg-cardBg rounded-xl p-4 sm:p-5 border border-borderCol flex flex-col sm:flex-row gap-4 items-center justify-between shadow-md">
+            <div class="relative w-full sm:w-96">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="searchInput" placeholder="Search domains (e.g. duckmaths, jackson)..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-slate-900 border border-borderCol rounded-lg text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end text-xs font-medium text-slate-400">
+                <span>Tip: Click link to open or use button to copy URL.</span>
             </div>
         </div>
 
-        <div class="space-y-8">
+        <div class="space-y-6" id="sectionsContainer">
+
             <!-- Section 1: Randomized / Other Domains -->
-            <section class="bg-slate-900/50 rounded-lg p-5 border border-slate-700/60">
-                <h2 class="text-lg font-semibold text-indigo-400 mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
-                    Randomized / Other Domains (18)
-                </h2>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    <li><a href="https://ptqzmlrwhcdxafesjnyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">1. ptqzmlrwhcdxafesjnyu.vercel.app</a></li>
-                    <li><a href="https://lrptqzwhcdxafesjnyum.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">2. lrptqzwhcdxafesjnyum.vercel.app</a></li>
-                    <li><a href="https://mlrptqzwhcdxafesjnyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">3. mlrptqzwhcdxafesjnyu.vercel.app</a></li>
-                    <li><a href="https://rmqplztwhcdxafesjnyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">4. rmqplztwhcdxafesjnyu.vercel.app</a></li>
-                    <li><a href="https://tqzmlrpnwhcdxafesjyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">5. tqzmlrpnwhcdxafesjyu.vercel.app</a></li>
-                    <li><a href="https://cdtqzmlrpnwhxafesjyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">6. cdtqzmlrpnwhxafesjyu.vercel.app</a></li>
-                    <li><a href="https://xrmqplztwhcdafesjnyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">7. xrmqplztwhcdafesjnyu.vercel.app</a></li>
-                    <li><a href="https://plqzrmtnwhcdxafesjyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">8. plqzrmtnwhcdxafesjyu.vercel.app</a></li>
-                    <li><a href="https://rmtqplzwhncdxfesjayu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">9. rmtqplzwhncdxfesjayu.vercel.app</a></li>
-                    <li><a href="https://nqplxrmztwhcdafesjyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">10. nqplxrmztwhcdafesjyu.vercel.app</a></li>
-                    <li><a href="https://wqzmlrptncdhfyasejku.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">11. wqzmlrptncdhfyasejku.vercel.app</a></li>
-                    <li><a href="https://hcdtqzmlrpnwafesjkyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">12. hcdtqzmlrpnwafesjkyu.vercel.app</a></li>
-                    <li><a href="https://zptmrlqwhsdfycnjkaeu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">13. zptmrlqwhsdfycnjkaeu.vercel.app</a></li>
-                    <li><a href="https://qmrplxzhfntcawesjdyu.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">14. qmrplxzhfntcawesjdyu.vercel.app</a></li>
-                    <li><a href="https://bxtlqsmrjvphkduwneca.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">15. bxtlqsmrjvphkduwneca.vercel.app</a></li>
-                    <li><a href="https://fjkqrmntplwzchadyeus.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">16. fjkqrmntplwzchadyeus.vercel.app</a></li>
-                    <li><a href="https://mjseqta.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">17. mjseqta.vercel.app</a></li>
-                    <li><a href="https://seqtab.vercel.app" target="_blank" class="text-slate-300 hover:text-indigo-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">18. seqtab.vercel.app</a></li>
+            <section class="domain-section bg-cardBg/80 backdrop-blur rounded-xl p-5 sm:p-6 border border-borderCol shadow-lg" data-category="random">
+                <div class="flex items-center justify-between mb-5 border-b border-borderCol pb-3">
+                    <h2 class="text-lg font-bold text-indigo-400 flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/50"></span>
+                        Randomized / Obfuscated Domains
+                    </h2>
+                    <span class="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-300 text-xs font-semibold">18 links</span>
+                </div>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm domain-list">
+                    <!-- Items inserted via JS/HTML template -->
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://ptqzmlrwhcdxafesjnyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>ptqzmlrwhcdxafesjnyu.vercel.app</a><button onclick="copyToClipboard('https://ptqzmlrwhcdxafesjnyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://lrptqzwhcdxafesjnyum.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>lrptqzwhcdxafesjnyum.vercel.app</a><button onclick="copyToClipboard('https://lrptqzwhcdxafesjnyum.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://mlrptqzwhcdxafesjnyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>mlrptqzwhcdxafesjnyu.vercel.app</a><button onclick="copyToClipboard('https://mlrptqzwhcdxafesjnyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://rmqplztwhcdxafesjnyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>rmqplztwhcdxafesjnyu.vercel.app</a><button onclick="copyToClipboard('https://rmqplztwhcdxafesjnyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://tqzmlrpnwhcdxafesjyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>tqzmlrpnwhcdxafesjyu.vercel.app</a><button onclick="copyToClipboard('https://tqzmlrpnwhcdxafesjyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://cdtqzmlrpnwhxafesjyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>cdtqzmlrpnwhxafesjyu.vercel.app</a><button onclick="copyToClipboard('https://cdtqzmlrpnwhxafesjyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://xrmqplztwhcdafesjnyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>xrmqplztwhcdafesjnyu.vercel.app</a><button onclick="copyToClipboard('https://xrmqplztwhcdafesjnyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://plqzrmtnwhcdxafesjyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>plqzrmtnwhcdxafesjyu.vercel.app</a><button onclick="copyToClipboard('https://plqzrmtnwhcdxafesjyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://rmtqplzwhncdxfesjayu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>rmtqplzwhncdxfesjayu.vercel.app</a><button onclick="copyToClipboard('https://rmtqplzwhncdxfesjayu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://nqplxrmztwhcdafesjyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>nqplxrmztwhcdafesjyu.vercel.app</a><button onclick="copyToClipboard('https://nqplxrmztwhcdafesjyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://wqzmlrptncdhfyasejku.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>wqzmlrptncdhfyasejku.vercel.app</a><button onclick="copyToClipboard('https://wqzmlrptncdhfyasejku.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://hcdtqzmlrpnwafesjkyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>hcdtqzmlrpnwafesjkyu.vercel.app</a><button onclick="copyToClipboard('https://hcdtqzmlrpnwafesjkyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://zptmrlqwhsdfycnjkaeu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>zptmrlqwhsdfycnjkaeu.vercel.app</a><button onclick="copyToClipboard('https://zptmrlqwhsdfycnjkaeu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://qmrplxzhfntcawesjdyu.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>qmrplxzhfntcawesjdyu.vercel.app</a><button onclick="copyToClipboard('https://qmrplxzhfntcawesjdyu.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://bxtlqsmrjvphkduwneca.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>bxtlqsmrjvphkduwneca.vercel.app</a><button onclick="copyToClipboard('https://bxtlqsmrjvphkduwneca.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://fjkqrmntplwzchadyeus.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>fjkqrmntplwzchadyeus.vercel.app</a><button onclick="copyToClipboard('https://fjkqrmntplwzchadyeus.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://mjseqta.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>mjseqta.vercel.app</a><button onclick="copyToClipboard('https://mjseqta.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-indigo-500/50 transition group"><a href="https://seqtab.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-indigo-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-globe text-slate-500"></i>seqtab.vercel.app</a><button onclick="copyToClipboard('https://seqtab.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
                 </ul>
             </section>
 
             <!-- Section 2: School / Project / Tool Domains -->
-            <section class="bg-slate-900/50 rounded-lg p-5 border border-slate-700/60">
-                <h2 class="text-lg font-semibold text-emerald-400 mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                    School / Project / Tool Domains (16)
-                </h2>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    <li><a href="https://duckmathscopy.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">1. duckmathscopy.vercel.app</a></li>
-                    <li><a href="https://frameworktools.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">2. frameworktools.vercel.app</a></li>
-                    <li><a href="https://networkservices.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">3. networkservices.vercel.app</a></li>
-                    <li><a href="https://ictlauncher.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">4. ictlauncher.vercel.app</a></li>
-                    <li><a href="https://semag2.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">5. semag2.vercel.app</a></li>
-                    <li><a href="https://ac-aus.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">6. ac-aus.vercel.app</a></li>
-                    <li><a href="https://aquinas-college.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">7. aquinas-college.vercel.app</a></li>
-                    <li><a href="https://aquinascollegeaus.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">8. aquinascollegeaus.vercel.app</a></li>
-                    <li><a href="https://aquinascollegea.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">9. aquinascollegea.vercel.app</a></li>
-                    <li><a href="https://octoarcade1.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">10. octoarcade1.vercel.app</a></li>
-                    <li><a href="https://octoarcade.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">11. octoarcade.vercel.app</a></li>
-                    <li><a href="https://blahblahb.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">12. blahblahb.vercel.app</a></li>
-                    <li><a href="https://wii-eta.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">13. wii-eta.vercel.app</a></li>
-                    <li><a href="https://goodluckgustavofromaquinasict.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">14. goodluckgustavofromaquinasict.vercel.app</a></li>
-                    <li><a href="https://gustavotheict.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">15. gustavotheict.vercel.app</a></li>
-                    <li><a href="https://harrythehacker.vercel.app" target="_blank" class="text-slate-300 hover:text-emerald-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">16. harrythehacker.vercel.app</a></li>
+            <section class="domain-section bg-cardBg/80 backdrop-blur rounded-xl p-5 sm:p-6 border border-borderCol shadow-lg" data-category="school">
+                <div class="flex items-center justify-between mb-5 border-b border-borderCol pb-3">
+                    <h2 class="text-lg font-bold text-emerald-400 flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/50"></span>
+                        School / Project / Tool Domains
+                    </h2>
+                    <span class="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 text-xs font-semibold">16 links</span>
+                </div>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm domain-list">
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://duckmathscopy.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>duckmathscopy.vercel.app</a><button onclick="copyToClipboard('https://duckmathscopy.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://frameworktools.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>frameworktools.vercel.app</a><button onclick="copyToClipboard('https://frameworktools.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://networkservices.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>networkservices.vercel.app</a><button onclick="copyToClipboard('https://networkservices.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://ictlauncher.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>ictlauncher.vercel.app</a><button onclick="copyToClipboard('https://ictlauncher.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://semag2.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>semag2.vercel.app</a><button onclick="copyToClipboard('https://semag2.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://ac-aus.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>ac-aus.vercel.app</a><button onclick="copyToClipboard('https://ac-aus.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://aquinas-college.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>aquinas-college.vercel.app</a><button onclick="copyToClipboard('https://aquinas-college.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://aquinascollegeaus.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>aquinascollegeaus.vercel.app</a><button onclick="copyToClipboard('https://aquinascollegeaus.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://aquinascollegea.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>aquinascollegea.vercel.app</a><button onclick="copyToClipboard('https://aquinascollegea.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://octoarcade1.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>octoarcade1.vercel.app</a><button onclick="copyToClipboard('https://octoarcade1.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://octoarcade.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>octoarcade.vercel.app</a><button onclick="copyToClipboard('https://octoarcade.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://blahblahb.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>blahblahb.vercel.app</a><button onclick="copyToClipboard('https://blahblahb.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://wii-eta.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>wii-eta.vercel.app</a><button onclick="copyToClipboard('https://wii-eta.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://goodluckgustavofromaquinasict.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>goodluckgustavofromaquinasict.vercel.app</a><button onclick="copyToClipboard('https://goodluckgustavofromaquinasict.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://gustavotheict.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>gustavotheict.vercel.app</a><button onclick="copyToClipboard('https://gustavotheict.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-emerald-500/50 transition group"><a href="https://harrythehacker.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-emerald-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-gamepad text-slate-500"></i>harrythehacker.vercel.app</a><button onclick="copyToClipboard('https://harrythehacker.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
                 </ul>
             </section>
 
-            <!-- Section 3: Student-name Domains -->
-            <section class="bg-slate-900/50 rounded-lg p-5 border border-slate-700/60">
-                <h2 class="text-lg font-semibold text-amber-400 mb-4 flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-                    Student-Name Domains (8)
-                </h2>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                    <li><a href="https://jacksonhagen.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">1. jacksonhagen.vercel.app</a></li>
-                    <li><a href="https://danielmitton.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">2. danielmitton.vercel.app</a></li>
-                    <li><a href="https://maxlinke.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">3. maxlinke.vercel.app</a></li>
-                    <li><a href="https://jetpatterson.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">4. jetpatterson.vercel.app</a></li>
-                    <li><a href="https://montagemlinke.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">5. montagemlinke.vercel.app</a></li>
-                    <li><a href="https://caelververka.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">6. caelververka.vercel.app</a></li>
-                    <li><a href="https://funkhagen.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">7. funkhagen.vercel.app</a></li>
-                    <li><a href="https://speed-kai.vercel.app" target="_blank" class="text-slate-300 hover:text-amber-300 hover:underline block p-1.5 rounded hover:bg-slate-800/80 transition">8. speed-kai.vercel.app</a></li>
+            <!-- Section 3: Student-Name Domains -->
+            <section class="domain-section bg-cardBg/80 backdrop-blur rounded-xl p-5 sm:p-6 border border-borderCol shadow-lg" data-category="student">
+                <div class="flex items-center justify-between mb-5 border-b border-borderCol pb-3">
+                    <h2 class="text-lg font-bold text-amber-400 flex items-center gap-2.5">
+                        <span class="w-3 h-3 rounded-full bg-amber-500 shadow-sm shadow-amber-500/50"></span>
+                        Student-Name Domains
+                    </h2>
+                    <span class="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 text-xs font-semibold">8 links</span>
+                </div>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm domain-list">
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://jacksonhagen.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>jacksonhagen.vercel.app</a><button onclick="copyToClipboard('https://jacksonhagen.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://danielmitton.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>danielmitton.vercel.app</a><button onclick="copyToClipboard('https://danielmitton.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://maxlinke.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>maxlinke.vercel.app</a><button onclick="copyToClipboard('https://maxlinke.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://jetpatterson.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>jetpatterson.vercel.app</a><button onclick="copyToClipboard('https://jetpatterson.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://montagemlinke.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>montagemlinke.vercel.app</a><button onclick="copyToClipboard('https://montagemlinke.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://caelververka.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>caelververka.vercel.app</a><button onclick="copyToClipboard('https://caelververka.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://funkhagen.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>funkhagen.vercel.app</a><button onclick="copyToClipboard('https://funkhagen.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
+                    <li class="domain-item"><div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900/60 border border-borderCol hover:border-amber-500/50 transition group"><a href="https://speed-kai.vercel.app" target="_blank" rel="noopener noreferrer" class="text-slate-300 group-hover:text-amber-300 truncate font-mono text-xs sm:text-sm mr-2 flex items-center gap-2"><i class="fa-solid fa-user-graduate text-slate-500"></i>speed-kai.vercel.app</a><button onclick="copyToClipboard('https://speed-kai.vercel.app', this)" title="Copy link" class="p-1.5 text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded transition"><i class="fa-regular fa-copy text-xs"></i></button></div></li>
                 </ul>
             </section>
+
         </div>
 
+        <!-- Empty Search State Notice -->
+        <div id="noResults" class="hidden text-center py-12 bg-cardBg rounded-xl border border-borderCol">
+            <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-3"></i>
+            <p class="text-slate-400 text-base font-medium">No domains match your search.</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-slate-500 py-4">
+            OctoArcade Directory &bull; Securely hosting 42 mirror links
+        </footer>
+
     </div>
+
+    <script>
+        function copyToClipboard(text, btnElement) {
+            // Fallback clipboard command for iframe compatibility
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                const originalHTML = btnElement.innerHTML;
+                btnElement.innerHTML = '<i class="fa-solid fa-check text-xs text-emerald-400"></i>';
+                btnElement.classList.add('bg-emerald-950/50', 'border', 'border-emerald-500/30');
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('bg-emerald-950/50', 'border', 'border-emerald-500/30');
+                }, 1500);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Live Search Filter
+        const searchInput = document.getElementById('searchInput');
+        const sections = document.querySelectorAll('.domain-section');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            let totalVisibleItems = 0;
+
+            sections.forEach(section => {
+                const items = section.querySelectorAll('.domain-item');
+                let sectionHasVisible = false;
+
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = '';
+                        sectionHasVisible = true;
+                        totalVisibleItems++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                if (sectionHasVisible) {
+                    section.style.display = '';
+                } else {
+                    section.style.display = 'none';
+                }
+            });
+
+            if (totalVisibleItems === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>
